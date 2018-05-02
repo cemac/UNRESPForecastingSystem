@@ -1,0 +1,42 @@
+c-----------------------------------------------------------------------
+c --- COMMON BLOCK /SNOW/                                       CTGPROC
+c-----------------------------------------------------------------------
+      character*120 fsngrid
+      character*16 datasets,datavers,datetimes
+      character*64 datamods
+      character*80 comment
+
+      character*8 cmaps,datumsn,timezones
+      character*10 datens
+      character*4 unitss
+
+      character*12 cactions
+      character*4 c4dums
+
+      real*8 vectis(9),vectos(9)
+
+      parameter (mxbuff=1024)
+
+      common/SNOWCHR/datasets,datavers,datetimes,datamods
+     &      ,cmaps,datumsn,timezones,datens,unitss
+     &      ,cactions,c4dums,comment
+
+      common/SNOWVAL/fsnow,fsngrid,flonorg,flatorg,flonbs,flatbs
+     &      ,dlon,dlat,xl,xh,yl,yh,xyoff,feastis,fnortis,feasts
+     &      ,fnorths,vectis,vectos
+     &      ,nxt,nyt,nxs,nys,nijs,ngref,ngipp
+     &      ,idatebeg,idateend,idate,istart
+
+c-----------------------------------------------------------------------
+c     DEFINITIONS  [i]=integer   [r]=real   [l]=logical   [c]=character
+c-----------------------------------------------------------------------
+c fsngrid        Snow grid reference file name                       [c]
+c datasets       Snow data set name                                  [c]
+c datavers       Snow data version name                              [c]
+c datetime       Snow data time                                      [c]
+c cmap           Snow data map projection                            [c]
+C datumsn        Snow data datum                                     [c]
+C timezones      Snow data time zone                                 [c]
+C datens         Snow data daten                                     [c]
+C unitss         Snow data units                                     [c]
+c-----------------------------------------------------------------------

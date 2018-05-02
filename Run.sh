@@ -30,3 +30,15 @@ echo " ---> FINISHED ###"
 echo -n "### MOVING TERREL OUTPUT FILES"
 mv *.dat *.grd *.lst *.sav ./CALPUFF_OUT/TERREL/.
 echo " ---> FINISHED ###"
+
+###CTGPROC###
+#Compile CTGPROC if required:
+cd CALPUFF_EXE
+if [ ! -f ./ctgproc_intel.exe ]; then
+    echo "### COMPILING CTGPROC"
+    ifort -O0 -fltconsistency ../CALPUFF_SRC/CTGPROC/ctgproc.for -o ctgproc_intel.exe 
+    echo " ---> FINISHED ###"
+else
+    echo "### CTGPROC ALREADY COMPILED ###"
+fi
+cd ..
