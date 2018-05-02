@@ -1,0 +1,76 @@
+Lahey/Fujitsu Fortran 95 Express Release 7.20.00  S/N: 00608146772706932
+Copyright (C) 1994-2009 Lahey Computer Systems.  All rights reserved.
+Copyright (C) 1998-2009 FUJITSU LIMITED. All rights reserved.
+Options:
+-nap           -nc            -nchk          -nchkglobal    -concc 
+-ndal          -ndbl          -ndll          -nf95          -fix 
+-ng            -nin           -ninfo         -ninline       -li 
+-nlst          -nlong         -maxfatals 50  -o0            -out makegeo.exe 
+-npause        -nprefetch     -nprivate      -npca          -nquad 
+-sav           -nsse2         -staticlib     -nstaticlink   -stchk 
+-tpp           -trace         -trap doi      -nunroll       -nvarheap 
+-w             -nwide         -winconsole    -nwo           -nxref 
+-zero          -nzfm 
+
+Compiling program unit makegeo at line 1:
+Compiling program unit __BLKDT__ at line 245:
+Compiling program unit xtractll at line 307:
+Compiling program unit yr4 at line 267:
+Compiling program unit yr4c at line 318:
+Compiling program unit qayr4 at line 362:
+Compiling program unit julday at line 449:
+Compiling program unit grday at line 514:
+Compiling program unit dedat at line 564:
+Compiling program unit deltt at line 592:
+Compiling program unit incr at line 658:
+Compiling program unit indecr at line 752:
+Compiling program unit incrs at line 831:
+Compiling program unit deltsec at line 898:
+Compiling program unit midnite at line 942:
+Compiling program unit utcbasr at line 1011:
+Compiling program unit basrutc at line 1047:
+Compiling program unit filcase at line 1094:
+Compiling program unit readin at line 1168:
+Compiling program unit altonu at line 1820:
+Compiling program unit deblnk at line 2156:
+Compiling program unit deplus at line 2217:
+Compiling program unit tright at line 2273:
+Compiling program unit tleft at line 2351:
+Compiling program unit setvar at line 2430:
+Compiling program unit allcap at line 2526:
+Compiling program unit datetm at line 2578:
+Compiling program unit fmt_date at line 2670:
+Compiling program unit etime at line 2805:
+Compiling program unit undrflw at line 2826:
+Compiling program unit comline at line 2859:
+Compiling program unit setup at line 311:
+Compiling program unit readcf at line 620:
+Compiling program unit readhd at line 1432:
+Compiling program unit comp at line 1865:
+Compiling program unit wt at line 2702:
+Compiling program unit wtsw at line 2797:
+Compiling program unit wtswz0 at line 2960:
+Compiling program unit wtswalb at line 3114:
+Compiling program unit xtrctx at line 3270:
+Compiling program unit wrrdat at line 3326:
+Compiling program unit wredat at line 3387:
+Compiling program unit out at line 3450:
+Compiling program unit wrt at line 3684:
+Compiling program unit wrt2 at line 3721:
+Compiling program unit lrsame at line 3746:
+Compiling program unit wrthead at line 3793:
+Compiling program unit fin at line 3891:
+Compiling program unit rdsnhd at line 3976:
+Compiling program unit rdsn at line 4089:
+Compiling program unit fills at line 4298:
+Compiling program unit fillt at line 4365:
+Compiling program unit chgtim at line 4412:
+Compiling program unit timestmp at line 4488:
+Compiling program unit getdate at line 4497:
+Compiling program unit rollbk at line 4510:
+Compiling program unit gethours at line 4538:
+Encountered 0 errors, 0 warnings in file makegeo.for.
+Microsoft (R) Incremental Linker Version 6.00.8447
+Copyright (C) Microsoft Corp 1992-1998. All rights reserved.
+
+Compiling file makegeo.for.
