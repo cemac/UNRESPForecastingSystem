@@ -5,8 +5,8 @@ set -e #stop at first error
 module load intel/17.0.0
 
 #Set flags
-runTERREL=false
-runCTGPROC=false
+runTERREL=true
+runCTGPROC=true
 runMAKEGEO=true
 
 ###TERREL###
