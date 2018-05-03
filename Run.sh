@@ -7,14 +7,15 @@ module load python2 python-libs
 
 #Read in command line arguments
 rundate=$1
-echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
 #Set flags
 runTERREL=false
 runCTGPROC=false
 runMAKEGEO=false
-run3DDAT=true
-runCALMET=false
+run3DDAT=false
+runCALMET=true
+
+echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
 ###TERREL###
 if [ "$runTERREL" = true ]; then
@@ -147,7 +148,7 @@ fi
 #Extract NAM data into CALMET input file format:
 if [ "$run3DDAT" = true ]; then
   echo "### EXTRACTING NAM DATA INTO 3D.DAT FILE"
-  rm -f data/3D.DAT
+  rm -f data/3d.dat
   cd Python
   ./Create3DDAT.py ${rundate}
   cd ..
@@ -166,5 +167,24 @@ if [ "$runCALMET" = true ]; then
       echo "### CTGPROC ALREADY COMPILED ###"
   fi
   cd ..
+  #Copy data file from MAKEGEO across to the data directory
+  echo -n "### COPYING GEO DATA FILE ACROSS"
+  cp -f ./CALPUFF_OUT/MAKEGEO/geo_masaya.dat data/.
+  echo " ---> FINISHED ###"
+  #Remove any old files before running:
+  echo -n "### DELETING OLD CALMET OUTPUT FILES"
+  rm -rf *.dat *.DAT *.bna *.lst *.aux
+  cd CALPUFF_OUT/CALMET
+  find . ! -name 'README' -type f -exec rm -f {} +
+  cd ../..
+  echo " ---> FINISHED ###"
+  #Run CALMET:
+  echo "### RUNNING CALMET"
+  ./CALPUFF_EXE/calmet_intel.exe ./CALPUFF_INP/calmet.inp
+  echo " ---> FINISHED ###"
+  #Move output files:
+  echo -n "### MOVING CALMET OUTPUT FILES"
+  mv *.dat *.DAT *.bna *.lst *.aux ./CALPUFF_OUT/CALMET/.
+  echo " ---> FINISHED ###"
 fi
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"
