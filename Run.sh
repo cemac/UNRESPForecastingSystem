@@ -5,11 +5,15 @@ set -e #stop at first error
 module load intel/17.0.0
 module load python2 python-libs
 
+#Read in command line arguments
+rundate=$1
+echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
+
 #Set flags
 runTERREL=false
 runCTGPROC=false
 runMAKEGEO=false
-run3DDAT=true
+run3DDAT=false
 
 ###TERREL###
 if [ "$runTERREL" = true ]; then
@@ -104,6 +108,11 @@ if [ "$runMAKEGEO" = true ]; then
 fi
 
 ###NAM data###
+#Download NAM data if required:
+if [ ! -d ./NAM_data/${rundate} ]; then
+  echo "dir doesn't exist"
+fi
+#Extract data into CALMET inpt file format:
 if [ "$run3DDAT" = true ]; then
   cd Python
   ./Create3DDAT.py 20171204
