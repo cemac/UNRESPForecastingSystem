@@ -6,3 +6,5 @@
 *.sav
 *.log
 *.clr
+
+NAM_data/*/

@@ -160,9 +160,9 @@ latMinCP=11.7 #Min lat of CALPUFF grid
 latMaxCP=12.2 #Max lat of CALPUFF grid
 lonMinCP=273.2 #Min lon of CALPUFF grid
 lonMaxCP=274.1 #Max lon of CALPUFF grid
-inDir=os.getenv("HOME")+'/UNRESP_ndrive/earjjo/Data/NAM_20180306' #Parent Directory containing GRIB files
+inDir='../NAM_data/20180306' #Parent Directory containing GRIB files
 nfiles=17 #Number of GRIB files (files are 3 hourly, so 48 hours is 17 files including hours 0 and 48)
-outFile=os.getenv("HOME")+'/Data/UNRESP/3D.DAT' #Outpuf ile path
+outFile='../data/3D.DAT' #Output file path
 levsIncl=[1000,950,925,900,850,800,700,600,500,400,300,250,200,150,100,75,50,30,20,10,7,5,2] #pressure levels to include in output
 #####
 
