@@ -3,11 +3,13 @@
 #Setup environment
 set -e #stop at first error
 module load intel/17.0.0
+module load python2 python-libs
 
 #Set flags
-runTERREL=true
-runCTGPROC=true
-runMAKEGEO=true
+runTERREL=false
+runCTGPROC=false
+runMAKEGEO=false
+run3DDAT=true
 
 ###TERREL###
 if [ "$runTERREL" = true ]; then
@@ -99,4 +101,11 @@ if [ "$runMAKEGEO" = true ]; then
   echo -n "### MOVING MAKEGEO OUTPUT FILES"
   mv *.dat *.lst *.clr *.log *.grd ./CALPUFF_OUT/MAKEGEO/.
   echo " ---> FINISHED ###"
+fi
+
+###NAM data###
+if [ "$run3DDAT" = true ]; then
+  cd Python
+  python Create3DDAT.py
+  cd ..
 fi
