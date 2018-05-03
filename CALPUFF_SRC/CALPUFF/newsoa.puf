@@ -1,0 +1,14 @@
+c----------------------------------------------------------------------
+c
+c Common block for new SOA module                               CALPUFF
+c
+c----------------------------------------------------------------------
+c
+      real bckoc
+      
+      common/NEWSOA/bckoc
+c
+c --- COMMON BLOCK /NEWSOA/ Variables:
+c
+c           bckoc - real    - Background conc. of primary OC (ug/m3)
+c

@@ -8,5 +8,7 @@
 *.clr
 *.bna
 *.aux
+*.mod
+*.o
 
 NAM_data/*/

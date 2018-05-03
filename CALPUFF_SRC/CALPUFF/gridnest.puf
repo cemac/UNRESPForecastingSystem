@@ -1,0 +1,38 @@
+c----------------------------------------------------------------------
+c --- COMMON BLOCK /GRIDNEST/ -- Derived information from       CALPUFF
+c                                nested meteorological data
+c                                files
+c-----------------------------------------------------------------------
+
+      integer*1 metcell(mxnx,mxny,mxmetdom)
+      integer ngrid
+      integer nestfac(mxmetdom),nestfacmx,ipargrd(mxmetdom)
+      real rnxnest0(mxmetdom),rnynest0(mxmetdom)
+
+      real cgridll(2,mxmetdom),cgridur(2,mxmetdom)
+
+      common/GRIDNEST/ ngrid,nestfac,nestfacmx,ipargrd,
+     &                 rnxnest0,rnynest0,cgridll,cgridur,metcell
+
+c --- COMMON BLOCK /GRIDNEST/ Variables:
+c             NGRID - integer - Number of CALMET met file grids
+c NESTFAC(mxmetdom) - integer - Number of cells in each grid that
+c                               equals one cell in outermost grid.
+c                               This is applied in 1-D.
+c         NESTFACMX - integer - Maximum nest factor NESTFAC
+c IPARGRD(mxmetdom) - integer - Parent grid ID for each nested grid
+c RNXNEST0(mxmetdom) - real   - Number of grid-k cells from origin of
+c                               grid-1 to origin of grid-k in X
+c RNYNEST0(mxmetdom) - real   - Number of grid-k cells from origin of
+c                               grid-1 to origin of grid-k in Y
+c CGRIDLL(2,mxmetdom) - real  - Lower-Left corner Coordinates of each
+c                               MET grid domain in outermost grid units
+c                               (1,_): x coordinate, (2,_): y coordinate
+c CGRIDUR(2,mxmetdom) - real  - Upper-Right corner Coordinates of each
+c                               MET grid domain in outermost grid units
+c                               (1,_): x coordinate, (2,_): y coordinate
+c METCELL(mxnx,mxny,mxmetdom)
+c                   -integer*1- Validity flag for each (i,j) grid
+c                               point in each of the met grid domains
+c                               METCELL=0 data in grid cell not used
+c                               METCELL=1 data in grid cell used
