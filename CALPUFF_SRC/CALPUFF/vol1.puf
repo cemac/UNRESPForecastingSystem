@@ -1,0 +1,53 @@
+c----------------------------------------------------------------------
+c --- COMMON BLOCK /VOL1/ -- Volume source data for discrete    CALPUFF
+c                            sources with constant emissions
+c----------------------------------------------------------------------
+      character*16 CNAMVL1
+      character*40 csfvl1
+c
+      common/VOL1/XVL1GRD(mxvol),YVL1GRD(mxvol),HTVL1(mxvol),
+     1 ELVL1(mxvol),SY0VL1(mxvol),SZ0VL1(mxvol),QVL1(mxspec,mxvol),
+     2 NEWVL1(mxvol),NVL1,IVLU,NSVL1,
+     3 IDSFVL1(mxspec,mxvol),IXREFVL1(mxspvl),
+     4 CNAMVL1(mxvol),CSFVL1(mxspvl)
+c
+c --- COMMON BLOCK /VOL1/ Variables:
+c
+c         XVL1GRD(mxvol) - real     - X coordinate of a volume
+c                                     source in grid units
+c                                     (i.e., origin at (0.0,0.0))
+c         YVL1GRD(mxvol) - real     - Y coordinate of a volume
+c                                     source in grid units
+c                                     (i.e., origin at (0.0,0.0))
+c           HTVL1(mxvol) - real     - Effective release height (m)
+c           ELVL1(mxvol) - real     - Ground elevation (m) above sea
+c                                     level
+c          SY0VL1(mxvol) - real     - Initial sigma y (m)
+c          SZ0VL1(mxvol) - real     - Initial sigma z (m)
+c     QVL1(mxspec,mxvol) - real     - Emission rate (g/s) for each
+c                                     pollutant
+c                   NVL1 - integer  - Number of volume sources
+c          NEWVL1(mxvol) - integer  - Number of puffs released by each
+c                                     source during the current step
+c                   IVLU - integer  - Units for emission rates in
+c                                     control file
+c                                     1:   g/s
+c                                     2:  kg/hr
+c                                     3:  lb/hr
+c                                     4:  ton/yr
+c                                     5:  Odour Unit * m**3/s
+c                                     6:  Odour Unit * m**3/min
+c                                     7:  metric tons/yr
+c                                     8:  Bq/s  (Bq = becquerel = disintegrations/s)
+c                                     9:  GBq/yr 
+c                  NSVL1 - integer  - Number of source-species pairs
+c                                     with emissions scaling factors
+c  IDSFVL1(mxspec,mxvol) - integer  - Pointer to volume-species pair
+c                                     index, 0 to NSVL1
+c                                     (0 if no scaling)
+c       IXREFVL1(mxspvl) - integer  - Cross-reference pointer from
+c                                     volume-species pairs to
+c                                     scale-factor tables
+c         CSFVL1(mxspvl) - c*40 arr - List of scale-factor table names
+c                                     for volume-species pairs
+c         CNAMVL1(mxvol) - c*16 arr - Source names

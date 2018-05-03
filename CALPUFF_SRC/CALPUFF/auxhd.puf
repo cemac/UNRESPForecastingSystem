@@ -1,0 +1,108 @@
+c----------------------------------------------------------------------
+c --- COMMON BLOCK /AUXHD/ -- Header from the auxiliary        CALPUFF
+c                             meteorological data file(s)
+c----------------------------------------------------------------------
+      character*4 utmhemma
+      character*8 datumma,pmapma,axbtzma
+      character*12 datenma
+
+      integer naux2d(mxmetdom),naux3d(mxmetdom)
+      character*8 auxnam2d(mxaux,mxmetdom), auxnam3d(mxaux,mxmetdom)
+      character*8 auxunit2d(mxaux,mxmetdom), auxunit3d(mxaux,mxmetdom)
+      character*4 auxtyp2d(mxaux,mxmetdom), auxtyp3d(mxaux,mxmetdom)
+
+      common/AUXHD/nxma(mxmetdom),nyma(mxmetdom),nzma,
+     1             xgridma(mxmetdom),xorigma(mxmetdom),
+     2             yorigma(mxmetdom),axbtzma,xbtzma,
+     3             rnlat0ma,relon0ma,xlat1ma,xlat2ma,
+     4             zfacema(mxnzp1),itimesa,
+     5             ibymeta(mxmetdom),ibmmeta(mxmetdom),
+     6             ibdmeta(mxmetdom),ibjdmeta(mxmetdom),
+     7             ibhmeta(mxmetdom),ibsmeta(mxmetdom),
+     8             ieymeta(mxmetdom),iemmeta(mxmetdom),
+     9             iedmeta(mxmetdom),iejdmeta(mxmetdom),
+     &             iehmeta(mxmetdom),iesmeta(mxmetdom),
+     1             iutmznma,feastma,fnorthma,pmapma,
+     2             datumma,datenma,utmhemma,
+     3             naux2d,naux3d,auxnam2d,auxnam3d,
+     4             auxunit2d,auxunit3d,auxtyp2d,auxtyp3d
+c
+c --- COMMON BLOCK /AUXHD/ Variables:
+c----------------------------------------------------------------------
+c --- Header (Trailing A denotes Auxilliary file)
+c----------------------------------------------------------------------
+c    NXMA(mxmetdom) - integer - Number of CALMET grid points in
+c                               X direction
+c    NYMA(mxmetdom) - integer - Number of CALMET grid points in
+c                               Y direction
+c              NZMA - integer - Number of CALMET vertical levels
+c XGRIDMA(mxmetdom) - real    - CALMET grid spacing (m)
+c XORIGMA(mxmetdom) - real    - Reference X coordinate (m) of
+c                               southwest corner of CALMET grid
+c YORIGMA(mxmetdom) - real    - Reference Y coordinate (m) of
+c                               southwest corner of CALMET grid
+c            XBTZMA - real    - Base time zone of CALMET data
+c RNLAT0MA,         - real    - N. Latitude, E. Longitude of (0,0)
+c RELON0MA (deg)                of map projection (Used only if
+c                               PMAP =LCC, PS, EM, TTM or LAZA) 
+c XLAT1MA,          - real    - Matching N. Latitude(s) for map
+c XLAT2MA (deg)                (Used only if PMAP= LCC, PS, or EM)
+c                             LCC :Projection cone slices through
+c                                  Earth's surface at XLAT1 and XLAT2
+c                             PS  :Projection plane slices through
+c                                  Earth at XLAT1
+c                             EM  :Projection cylinder slices through
+c                                  Earth at [+/-] XLAT1
+c   ZFACEMA(mxnzp1) - real    - CALMET cell face heights (m)
+c                               (NZM+1 values)
+c           ITIMESA - integer - Flag for reading times
+c                                0: end-time (no seconds)
+c                                1: begin-time / end-time with seconds
+c  IBYMETA(mxmetdom)- integer - Beginning year of run (four digits)
+c  IBMMETA(mxmetdom)- integer - Beginning month of run
+c  IBDMETA(mxmetdom)- integer - Beginning day of run
+c IBJDMETA(mxmetdom)- integer - Beginning Julian day of run
+c  IBHMETA(mxmetdom)- integer - Beginning hour of run (00-23)
+c  IBSMETA(mxmetdom)- integer - Beginning seconds of run (0000-3599)
+c  IEYMETA(mxmetdom)- integer - Ending year of run (four digits)
+c  IEMMETA(mxmetdom)- integer - Ending month of run
+c  IEDMETA(mxmetdom)- integer - Ending day of run
+c IEJDMETA(mxmetdom)- integer - Ending Julian day of run
+c  IEHMETA(mxmetdom)- integer - Ending hour of run (00-23)
+c  IESMETA(mxmetdom)- integer - Ending seconds of run (0000-3599)
+c IUTMZNMA          - integer - UTM zone for UTM projection
+c FEASTMA (km)      - real    - False Easting at projection origin
+c FNORTHMA(km)      - real    - False Northing at projection origin
+c PMAPMA            - char*8  - Code for output map projection
+c                             UTM :Universal Transverse Mercator
+c                             LCC :Lambert Conformal Conic
+c                             PS  :Polar Stereographic
+c                             EM  :Equatorial Mercator
+c                             LAZA:Lambert Azimuthal Equal Area
+c                             TTM :Tangential Transverse Mercator
+c UTMHEMMA          - char*4  - Base hemisphere for UTM projection
+c                              (S=southern, N=northern)
+c DATUMMA           - char*8  - Datum-Region for grid coordinates
+c DATENMA           - char*12 - NIMA date for datum parameters
+c                               (MM-DD-YYYY  )
+c NAUX2D(mxmetdom)- integer    - Number of 2D variables
+c NAUX3D(mxmetdom)- integer    - Number of 3D variables
+c AUXNAM2D(mxaux  - C*8 array  - 2D variable names in AUX output
+c      ,mxmetdom)
+c AUXNAM3D(mxaux  - C*8 array  - 3D variable names in AUX output
+c      ,mxmetdom)
+c AUXUNIT2D(mxaux - C*8 array  - 2D variable units in AUX output
+c      ,mxmetdom)
+c AUXUNIT3D(mxaux - C*8 array  - 3D variable units in AUX output
+c      ,mxmetdom)
+c AUXTYP2D(mxaux  - C*4 array  - 2D variable types in AUX output
+c      ,mxmetdom)
+c AUXTYP3D(mxaux  - C*4 array  - 3D variable types in AUX output
+c      ,mxmetdom)
+c----------------------------------------------------------------------
+c --- Notes: 1. AUX Variable names are upper case
+c            2. AUX Variable units are upper case
+c               'G/M3    ' for example
+c            3. AUX Variable types allowed are
+c               'R_4 ' for single-precision reals
+c               'I_4 ' for 4-byte integers

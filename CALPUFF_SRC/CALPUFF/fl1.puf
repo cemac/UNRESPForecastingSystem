@@ -1,0 +1,61 @@
+c----------------------------------------------------------------------
+c --- COMMON BLOCK /FL1/ -- Flare source data for sources      CALPUFF
+c                           configured in control-file
+c                           (not active)
+c----------------------------------------------------------------------
+      character*16 CNAMFL1
+      character*40 CSFFL1
+      common/FL1/ NFL1,IFLU,NSFL1,QFL1(mxspec,mxfl1),
+     2            IDSFFL1(mxspec,mxfl1),IXREFFL1(mxspfl),
+     4            XFL1GRD(mxfl1),YFL1GRD(mxfl1),
+     5            HTFL1(mxfl1),ELFL1(mxfl1),
+     6            DFL1(mxfl1),TFL1(mxfl1),
+     7            UFL1(mxfl1),VFL1(mxfl1),WFL1(mxfl1),
+     8            SY0FL1(mxfl1),SZ0FL1(mxfl1),
+     9            NEWFL1(mxfl1),CNAMFL1(mxfl1),CSFFL1(mxspfl)
+
+c
+c --- COMMON BLOCK /FL1/ Variables:
+c                   NFL1 - integer  - Number control-file flare sources
+c     QFL1(mxspec,mxfl1) - real     - Emission rate (g/s) for each
+c                                     pollutant
+c          NEWFL1(mxfl1) - integer  - Number of puffs released by each
+c                                     source during the current step
+c                   IFLU - integer  - Units for emission rates in
+c                                     control file
+c                                     1:   g/s
+c                                     2:  kg/hr
+c                                     3:  lb/hr
+c                                     4:  ton/yr
+c                                     5:  Odour Unit * m**3/s
+c                                     6:  Odour Unit * m**3/min
+c                                     7:  metric tons/yr
+c                                     8:  Bq/s  (Bq = becquerel = disintegrations/s)
+c                                     9:  GBq/yr 
+c                  NSFL1 - integer  - Number of flare-species pairs
+c                                     with emissions scaling factors
+c  IDSFFL1(mxspec,mxfl1) - integer  - Pointer to flare-species pair
+c                                     index, 0 to NSFL1
+c                                     (0 if no scaling)
+c         CSFFL1(mxspfl) - c*40 arr - List of scale-factor table names
+c                                     for flare-species pairs
+c       IXREFFL1(mxspfl) - integer  - Cross-reference pointer from
+c                                     flare-species pairs to
+c                                     scale-factor tables
+c         XFL1GRD(mxfl1) - real     - X coordinate of a flare
+c                                     source in grid units
+c                                     (i.e., origin at (0.0,0.0))
+c         YFL1GRD(mxfl1) - real     - Y coordinate of a flare
+c                                     source in grid units
+c                                     (i.e., origin at (0.0,0.0))
+c           HTFL1(mxfl1) - real     - Effective stack height (m)
+c           ELFL1(mxfl1) - real     - Ground elevation (m) above sea
+c                                     level
+c            DFL1(mxfl1) - real     - Effective stack diameter (m)
+c            TFL1(mxfl1) - real     - Effective stack temperature (K)
+c            UFL1(mxfl1) - real     - Effective exit velocity in x (m/s)
+c            VFL1(mxfl1) - real     - Effective exit velocity in y (m/s)
+c            WFL1(mxfl1) - real     - Effective exit velocity in z (m/s)
+c          SY0FL1(mxfl1) - real     - Initial sigma y (m)
+c          SZ0FL1(mxfl1) - real     - Initial sigma z (m)
+c         CNAMFL1(mxfl1) - c*16 arr - Source names

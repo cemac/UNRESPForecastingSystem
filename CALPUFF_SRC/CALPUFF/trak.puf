@@ -1,0 +1,62 @@
+c----------------------------------------------------------------------
+c --- COMMON BLOCK /TRAK/ -- arrays for PUFF-TRACKING Output    CALPUFF
+c----------------------------------------------------------------------
+c
+      common/TRAK/idathrtrak(mxtrak),isectrak(mxtrak),
+     &            xkmtrak(mxtrak),ykmtrak(mxtrak),hmtrak(mxtrak),
+     &            sytrak(mxtrak),sztrak(mxtrak),zitrak(mxtrak),
+     &            zimaxtrak(mxtrak),tsectrak(mxtrak),dmtrak(mxtrak),
+     &            icodetrak(mxtrak),irlstrak,isrctrak,ityptrak,ntrk
+c
+c --- COMMON BLOCK /TRAK/ Variables:
+c
+c IDATHRTRAK(mxtrak) - integer - Date-Hour of snapshot (YYYYJJJHH)
+c   ISECTRAK(mxtrak) - integer - Second of snapshot (SSSS)
+c                                (10:36PM - HH=22  SSSS=2160)
+c    XKMTRAK(mxtrak) - real    - X coordinate (km) of puff center
+c                               (or youngest end of slug)
+c    YKMTRAK(mxtrak) - real    - Y coordinate (km) of puff center
+c                               (or youngest end of slug)
+c     HMTRAK(mxtrak) - real    - Height above ground (m) of puff center
+c     SYTRAK(mxtrak) - real    - Sigma y (m) for the puff center (or
+c                                youngest end of slug) with BID
+c     SZTRAK(mxtrak) - real    - Sigma z (m) for the puff center (or
+c                                youngest end of slug) with BID
+c     ZITRAK(mxtrak) - real    - Last mixing ht. (m) for the puff
+c  ZIMAXTRAK(mxtrak) - real    - Highest mixing ht. (m) to which puff
+c                                has been exposed
+c   TSECTRAK(mxtrak) - real    - Total integrated travel time (s) of
+c                                the puff (or youngest end of slug)
+c     DMTRAK(mxtrak) - real    - Total integrated travel distance (m) of
+c                                the puff (or youngest end of slug)
+c  ICODETRAK(mxtrak) - integer - Puff status code:
+c                                1 = Puff within mixed layer & Gaussian
+c                                2 = Puff within mixed layer & uniform
+c                                3 = Puff above mixed layer & Gaussian
+c                                4 = Puff above mixed layer & uniform
+c                                5 = Puff currently above mixed layer
+c                                    (but previously below) & Gaussian
+c                                6 = Puff currently above mixed layer
+c                                    (but previously below) & uniform
+c                               11 = Slug within mixed layer & Gaussian
+c                               12 = Slug within mixed layer & uniform
+c                               13 = Slug above mixed layer & Gaussian
+c                               14 = Slug above mixed layer & uniform
+c                               15 = Slug currently above mixed layer
+c                                    (but previously below) & Gaussian
+c                               16 = Slug currently above mixed layer
+c                                    (but previously below) & uniform
+c                               99 = Puff/slug off computational grid
+c           ISRCTRAK - integer - Source ID number
+c           ITYPTRAK - integer - Source type number
+c                                Source Types are:
+c                                1 = Point         Constant Emissions
+c                                2 = Point         Variable Emissions
+c                                3 = Poly. Area    Constant Emissions
+c                                4 = Poly. Area    Variable Emissions
+c                                5 = Line          Constant Emissions
+c                                6 = Line          Variable Emissions
+c                                7 = Volume        Constant Emissions
+c                                8 = Grid Volume   Variable Emissions
+c                                9 = Boundary Condition
+c              NTRK - integer - Number of tracking steps stored

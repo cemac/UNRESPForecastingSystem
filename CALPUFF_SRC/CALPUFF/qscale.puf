@@ -1,0 +1,67 @@
+c----------------------------------------------------------------------
+c --- COMMON BLOCK /QSCALE/ -- Emission(Q)                     CALPUFF
+c ---                          Scaling-Factor(SF) Definition
+c----------------------------------------------------------------------
+      character(len=16)    :: cqsftyp(9)
+      integer              :: nqsftyp, nqsfval(9)
+      integer              :: nqsfcol(9),nqsfrow(9)
+      integer              :: mapvary(6)
+      real                 :: wqsf(5,13),tqsf(11,13)
+
+      common/QSCALE/ nqsftyp, nqsfval,nqsfcol,nqsfrow,
+     1               cqsftyp,mapvary, wqsf,tqsf
+
+
+c --- Variables:
+c ---------------
+c
+c                 NQSFTYP - integer - Number of scaling factor types
+c                                     (MUST equal array dimension)
+c              CQSFTYP(9) - char*16 - Scaling factor type names:
+c
+c         CONSTANT1       1   scaling factor
+c         MONTH12         12  scaling factors: months 1-12
+c         DAY7            7   scaling factors: days 1-7
+c                         [SUNDAY,MONDAY, ... FRIDAY,SATURDAY]    
+c         HOUR24          24  scaling factors: hours 1-24
+c         HOUR24_DAY7     168 scaling factors: hours 1-24,
+c                           repeated  7 times: SUNDAY, MONDAY, ...
+c         HOUR24_MONTH12  288 scaling factors: hours 1-24,
+c                           repeated 12 times: months 1-12
+c         WSP6            6   scaling factors: wind speed classes 1-6
+c                         [speed classes defined in Group 12]
+c         WSP6_PGCLASS6   36  scaling factors: wind speed classes 1-6
+c                           repeated  6 times: PG classes A,B,C,D,E,F
+c                         [speed classes defined in Group 12]
+c         TEMPERATURE12   12  scaling factors: temperature classes 1-12
+c                         [temperature(K) classes defined in Group 12]
+c
+c              MAPVARY(6) - integer - Map pointer from the 6 IVARY 
+c                                     choices to the corresponding
+c                                     CQSFTYP() index
+c
+c              NQSFVAL(9) - integer - Number of scaling factors for
+c                                     each type
+c                                     (Max must = MXQSF in /params/)
+c              NQSFCOL(9) - integer - Number of print columns for each
+c              NQSFROW(9) - integer - Number of print rows for each
+c
+c --- Temperature and wind speed classes by source type (13)
+c              WQSF(5,13) - real    - Wind speed class boundaries (m/s)
+c                                     (boundary is upper limit of class)
+c             TQSF(11,13) - real    - Temperature class boundaries (K)
+c                                     (boundary is upper limit of class)
+c     Source Types are:
+c            1 = Point         Constant Emissions
+c            2 = Point         Variable Emissions (no WS/T class used)
+c            3 = Poly. Area    Constant Emissions
+c            4 = Poly. Area    Variable Emissions (no WS/T class used)
+c            5 = Line          Constant Emissions
+c            6 = Line          Variable Emissions (no WS/T class used)
+c            7 = Volume        Constant Emissions
+c            8 = Grid Volume   Variable Emissions (no WS/T class used)
+c            9 = Boundary Condition               (no WS/T class used)
+c          (10)= Flare         Constant Emissions
+c           11 = Flare         Variable Emissions (no WS/T class used)
+c           12 = Road          Constant Emissions
+c           13 = Road          Variable Emissions (no WS/T class used)

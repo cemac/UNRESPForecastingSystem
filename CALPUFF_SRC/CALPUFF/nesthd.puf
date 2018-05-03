@@ -1,0 +1,81 @@
+c----------------------------------------------------------------------
+c --- COMMON BLOCK /NESTHD/ -- Header record information from   CALPUFF
+c                              nested meteorological data file
+c                              that is read and tested, but not
+c                              used
+c                              (Subset of /METHD/)
+c----------------------------------------------------------------------
+c
+      logical lcalgrdx
+      logical*4 llconfmx
+      character*8 levmetx
+      character*4 utmhemmx
+      character*8 datummx,pmapmx
+      character*12 datenmx
+c
+      common/NESTHD/levmetx,dversmx,nzmx,
+     1 xbtzmx,xlat0mx,xlon0mx,llconfmx,rlat0mx,rlon0mx,xlat1mx,xlat2mx,
+     2 nlux,iwat1x,iwat2x,zfacemx(mxnzp1),lcalgrdx,
+     3 i2dmetx,itimesx,itimeprfx,
+     4 iutmznmx,feastmx,fnorthmx,pmapmx,datummx,datenmx,utmhemmx
+c
+c --- COMMON BLOCK /METHD/ Variables:   (without the 'x' trailer)
+c           LEVMET - character- Level of CALMET that generated met file
+c           DVERSM - real     - Dataset version number for CALMET file
+c              NZM - integer  - Number of CALMET vertical levels
+c            XBTZM - real     - Base time zone of CALMET data
+c           XLAT0M - real     - Reference N LATITUDE (deg) of
+c                               southwest corner of CALMET grid
+c           XLON0M - real     - Reference W LONGITUDE (deg) of
+c                               southwest corner of CALMET grid
+c          LLCONFM - logical  - Lambert Conformal Map Projection used
+c                               instead of UTM when TRUE
+c RLAT0M,       - real      - N. latitude & W. longitude of x=0 and y=0
+c RLON0M (deg)                of map projection (Used only if PMAP =
+c                             LCC, PS, EM, TTM or LAZA) 
+c                             NOTE: longitude POS in western hemisphere
+c XLAT1M,       - real      - Matching N. latitude(s) for projection
+c XLAT2M (deg)                (Used only if PMAP= LCC, PS, or EM)
+c                             LCC :  Projection cone slices through
+c                                    Earth's surface at XLAT1 and XLAT2
+c                             PS  :  Projection plane slices through
+c                                    Earth at XLAT1
+c                             EM  :  Projection cylinder slices through
+c                                    Earth at [+/-] XLAT1
+c              NLU - integer  - Number of land use categories
+c     IWAT1, IWAT2 - integers - Land use categories from IWAT1 through
+c                               IWAT2 correspond to water
+c   ZFACEM(mxnzp1) - real     - CALMET cell face heights (m)
+c                               (NZM+1 values)
+c          LCALGRD - logical  - Control variable indicating if special
+c                               meteorological fields required by
+c                               CALGRID are stored in the met. file
+c          I2DMET - integer   - Flag for 2 D array of sfc met
+c                                0: 2D arrays NOT available
+c                                1: 2D array available
+c
+c *** Timing variables
+c           ITIMES - integer - Flag for reading times in data records
+c                                 0: end-time (no seconds)
+c                                 1: begin-time / end-time with seconds
+c         ITIMEPRF - integer - Flag for reading times in PROFILE.DAT
+c                              data records (METFM not 4 or 5)
+c                                 0: end-time (no seconds)
+c                                 1: begin-time / end-time with seconds
+c
+c
+c IUTMZNM       - integer   - UTM zone for UTM projection
+c FEASTM (km)   - real      - False Easting at projection origin
+c FNORTHM(km)   - real      - False Northing at projection origin
+c PMAPM         - character - Character code for output map projection
+c                             UTM :  Universal Transverse Mercator
+c                             LCC :  Lambert Conformal Conic
+c                             PS  :  Polar Stereographic
+c                             EM  :  Equatorial Mercator
+c                             LAZA:  Lambert Azimuthal Equal Area
+c                             TTM :  Tangential Transverse Mercator
+c UTMHEMM       - character - Base hemisphere for UTM projection
+c                             (S=southern, N=northern)
+c DATUMM        - character - Datum-Region for grid coordinates
+c DATENM        - character - NIMA date for datum parameters
+c                             (MM-DD-YYYY  )

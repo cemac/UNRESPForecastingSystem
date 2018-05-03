@@ -1,0 +1,42 @@
+c----------------------------------------------------------------------
+c --- COMMON BLOCK /AUXDAT/ -- Current data from the           CALPUFF
+c                              auxiliary meteorological data
+c                              file(s)
+c----------------------------------------------------------------------
+
+      real qcup(mxnx,mxny,mxmetdom)
+      real zuptop(mxnx,mxny,mxmetdom),zupbot(mxnx,mxny,mxmetdom)
+      real qc3d(mxnx,mxny,mxnz,mxmetdom)
+      integer icldmr2d(3,mxmetdom),icldmr3d(mxmetdom)
+
+      common/AUXDAT/icldmr2d,icldmr3d,qcup,zuptop,zupbot,qc3d
+
+c --- COMMON BLOCK /AUXDAT/ Variables:
+c   ICLDMR2D(3,mxmetdom) - integer - Position of cloud water variables
+c                                    in list of 2D variables in
+c                                    auxiliary CALMET files
+c                                    (1,_): CLDMRUP
+c                                    (2,_): ZCLDBOT
+c                                    (3,_): ZCLDTOP
+c     ICLDMR3D(mxmetdom) - integer - Position of cloud water variable
+c                                    in list of 3D variables in
+c                                    auxiliary CALMET files
+c                                    (_): CLDMR3D
+c        QCUP(mxnx,mxny,mxmetdom)
+c                        - real    - CLDMRUP:  Liquid cloud water
+c                                    mixing ratio averaged over all
+c                                    cloud layers above CALMET domain
+c                                    top (g/kg)
+c      ZUPBOT(mxnx,mxny,mxmetdom)
+c                        - real    - ZCLDBOT:  Bottom of liquid cloud
+c                                    water layers above CALMET domain
+c                                    top (mAGL)
+c                                    (Zero if no water)
+c      ZUPTOP(mxnx,mxny,mxmetdom)
+c                        - real    - ZCLDTOP:  Top of liquid cloud
+c                                    water layers above CALMET domain
+c                                    top (mAGL)
+c                                    (Zero if no water)
+c   QC3D(mxnx,mxny,mxnz,mxmetdom)
+c                        - real    - CLDMR3D:  Liquid cloud water
+c                                    mixing ratio for 3D CALMET grid
