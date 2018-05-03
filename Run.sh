@@ -13,7 +13,8 @@ echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 runTERREL=false
 runCTGPROC=false
 runMAKEGEO=false
-run3DDAT=true
+run3DDAT=false
+runCALMET=true
 
 ###TERREL###
 if [ "$runTERREL" = true ]; then
@@ -117,13 +118,13 @@ else
 fi
 #if not 17 files, need to download more:
 if [ ${numfiles} != 17 ]; then
-  echo "### ATTEMPTING TO DOWNLOAD NAM DATA ###"
+  echo "### ATTEMPTING TO DOWNLOAD NAM DATA"
   #Make data directory if required:
   if [ ! -d ./NAM_data/${rundate}  ]; then
     mkdir NAM_data/${rundate}
   fi
   cd NAM_data/${rundate}
-  #Download each file if required:
+  #Download each NAM data file if required:
   for i in `seq 0 3 48`; do
     hour=`printf "%02d" $i`
     if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
@@ -131,11 +132,29 @@ if [ ${numfiles} != 17 ]; then
     fi
   done
   cd ../..
+  echo " ---> FINISHED ###"
 fi
-#Extract data into CALMET inpt file format:
+#Extract NAM data into CALMET input file format:
 if [ "$run3DDAT" = true ]; then
+  echo "### EXTRACTING NAM DATA INTO 3D.DAT FILE"
   rm -f data/3D.DAT
   cd Python
   ./Create3DDAT.py ${rundate}
   cd ..
+  echo " ---> FINISHED ###"
 fi
+
+###CALMET###
+if [ "$runCALMET" = true ]; then
+  #Compile CALMET if required:
+  cd CALPUFF_EXE
+  if [ ! -f ./calmet_intel.exe ]; then
+      echo -n "### COMPILING CALMET"
+      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/CALMET/calmet.for -o calmet_intel.exe
+      echo " ---> FINISHED ###"
+  else
+      echo "### CTGPROC ALREADY COMPILED ###"
+  fi
+  cd ..
+fi
+echo "### SUCCESSFULLY COMPLETED FORECAST ###"
