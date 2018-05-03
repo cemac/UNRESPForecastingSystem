@@ -13,8 +13,8 @@ echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 runTERREL=false
 runCTGPROC=false
 runMAKEGEO=false
-run3DDAT=false
-runCALMET=true
+run3DDAT=true
+runCALMET=false
 
 ###TERREL###
 if [ "$runTERREL" = true ]; then
@@ -128,7 +128,17 @@ if [ ${numfiles} != 17 ]; then
   for i in `seq 0 3 48`; do
     hour=`printf "%02d" $i`
     if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
-      wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2
+      echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
+      #Entire GRIB file:
+      #wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2 
+      #Subset of GRIB file using GRIB filter (http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl):
+      curl "http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl?file=nam.t00z.afwaca"${hour}".tm00.grib2&"\
+"lev_1000_mb=on&lev_100_mb=on&lev_10_mb=on&lev_150_mb=on&lev_200_mb=on&lev_20_mb=on&lev_250_mb=on&"\
+"lev_2_mb=on&lev_300_mb=on&lev_30_mb=on&lev_400_mb=on&lev_500_mb=on&lev_50_mb=on&lev_5_mb=on&"\
+"lev_600_mb=on&lev_700_mb=on&lev_75_mb=on&lev_7_mb=on&lev_800_mb=on&lev_850_mb=on&lev_900_mb=on&"\
+"lev_925_mb=on&lev_950_mb=on&lev_mean_sea_level=on&var_HGT=on&var_PRMSL=on&var_RH=on&var_TMP=on&var_UGRD=on&var_VGRD=on&"\
+"var_DZDT=on&subregion=&leftlon=272&rightlon=278&toplat=16&bottomlat=10&dir=%2Fnam."${rundate} \
+-o nam.t00z.afwaca${hour}.tm00.grib2
     fi
   done
   cd ../..
