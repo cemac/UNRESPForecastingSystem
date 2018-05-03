@@ -1,3 +1,14 @@
+#!/usr/bin/env python2
+"""
+Script name: Create3DDAT.py
+Author: JO'N
+Date: March 2018
+Purpose: Generate input file to CALMET from NAM met data
+Usage: ./Create3DDAT.py <date>
+        <date> - Start date of NAM data in format YYYYMMDD, e.g. 20171204
+Output: File written to <root>/data/3D.DAT
+"""
+
 def writeRec1():
 #    DATASET='3D.DAT' #Dataset name
 #    DATAVER='2.1' #Dataset version
@@ -38,9 +49,9 @@ def writeRec5():
     fout.write(('{:3d}'*23+'\n').format(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
 
 def writeRec6():
-    IBYRM=int(startDate[0:4]) #Beginning year of GRIB data
-    IBMOM=int(startDate[4:6]) #Beginning month of GRIB data
-    IBDYM=int(startDate[6:8]) #Beginning day of GRIB data
+    IBYRM=int(date[0:4]) #Beginning year of GRIB data
+    IBMOM=int(date[4:6]) #Beginning month of GRIB data
+    IBDYM=int(date[6:8]) #Beginning day of GRIB data
     IBHRM=0 #Beginning hour (GMT) of GRIB data
     NHRSMM5=nfiles-1 #Length of period (hours of data in file (Replicate Sara's file but should possibly be 3* this value?)
     fout.write(('{:4d}'+'{:02d}'*3+'{:5d}'+'{:4d}'*3+'\n').format(IBYRM,IBMOM,IBDYM,IBHRM,NHRSMM5,NX,NY,NZ))
@@ -84,7 +95,7 @@ def writeRec9():
     VAPMR=0.0 #Vagour mixing ratio (replicate Sara's file)
     for t in range(nfiles):
         print("Processing file "+filenames[t])
-        dateTime=parse(startDate)+dt.timedelta(hours=t*3)
+        dateTime=parse(date)+dt.timedelta(hours=t*3)
         MYR=dateTime.year #Year of data block
         MMO=dateTime.month #Month of data block
         MDAY=dateTime.day #Day of data block
@@ -142,7 +153,8 @@ def writeRec9():
         #Release all messages:
         for i in range(mcount):
             gribapi.grib_release(i+1)
-                    
+
+
 import sys
 import os
 #Ensure most recent eccodes python packages are used
@@ -153,14 +165,21 @@ from dateutil.parser import parse
 import datetime as dt
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
+import argparse
+
+######READ IN COMMAND LINE ARGUMENTS
+parser = argparse.ArgumentParser(description="Script to generate input file to CALMET from NAM met data",\
+   epilog="Example of use: ./Create3DDAT.py 20171204")
+parser.add_argument("date",help="Start date of NAM data in format YYYYMMDD, e.g. 20171204",type=str)
+args = parser.parse_args()
+date=args.date
 
 #####PARAMETERS
-startDate='20171204' #Eventually this will be passed in as an argument
 latMinCP=11.7 #Min lat of CALPUFF grid
 latMaxCP=12.2 #Max lat of CALPUFF grid
 lonMinCP=273.2 #Min lon of CALPUFF grid
 lonMaxCP=274.1 #Max lon of CALPUFF grid
-inDir='../NAM_data/20180306' #Parent Directory containing GRIB files
+inDir='../NAM_data/'+date #Directory containing GRIB files
 nfiles=17 #Number of GRIB files (files are 3 hourly, so 48 hours is 17 files including hours 0 and 48)
 outFile='../data/3D.DAT' #Output file path
 levsIncl=[1000,950,925,900,850,800,700,600,500,400,300,250,200,150,100,75,50,30,20,10,7,5,2] #pressure levels to include in output
