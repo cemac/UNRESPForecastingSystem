@@ -14,7 +14,7 @@ runCTGPROC=false
 runMAKEGEO=false
 run3DDAT=false
 runCALMET=false
-runCALPUFF=true
+runCALPUFF=false
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
@@ -198,30 +198,30 @@ if [ "$runCALPUFF" = true ]; then
       ifort -c modules.for
       cd ../../CALPUFF_EXE
       ifort -O0 -fltconsistency -w ../CALPUFF_SRC/CALPUFF/calpuff.for ../CALPUFF_SRC/CALPUFF/modules.o -o calpuff_intel.exe
+      cd ..
       echo " ---> FINISHED ###"
   else
       echo "### CALPUFF ALREADY COMPILED ###"
   fi
-  cd ..
-#   #Copy data file from MAKEGEO across to the data directory
-#   echo -n "### COPYING GEO DATA FILE ACROSS"
-#   cp -f ./CALPUFF_OUT/MAKEGEO/geo_masaya.dat data/.
-#   echo " ---> FINISHED ###"
-#   #Remove any old files before running:
-#   echo -n "### DELETING OLD CALMET OUTPUT FILES"
-#   rm -rf *.dat *.DAT *.bna *.lst *.aux
-#   cd CALPUFF_OUT/CALMET
-#   find . ! -name 'README' -type f -exec rm -f {} +
-#   cd ../..
-#   echo " ---> FINISHED ###"
-#   #Run CALMET:
-#   echo "### RUNNING CALMET"
-#   ./CALPUFF_EXE/calmet_intel.exe ./CALPUFF_INP/calmet.inp
-#   echo " ---> FINISHED ###"
-#   #Move output files:
-#   echo -n "### MOVING CALMET OUTPUT FILES"
-#   mv *.dat *.DAT *.bna *.lst *.aux ./CALPUFF_OUT/CALMET/.
-#   echo " ---> FINISHED ###"
+  #Copy data file from CALMET across to the data directory
+  echo -n "### COPYING CALMET OUTPUT DATA FILE ACROSS"
+  cp -f ./CALPUFF_OUT/CALMET/calmet.dat data/.
+  echo " ---> FINISHED ###"
+  #Remove any old files before running:
+  echo -n "### DELETING OLD CALPUFF OUTPUT FILES"
+  rm -rf *.con *.lst *.dat *.clr *.bna *.grd
+  cd CALPUFF_OUT/CALPUFF
+  find . ! -name 'README' -type f -exec rm -f {} +
+  cd ../..
+  echo " ---> FINISHED ###"
+  #Run CALPUFF:
+  echo "### RUNNING CALPUFF"
+  ./CALPUFF_EXE/calpuff_intel.exe ./CALPUFF_INP/calpuff.inp
+  echo " ---> FINISHED ###"
+  #Move output files:
+  echo -n "### MOVING CALMET OUTPUT FILES"
+  mv *.con *.lst *.dat *.clr *.bna *.grd ./CALPUFF_OUT/CALPUFF/.
+  echo " ---> FINISHED ###"
 fi
 
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"

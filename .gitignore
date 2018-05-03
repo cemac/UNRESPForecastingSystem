@@ -10,5 +10,6 @@
 *.aux
 *.mod
 *.o
+*.con
 
 NAM_data/*/
