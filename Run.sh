@@ -106,6 +106,6 @@ fi
 ###NAM data###
 if [ "$run3DDAT" = true ]; then
   cd Python
-  python Create3DDAT.py
+  ./Create3DDAT.py 20171204
   cd ..
 fi
