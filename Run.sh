@@ -13,7 +13,7 @@ echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 runTERREL=false
 runCTGPROC=false
 runMAKEGEO=false
-run3DDAT=false
+run3DDAT=true
 
 ###TERREL###
 if [ "$runTERREL" = true ]; then
@@ -115,6 +115,6 @@ fi
 #Extract data into CALMET inpt file format:
 if [ "$run3DDAT" = true ]; then
   cd Python
-  ./Create3DDAT.py 20171204
+  ./Create3DDAT.py ${rundate}
   cd ..
 fi
