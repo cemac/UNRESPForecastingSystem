@@ -108,12 +108,33 @@ if [ "$runMAKEGEO" = true ]; then
 fi
 
 ###NAM data###
-#Download NAM data if required:
-if [ ! -d ./NAM_data/${rundate} ]; then
-  echo "dir doesn't exist"
+##Download NAM data if required:
+#How many files downloaded already?:
+if [ -d ./NAM_data/${rundate} ]; then
+  eval numfiles=$(ls ./NAM_data/${rundate} | wc -l)
+else
+  numfiles=0
+fi
+#if not 17 files, need to download more:
+if [ ${numfiles} != 17 ]; then
+  echo "### ATTEMPTING TO DOWNLOAD NAM DATA ###"
+  #Make data directory if required:
+  if [ ! -d ./NAM_data/${rundate}  ]; then
+    mkdir NAM_data/${rundate}
+  fi
+  cd NAM_data/${rundate}
+  #Download each file if required:
+  for i in `seq 0 3 48`; do
+    hour=`printf "%02d" $i`
+    if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
+      wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2
+    fi
+  done
+  cd ../..
 fi
 #Extract data into CALMET inpt file format:
 if [ "$run3DDAT" = true ]; then
+  rm -f data/3D.DAT
   cd Python
   ./Create3DDAT.py ${rundate}
   cd ..
