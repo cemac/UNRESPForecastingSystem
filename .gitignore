@@ -6,5 +6,7 @@
 *.sav
 *.log
 *.clr
+*.bna
+*.aux
 
 NAM_data/*/

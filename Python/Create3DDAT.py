@@ -6,7 +6,7 @@ Date: March 2018
 Purpose: Generate input file to CALMET from NAM met data
 Usage: ./Create3DDAT.py <date>
         <date> - Start date of NAM data in format YYYYMMDD, e.g. 20171204
-Output: File written to <root>/data/3D.DAT
+Output: File written to <root>/data/3d.dat
 """
 
 def writeRec1():
@@ -181,7 +181,7 @@ lonMinCP=273.2 #Min lon of CALPUFF grid
 lonMaxCP=274.1 #Max lon of CALPUFF grid
 inDir='../NAM_data/'+date #Directory containing GRIB files
 nfiles=17 #Number of GRIB files (files are 3 hourly, so 48 hours is 17 files including hours 0 and 48)
-outFile='../data/3D.DAT' #Output file path
+outFile='../data/3d.dat' #Output file path
 levsIncl=[1000,950,925,900,850,800,700,600,500,400,300,250,200,150,100,75,50,30,20,10,7,5,2] #pressure levels to include in output
 #####
 
