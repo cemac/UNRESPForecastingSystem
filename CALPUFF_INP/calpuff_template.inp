@@ -267,16 +267,16 @@ INPUT GROUP: 1 -- General run control parameters
          METRUN = 0 - Run period explicitly defined below
          METRUN = 1 - Run all periods in met. file
 
-     Starting date:    Year   (IBYR)  --    No default   ! IBYR  =  2017  !
-                       Month  (IBMO)  --    No default   ! IBMO  =  12  !
-                       Day    (IBDY)  --    No default   ! IBDY  =  4  !
+     Starting date:    Year   (IBYR)  --    No default   ! IBYR  =  YYYYb  !
+                       Month  (IBMO)  --    No default   ! IBMO  =  MMb  !
+                       Day    (IBDY)  --    No default   ! IBDY  =  DDb  !
      Starting time:    Hour   (IBHR)  --    No default   ! IBHR  =  0  !
                        Minute (IBMIN) --    No default   ! IBMIN =  0  !
                        Second (IBSEC) --    No default   ! IBSEC =  0  !
 
-     Ending date:      Year   (IEYR)  --    No default   ! IEYR  =  2017  !
-                       Month  (IEMO)  --    No default   ! IEMO  =  12 !
-                       Day    (IEDY)  --    No default   ! IEDY  =  6  !
+     Ending date:      Year   (IEYR)  --    No default   ! IEYR  =  YYYYe  !
+                       Month  (IEMO)  --    No default   ! IEMO  =  MMe !
+                       Day    (IEDY)  --    No default   ! IEDY  =  DDe  !
      Ending time:      Hour   (IEHR)  --    No default   ! IEHR  =  0  !
                        Minute (IEMIN) --    No default   ! IEMIN =  0  !
                        Second (IESEC) --    No default   ! IESEC =  0  !
