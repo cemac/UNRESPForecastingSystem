@@ -5,16 +5,23 @@ set -e #stop at first error
 module load intel/17.0.0
 module load python2 python-libs
 
-#Read in command line arguments
+#Read in command line arguments and set subsequent variables
 rundate=$1
+startYear=${rundate:0:4}
+startMonth=${rundate:4:2}
+startDay=${rundate:6:2}
+enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
+endYear=${enddate:0:4}
+endMonth=${enddate:4:2}
+endDay=${enddate:6:2}
 
 #Set flags
-runTERREL=false
-runCTGPROC=false
-runMAKEGEO=false
-run3DDAT=false
-runCALMET=false
-runCALPUFF=false
+runTERREL=true
+runCTGPROC=true
+runMAKEGEO=true
+run3DDAT=true
+runCALMET=true
+runCALPUFF=true
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
@@ -179,6 +186,11 @@ if [ "$runCALMET" = true ]; then
   find . ! -name 'README' -type f -exec rm -f {} +
   cd ../..
   echo " ---> FINISHED ###"
+  #Update dates in input file:
+  echo -n "### SETTING DATES IN CALMET INPUT FILE"
+  sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$endYear/g" \
+-e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" ./CALPUFF_INP/calmet_template.inp > ./CALPUFF_INP/calmet.inp
+  echo " ---> FINISHED ###"
   #Run CALMET:
   echo "### RUNNING CALMET"
   ./CALPUFF_EXE/calmet_intel.exe ./CALPUFF_INP/calmet.inp
@@ -213,6 +225,11 @@ if [ "$runCALPUFF" = true ]; then
   cd CALPUFF_OUT/CALPUFF
   find . ! -name 'README' -type f -exec rm -f {} +
   cd ../..
+  echo " ---> FINISHED ###"
+  #Update dates in input file:
+  echo -n "### SETTING DATES IN CALPUFF INPUT FILE"
+  sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$endYear/g" \
+-e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
   #Run CALPUFF:
   echo "### RUNNING CALPUFF"
