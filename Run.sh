@@ -243,11 +243,14 @@ fi
 
 ###VISUALISATION###
 if [ "$runVIS" = true ]; then
+  echo "### RUNNING VISUALISATION TOOLS"
   rm -rf ./vis/${rundate}
   mkdir ./vis/${rundate}
   cd Python
   ./staticMaps.py ${rundate}
+  ./googleMaps.py ${rundate}
   cd ..
+  echo " ---> FINISHED ###"
 fi
 
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"

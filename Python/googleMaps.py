@@ -1,34 +1,25 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Script name: masaya_conc.py
+Script name: googleMaps.py
 Author: JO'N
 Date: January 2018
-Purpose: Used to generate an interactive Google map showing SO2 concentrations around the
-         Masaya volcano, for one output time, as predicted by the CALPUFF dispersion model
-Usage: python masaya_conc.py <concFile>
-        <concFile> - CALPUFF SO2 output file with naming convention 'concrec******.dat'
-Output: map\_concrec******.png - A static image file of the SO2 plume (with no basemap).
-        map\_concrec******.html - An interactive webpage of the SO2 plume (Google basemap).
+Purpose: Used to generate a series (48hrs) of interactive google maps showing SO2 concentrations around the
+         Masaya volcano, as predicted by the CALPUFF dispersion model
+Usage: ./googleMaps.py <date>
+       <date> - Date string, format YYYYMMDD, of the current CALPUFF run. Used to locate 
+           directory containing the SO2 output files (with assumed naming convention 'concrec0100**.dat',
+           where '**' goes from '01' through to '48')
+Output: vis/<date>/google_concrec******.html - A set of html files showing an interactive google basemap
+        with the SO2 plume overlain.
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib as mpl
 import os
 import utm
 import gmplot
 import argparse
-
-###Read in command line arguments:
-parser = argparse.ArgumentParser()
-parser.add_argument("concFile", help="absolute/relative path to concrec data file",type=str)
-args = parser.parse_args()
-assert os.path.exists(args.concFile), "concrec data file not found. Check path."
-concFile=args.concFile
-#concFile=os.environ['HOME']+'/Data/concrec010001.dat'
-
-scriptPath=os.path.dirname(os.path.realpath(__file__))
 
 def Read_Two_Column_File(file_name):
     with open(file_name, 'r') as data:
@@ -41,8 +32,42 @@ def Read_Two_Column_File(file_name):
 
     return x, y
 
-###spatial data:
-x, y = Read_Two_Column_File(os.path.abspath(os.path.join(scriptPath,'../Data/xy_masaya.dat'))) #reads in data
+#####READ IN COMMAND LINE ARGUMENTS
+parser = argparse.ArgumentParser(description = "Used to generate a series (48hrs) of interactive google maps showing \
+         SO2 concentrations around the Masaya volcano, as predicted by the CALPUFF dispersion model")
+parser.add_argument("date", help="Date string, format YYYYMMDD, of the current CALPUFF run. Used to locate \
+                    directory containing the SO2 output files (with assumed naming convention 'concrec0100**.dat', \
+                    where '**' goes from '01' through to '48'",type=str)
+args = parser.parse_args()
+date=args.date
+#####
+
+#####PARAMETERS
+concDir="../CALPUFF_OUT/CALPUFF/"+date
+xyFile="../data/xy_masaya.dat"
+outDir="../vis/"+date
+nConcFiles=48 #Number of conc files to process (48 = full 2 days)
+binLims=[10,350,600,2600,9000,14000] #SO2 bin limits
+colsHex=['#FFFFFF','#008000','#FFFF00','#FF6600','#FF0000','#800080','#8F246B'] #Hex codes for SO2 colour bins
+#####
+
+#####CHECK PATHS/FILES EXIST
+assert os.path.exists(concDir), "CALPUFF output directory does not exist for this date."
+assert os.path.exists(xyFile), "Cannot find data/xy_masaya.dat coordinate data file."
+assert os.path.exists(outDir), "Output directory vis/<date> does not exist."
+filenames=[]
+filePaths=[]
+for i in range(nConcFiles):
+    s = str('{:02}'.format(i+1)) #Ensures e.g. '1' is converted to '01'
+    fileName='concrec0100'+s+'.dat'
+    filenames.append(fileName)
+    filePath=os.path.join(concDir,fileName)
+    filePaths.append(filePath)
+    assert os.path.exists(filePath), "File "+filePath+" not found. Check path."
+#####
+
+#####SPATIAL DATA
+x, y = Read_Two_Column_File(xyFile) #reads in x,y data
 #get unique x,y coordinates and their respective lat,lons:
 xunq, yunq = np.unique(x), np.unique(y)
 nx, ny = len(xunq), len(yunq)
@@ -76,59 +101,41 @@ glat2, glon2 = np.reshape(lat2,(ny2,nx2)),  np.reshape(lon2,(ny2,nx2))
 #plt.imshow(glon2)
 #plt.colorbar()
 #plt.show()
+#####
 
-###set area for static plot based on x,y extent, and colour bins basd on AQ limits:
-xrange, yrange = np.ptp(x), np.ptp(y)
-longaxs=7
-xrplt = xrange/max(xrange,yrange) * longaxs
-yrplt = yrange/max(xrange,yrange) * longaxs
-binLims=[20,350,600,2600,9000,14000]
-colsHex=['#FFFFFF','#008000','#FFFF00','#FF6600','#FF0000','#800080','#8F246B']
+#####SET BIN COLOURS
 cmap = mpl.colors.ListedColormap(colsHex[1:-1])
 cmap.set_under(colsHex[0])
 cmap.set_over(colsHex[-1])
 norm = mpl.colors.BoundaryNorm(boundaries=binLims,ncolors=5)
+#####
 
 ###conc data plots:
-f = open(concFile,'r')
-lines = f.read().splitlines()
-f.close
-conc = np.array([float(x) for x in lines])*100**3 #ug/cm^3 -> ug/m^3
-concAry=np.reshape(conc,(ny,nx))
-concMask = np.ma.masked_array(concAry, concAry<binLims[0])
-#static plot (no basemap):
-fig = plt.figure(figsize=(xrplt+xrplt/3.,yrplt))
-figaxs = fig.add_axes([0.15,0.15,0.55,0.8])
-plt.pcolormesh(glon,glat,concMask,norm=norm,cmap=cmap)
-figaxs.set_xlabel('longitude (decimal deg)')
-figaxs.set_ylabel('latitude (decimal deg)')
-cbaxs = fig.add_axes([0.75,0.05,0.1,0.9])
-cb = mpl.colorbar.ColorbarBase(cbaxs, cmap=cmap,
-                            norm=norm,
-                            boundaries=[0.] + binLims + [100000.],
-                            extend='both',
-                            extendfrac='auto',
-                            ticks=binLims,
-                            spacing='uniform',
-                            orientation='vertical')
-cb.set_label('SO2 concentration (ug/m^3)')
-PNGfile = 'map_'+ concFile[-17:-4] +'.png'
-plt.savefig(PNGfile)
-#interactive plot (gmplot):
-gmap = gmplot.GoogleMapPlotter(min(lat)+np.ptp(lat)/2.,min(lon)+np.ptp(lon)/2.,zoom=11)
-for i in np.arange(0,nx):
-    for j in np.arange(0,ny):
-        for k in np.arange(0,len(binLims)-1):
-            if concAry[j,i] > binLims[k] and concAry[j,i] <= binLims[k+1]:
+for j,file in enumerate(filePaths):
+    #Read in concentration data:
+    f = open(file,'r')
+    lines = f.read().splitlines()
+    f.close
+    #Process concentration data into desired format:
+    conc = np.array([float(X) for X in lines])*100**3 #ug/cm^3 -> ug/m^3
+    concAry=np.reshape(conc,(ny,nx)) #Reshape data onto latlon grid
+    concMask = np.ma.masked_array(concAry, concAry<binLims[0]) #apply mask to all concs below lower limit
+    #Plot on google maps:
+    gmap = gmplot.GoogleMapPlotter(min(lat)+np.ptp(lat)/2.,min(lon)+np.ptp(lon)/2.,zoom=11)
+    for i in np.arange(0,nx):
+        for j in np.arange(0,ny):
+            for k in np.arange(0,len(binLims)-1):
+                if concAry[j,i] > binLims[k] and concAry[j,i] <= binLims[k+1]:
+                    gmap.polygon((glat2[j+1,i],glat2[j,i],glat2[j,i+1],glat2[j+1,i+1]),
+                                  (glon2[j+1,i],glon2[j,i],glon2[j,i+1],glon2[j+1,i+1]),
+                                  color=colsHex[k+1],edge_width=0.001)
+            if conc[j] > binLims[-1]:
                 gmap.polygon((glat2[j+1,i],glat2[j,i],glat2[j,i+1],glat2[j+1,i+1]),
-                              (glon2[j+1,i],glon2[j,i],glon2[j,i+1],glon2[j+1,i+1]),
-                              color=colsHex[k+1],edge_width=0.001)
-        if conc[j] > binLims[-1]:
-            gmap.polygon((glat2[j+1,i],glat2[j,i],glat2[j,i+1],glat2[j+1,i+1]),
-                              (glon2[j+1,i],glon2[j,i],glon2[j,i+1],glon2[j+1,i+1]),
-                              color=colsHex[-1],edge_width=0.001)
-HTMLfile = 'map_'+ concFile[-17:-4] +'.html'
-gmap.draw(HTMLfile)
-
+                                  (glon2[j+1,i],glon2[j,i],glon2[j,i+1],glon2[j+1,i+1]),
+                                  color=colsHex[-1],edge_width=0.001)
+    HTMLfile = 'google_'+ file[-17:-4] +'.html'
+    print("Writing out file "+HTMLfile)
+    gmap.draw(os.path.join(outDir,HTMLfile))
+#####
 
 
