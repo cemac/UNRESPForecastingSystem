@@ -21,7 +21,8 @@ runCTGPROC=false
 runMAKEGEO=false
 run3DDAT=false
 runCALMET=false
-runCALPUFF=true
+runCALPUFF=false
+runVIS=true
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
@@ -238,6 +239,15 @@ if [ "$runCALPUFF" = true ]; then
   mkdir ./CALPUFF_OUT/CALPUFF/${rundate}
   mv *.con *.lst *.dat *.clr *.bna *.grd ./CALPUFF_OUT/CALPUFF/${rundate}/.
   echo " ---> FINISHED ###"
+fi
+
+###VISUALISATION###
+if [ "$runVIS" = true ]; then
+  rm -rf ./vis/${rundate}
+  mkdir ./vis/${rundate}
+  cd Python
+  ./staticMaps.py ${rundate}
+  cd ..
 fi
 
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"
