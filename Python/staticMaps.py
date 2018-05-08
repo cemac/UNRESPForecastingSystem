@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
 Script name: staticMaps.py
@@ -6,11 +6,11 @@ Author: JO'N
 Date: March 2018
 Purpose: Used to generate a series (48hrs) of static maps showing SO2 concentrations around the
          Masaya volcano, as predicted by the CALPUFF dispersion model
-Usage: ./staticMaps.py <concDir>
-        <concDir> - Directory containing CALPUFF SO2 output files with naming convention 'concrec010**.dat', \
-        where '**' goe from '01' through to '48'
-        <xyFile> - Path to data file containing the x,y coordinates of each output point
-Output: static_concrec010**.png - A series of static image files of the SO2 plume (with a basemap).
+Usage: ./staticMaps.py <date>
+        <date> - Date string, format YYYYMMDD, of the current CALPUFF run. Used to locate 
+           directory containing the SO2 output files (with assumed naming convention 'concrec0100**.dat',
+           where '**' goes from '01' through to '48')
+Output: vis/<date>/static_concrec0100**.png - A series of static image files of the SO2 plume (with a basemap).
 """
 
 import numpy as np
@@ -37,26 +37,19 @@ def Read_Two_Column_File(file_name):
     return x, y
 
 #####READ IN COMMAND LINE ARGUMENTS
-#parser = argparse.ArgumentParser(description = "Used to generate a series (48hrs) of static maps showing \
-#         SO2 concentrations around the Masaya volcano, as predicted by the CALPUFF dispersion model")
-#parser.add_argument("concDir", help="absolute/relative path to directory containing CALPUFF SO2 output files, \
-#           with expected naming convention 'concrec010**.dat', where '**' goes from '01' through to '48'",type=str)
-#parser.add_argument("xyFile", help="absolute/relative path to data file containing the x,y coordinates of each output point",type=str)
-#parser.add_argument("date", help="date of forecast in format YYYYMMDD",type=str)
-#parser.add_argument("outDir", help="absolute/relative path to output directory for the generated png files",type=str)
-#args = parser.parse_args()
-#concDir=args.concDir
-#xyFile=args.xyFile
-#date=args.date
-#outDir=args.outDir
-#
-concDir=os.getenv('HOME')+'/Data/UNRESP/CalpuffOutput_JJO'
-xyFile=os.getenv('HOME')+'/gitRepos/UNRESP/Data/xy_masaya.dat'
-date='20171204'
-outDir=os.getenv('HOME')+'/Data/UNRESP/JJO_out'
+parser = argparse.ArgumentParser(description = "Used to generate a series (48hrs) of static maps showing \
+         SO2 concentrations around the Masaya volcano, as predicted by the CALPUFF dispersion model")
+parser.add_argument("date", help="Date string, format YYYYMMDD, of the current CALPUFF run. Used to locate \
+                    directory containing the SO2 output files (with assumed naming convention 'concrec0100**.dat', \
+                    where '**' goes from '01' through to '48'",type=str)
+args = parser.parse_args()
+date=args.date
 #####
 
 ####PARAMETERS
+concDir="../CALPUFF_OUT/CALPUFF/"+date
+xyFile="../data/xy_masaya.dat"
+outDir="../vis/"+date
 nConcFiles=48 #Number of conc files to process (48 = full 2 days)
 binLims=[10,350,600,2600,9000,14000] #SO2 bin limits
 colsHex=['#FFFFFF','#008000','#FFFF00','#FF6600','#FF0000','#800080','#8F246B'] #Hex codes for SO2 colour bins
@@ -74,9 +67,9 @@ so2title='Atmospheric SO2 concentrations at ground level (hourly means). GCRF UN
 #####
 
 #####CHECK PATHS/FILES EXIST
-assert os.path.exists(concDir), "concDir directory does not exist. Check path."
-assert os.path.exists(xyFile), "xyFile data file does not exist. Check path."
-assert os.path.exists(outDir), "outDir directory does not exist. Check path."
+assert os.path.exists(concDir), "CALPUFF output directory does not exist for this date."
+assert os.path.exists(xyFile), "Cannot find data/xy_masaya.dat coordinate data file."
+assert os.path.exists(outDir), "Output directory vis/<date> does not exist."
 filenames=[]
 filePaths=[]
 for i in range(nConcFiles):
@@ -141,7 +134,7 @@ for j,file in enumerate(filePaths):
     lines = f.read().splitlines()
     f.close
     #Process concentration data into desired format:
-    conc = np.array([float(x) for x in lines])*100**3 #ug/cm^3 -> ug/m^3
+    conc = np.array([float(X) for X in lines])*100**3 #ug/cm^3 -> ug/m^3
     concAry=np.reshape(conc,(ny,nx)) #Reshape data onto latlon grid
     concMask = np.ma.masked_array(concAry, concAry<binLims[0]) #apply mask to all concs below lower limit
     #Plot on basemap:
@@ -166,6 +159,7 @@ for j,file in enumerate(filePaths):
     plt.suptitle(so2title)
     plt.title(dates[j].strftime('%c'),fontsize=24)
     PNGfile = 'static_'+ file[-17:-4] +'.png'
+    print("Writing out file "+PNGfile)
     PNGpath=os.path.join(outDir,PNGfile)
     plt.savefig(PNGpath)
     plt.close()
