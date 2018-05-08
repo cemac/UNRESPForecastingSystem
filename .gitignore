@@ -13,3 +13,6 @@
 *.con
 
 NAM_data/*/
+
+CALPUFF_INP/calmet.inp
+CALPUFF_INP/calpuff.inp
