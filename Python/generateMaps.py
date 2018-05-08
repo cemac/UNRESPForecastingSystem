@@ -1,16 +1,17 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Script name: staticMaps.py
+Script name: generateMaps.py
 Author: JO'N
 Date: March 2018
-Purpose: Used to generate a series (48hrs) of static maps showing SO2 concentrations around the
+Purpose: Used to generate a series (48hrs) of static and interactive (google) maps showing SO2 concentrations around the
          Masaya volcano, as predicted by the CALPUFF dispersion model
-Usage: ./staticMaps.py <date>
+Usage: ./generateMaps.py <date>
         <date> - Date string, format YYYYMMDD, of the current CALPUFF run. Used to locate 
            directory containing the SO2 output files (with assumed naming convention 'concrec0100**.dat',
            where '**' goes from '01' through to '48')
-Output: vis/<date>/static_concrec0100**.png - A series of static image files of the SO2 plume (with a basemap).
+Output: vis/<date>/static_concrec0100**.png and vis/<date>/google_concrec0100**.html - A series of static 
+        and interactive maps of the SO2 plume
 """
 
 import numpy as np
@@ -24,6 +25,8 @@ import datetime as dt
 import pytz
 from dateutil.parser import parse
 import argparse
+import gmplot
+
 
 def Read_Two_Column_File(file_name):
     with open(file_name, 'r') as data:
@@ -37,8 +40,8 @@ def Read_Two_Column_File(file_name):
     return x, y
 
 #####READ IN COMMAND LINE ARGUMENTS
-parser = argparse.ArgumentParser(description = "Used to generate a series (48hrs) of static maps showing \
-         SO2 concentrations around the Masaya volcano, as predicted by the CALPUFF dispersion model")
+parser = argparse.ArgumentParser(description = "Used to generate a series (48hrs) of static and interactive (google) maps \
+         showing SO2 concentrations around the Masaya volcano, as predicted by the CALPUFF dispersion model")
 parser.add_argument("date", help="Date string, format YYYYMMDD, of the current CALPUFF run. Used to locate \
                     directory containing the SO2 output files (with assumed naming convention 'concrec0100**.dat', \
                     where '**' goes from '01' through to '48'",type=str)
@@ -47,6 +50,8 @@ date=args.date
 #####
 
 ####PARAMETERS
+generateStaticMaps=True
+generateGoogleMaps=True
 concDir="../CALPUFF_OUT/CALPUFF/"+date
 xyFile="../data/xy_masaya.dat"
 outDir="../vis/"+date
@@ -99,11 +104,22 @@ lat = [ utm.to_latlon(x[i]*1000,y[i]*1000,16,'P')[0] for i in np.arange(0,len(x)
 lon = [ utm.to_latlon(x[i]*1000,y[i]*1000,16,'P')[1] for i in np.arange(0,len(x)) ]
 #Create gridded field of lat,lon of appropriate size:
 glat, glon = np.reshape(lat,(ny,nx)),  np.reshape(lon,(ny,nx))
-#Also grab range for later plot
+#Also grab range for static plots
 latMin=min(lat)
 latMax=max(lat)
 lonMin=min(lon)
 lonMax=max(lon)
+#Get x,y coordinates of all the corners of the square cells centred on each x,y (for google plots):
+x2unq = [v-(xunq[1]-xunq[0])/2. for v in xunq]
+x2unq.append(x2unq[-1]+(xunq[1]-xunq[0]))
+y2unq = [v-(yunq[1]-yunq[0])/2. for v in yunq]
+y2unq.append(y2unq[-1]+(yunq[1]-yunq[0]))
+nx2, ny2 = len(x2unq), len(y2unq)
+x2grd,y2grd=np.meshgrid(x2unq,y2unq)
+x2, y2 = np.reshape(x2grd,(nx2*ny2)), np.reshape(y2grd,(nx2*ny2))
+lat2 = [ utm.to_latlon(x2[i]*1000,y2[i]*1000,16,'P')[0] for i in np.arange(0,len(x2)) ]
+lon2 = [ utm.to_latlon(x2[i]*1000,y2[i]*1000,16,'P')[1] for i in np.arange(0,len(x2)) ]
+glat2, glon2 = np.reshape(lat2,(ny2,nx2)),  np.reshape(lon2,(ny2,nx2))
 #####
 
 #####SET BIN COLOURS
@@ -115,10 +131,11 @@ norm = mpl.colors.BoundaryNorm(boundaries=binLims,ncolors=5)
 
 #####PLOT
 plt.ioff() #turn off interactive plotting
-#Download ESRI image only once:
-bmap = Basemap(llcrnrlon=lonMin,llcrnrlat=latMin,urcrnrlon=lonMax,urcrnrlat=latMax)
-esri_url = \
-"http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/export?\
+if generateStaticMaps:
+    #Download ESRI image only once:
+    bmap = Basemap(llcrnrlon=lonMin,llcrnrlat=latMin,urcrnrlon=lonMax,urcrnrlat=latMax)
+    esri_url = \
+    "http://server.arcgisonline.com/ArcGIS/rest/services/ESRI_Imagery_World_2D/MapServer/export?\
 bbox=%s,%s,%s,%s&\
 bboxSR=%s&\
 imageSR=%s&\
@@ -127,7 +144,7 @@ dpi=%s&\
 format=png32&\
 f=image" %\
 (bmap.llcrnrlon,bmap.llcrnrlat,bmap.urcrnrlon,bmap.urcrnrlat,bmap.epsg,bmap.epsg,xpixels,bmap.aspect*xpixels,96)
-ESRIimg = mpimg.imread(esri_url)
+    ESRIimg = mpimg.imread(esri_url)
 for j,file in enumerate(filePaths):
     #Read in concentration data:
     f = open(file,'r')
@@ -137,31 +154,49 @@ for j,file in enumerate(filePaths):
     conc = np.array([float(X) for X in lines])*100**3 #ug/cm^3 -> ug/m^3
     concAry=np.reshape(conc,(ny,nx)) #Reshape data onto latlon grid
     concMask = np.ma.masked_array(concAry, concAry<binLims[0]) #apply mask to all concs below lower limit
-    #Plot on basemap:
-    plt.figure(figsize=(12,9))
-    bmap = Basemap(llcrnrlon=lonMin,llcrnrlat=latMin,urcrnrlon=lonMax,urcrnrlat=latMax)
-    bmap.imshow(ESRIimg,origin='upper')
-    bmap.pcolormesh(glon,glat,concMask,norm=norm,cmap=cmap,alpha=0.5)
-    cbar=bmap.colorbar(location='bottom',pad='20%',cmap=cmap,norm=norm,boundaries=[0.] + binLims + [100000.],
-                 extend='both',extendfrac='auto',ticks=binLims,spacing='uniform',label='SO2 concentration (ug/m3)')
-    cbar.solids.set(alpha=1)
-    latTicks=np.arange(round(latMin,1),round(latMax,1)+0.1,0.1)
-    lonTicks=np.arange(round(lonMin,1),round(lonMax,1)+0.1,0.2)
-    bmap.drawparallels(latTicks,labels=[1,0,0,0],linewidth=0.0)#labels=[left,right,top,bottom]
-    bmap.drawmeridians(lonTicks,labels=[0,0,0,1],linewidth=0.0)
-    for i,town in enumerate(towns):
-        plt.plot(townCoords[i][0],townCoords[i][1],'ok',markersize=3)
-        plt.text(townCoords[i][0],townCoords[i][1],town,fontsize=8)
-    for i,city in enumerate(cities):
-        plt.plot(cityCoords[i][0],cityCoords[i][1],'sk',markersize=4)
-        plt.text(cityCoords[i][0],cityCoords[i][1],city,fontsize=11)
-    plt.plot(volcCoords[0],volcCoords[1],'^r',markersize=5)
-    plt.suptitle(so2title)
-    plt.title(dates[j].strftime('%c'),fontsize=24)
-    PNGfile = 'static_'+ file[-17:-4] +'.png'
-    print("Writing out file "+PNGfile)
-    PNGpath=os.path.join(outDir,PNGfile)
-    plt.savefig(PNGpath)
-    plt.close()
+    #Plot static maps:
+    if generateStaticMaps:
+        plt.figure(figsize=(12,9))
+        bmap = Basemap(llcrnrlon=lonMin,llcrnrlat=latMin,urcrnrlon=lonMax,urcrnrlat=latMax)
+        bmap.imshow(ESRIimg,origin='upper')
+        bmap.pcolormesh(glon,glat,concMask,norm=norm,cmap=cmap,alpha=0.5)
+        cbar=bmap.colorbar(location='bottom',pad='20%',cmap=cmap,norm=norm,boundaries=[0.] + binLims + [100000.],
+                     extend='both',extendfrac='auto',ticks=binLims,spacing='uniform',label='SO2 concentration (ug/m3)')
+        cbar.solids.set(alpha=1)
+        latTicks=np.arange(round(latMin,1),round(latMax,1)+0.1,0.1)
+        lonTicks=np.arange(round(lonMin,1),round(lonMax,1)+0.1,0.2)
+        bmap.drawparallels(latTicks,labels=[1,0,0,0],linewidth=0.0)#labels=[left,right,top,bottom]
+        bmap.drawmeridians(lonTicks,labels=[0,0,0,1],linewidth=0.0)
+        for i,town in enumerate(towns):
+            plt.plot(townCoords[i][0],townCoords[i][1],'ok',markersize=3)
+            plt.text(townCoords[i][0],townCoords[i][1],town,fontsize=8)
+        for i,city in enumerate(cities):
+            plt.plot(cityCoords[i][0],cityCoords[i][1],'sk',markersize=4)
+            plt.text(cityCoords[i][0],cityCoords[i][1],city,fontsize=11)
+        plt.plot(volcCoords[0],volcCoords[1],'^r',markersize=5)
+        plt.suptitle(so2title)
+        plt.title(dates[j].strftime('%c'),fontsize=24)
+        PNGfile = 'static_'+ file[-17:-4] +'.png'
+        print("Writing out file "+PNGfile)
+        PNGpath=os.path.join(outDir,PNGfile)
+        plt.savefig(PNGpath)
+        plt.close()
+    #Plot google maps:
+    if generateGoogleMaps:
+        gmap = gmplot.GoogleMapPlotter(min(lat)+np.ptp(lat)/2.,min(lon)+np.ptp(lon)/2.,zoom=11)
+        for i in np.arange(0,nx):
+            for j in np.arange(0,ny):
+                for k in np.arange(0,len(binLims)-1):
+                    if concAry[j,i] > binLims[k] and concAry[j,i] <= binLims[k+1]:
+                        gmap.polygon((glat2[j+1,i],glat2[j,i],glat2[j,i+1],glat2[j+1,i+1]),
+                                      (glon2[j+1,i],glon2[j,i],glon2[j,i+1],glon2[j+1,i+1]),
+                                      color=colsHex[k+1],edge_width=0.001)
+                if conc[j] > binLims[-1]:
+                    gmap.polygon((glat2[j+1,i],glat2[j,i],glat2[j,i+1],glat2[j+1,i+1]),
+                                      (glon2[j+1,i],glon2[j,i],glon2[j,i+1],glon2[j+1,i+1]),
+                                      color=colsHex[-1],edge_width=0.001)
+        HTMLfile = 'google_'+ file[-17:-4] +'.html'
+        print("Writing out file "+HTMLfile)
+        gmap.draw(os.path.join(outDir,HTMLfile))
 plt.ion() #turn on interactive ploting
 #####    
