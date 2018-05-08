@@ -249,6 +249,9 @@ if [ "$runVIS" = true ]; then
   cd Python
   ./generateMaps.py ${rundate}
   cd ..
+  cd vis/${rundate}
+  ffmpeg -f image2 -r 4 -i static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
+  cd ../..
   echo " ---> FINISHED ###"
 fi
 
