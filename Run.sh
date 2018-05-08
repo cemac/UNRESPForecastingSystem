@@ -247,8 +247,7 @@ if [ "$runVIS" = true ]; then
   rm -rf ./vis/${rundate}
   mkdir ./vis/${rundate}
   cd Python
-  ./staticMaps.py ${rundate}
-  ./googleMaps.py ${rundate}
+  ./generateMaps.py ${rundate}
   cd ..
   echo " ---> FINISHED ###"
 fi
