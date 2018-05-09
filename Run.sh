@@ -19,8 +19,8 @@ endDay=${enddate:6:2}
 runTERREL=false
 runCTGPROC=false
 runMAKEGEO=false
-run3DDAT=true
-runCALMET=false
+run3DDAT=false
+runCALMET=true
 runCALPUFF=false
 runVIS=false
 
@@ -191,9 +191,9 @@ if [ "$runCALMET" = true ]; then
   cd ../..
   echo " ---> FINISHED ###"
   #Update dates in input file:
-  echo -n "### SETTING DATES IN CALMET INPUT FILE"
+  echo -n "### SETTING UP CALMET INPUT FILE"
   sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$endYear/g" \
--e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" ./CALPUFF_INP/calmet_template.inp > ./CALPUFF_INP/calmet.inp
+-e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?3DDAT?/met_${rundate}.dat/g" ./CALPUFF_INP/calmet_template.inp > ./CALPUFF_INP/calmet.inp
   echo " ---> FINISHED ###"
   #Run CALMET:
   echo "### RUNNING CALMET"
