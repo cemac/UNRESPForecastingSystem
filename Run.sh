@@ -19,10 +19,10 @@ endDay=${enddate:6:2}
 runTERREL=false
 runCTGPROC=false
 runMAKEGEO=false
-run3DDAT=false
+run3DDAT=true
 runCALMET=false
 runCALPUFF=false
-runVIS=true
+runVIS=false
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
@@ -122,8 +122,8 @@ fi
 if [ "$run3DDAT" = true ]; then
   ##Download NAM data if required:
   #How many files downloaded already?:
-  if [ -d ./NAM_data/${rundate} ]; then
-    eval numfiles=$(ls ./NAM_data/${rundate} | wc -l)
+  if [ -d ./NAM_data/raw/${rundate} ]; then
+    eval numfiles=$(ls ./NAM_data/raw/${rundate} | wc -l)
   else
     numfiles=0
   fi
@@ -131,10 +131,10 @@ if [ "$run3DDAT" = true ]; then
   if [ ${numfiles} != 17 ]; then
     echo "### ATTEMPTING TO DOWNLOAD NAM DATA"
     #Make data directory if required:
-    if [ ! -d ./NAM_data/${rundate}  ]; then
-      mkdir NAM_data/${rundate}
+    if [ ! -d ./NAM_data/raw/${rundate}  ]; then
+      mkdir NAM_data/raw/${rundate}
     fi
-    cd NAM_data/${rundate}
+    cd NAM_data/raw/${rundate}
     #Download each NAM data file if required:
     for i in `seq 0 3 48`; do
       hour=`printf "%02d" $i`
@@ -152,12 +152,12 @@ if [ "$run3DDAT" = true ]; then
 -o nam.t00z.afwaca${hour}.tm00.grib2
       fi
     done
-    cd ../..
+    cd ../../..
     echo " ---> FINISHED ###"
   fi
   #Extract NAM data into CALMET input file format:
-  echo "### EXTRACTING NAM DATA INTO 3D.DAT FILE"
-  rm -f data/3d.dat
+  echo "### EXTRACTING NAM DATA INTO CALMET INPUT FILE FORMAT"
+  rm -f NAM_data/processed/met_${rundate}.dat
   cd Python
   ./Create3DDAT.py ${rundate}
   cd ..
@@ -176,9 +176,12 @@ if [ "$runCALMET" = true ]; then
       echo "### CTGPROC ALREADY COMPILED ###"
   fi
   cd ..
-  #Copy data file from MAKEGEO across to the data directory
-  echo -n "### COPYING GEO DATA FILE ACROSS"
+  #Remove any old files and copy relevant new files into the data directory
+  echo -n "### SETTING UP DATA DIRECTORY"
+  rm -f data/geo_masaya.dat
   cp -f ./CALPUFF_OUT/MAKEGEO/geo_masaya.dat data/.
+  rm -f data/met_*.dat
+  cp -f ./NAM_data/processed/met_${rundate}.dat data/.
   echo " ---> FINISHED ###"
   #Remove any old files before running:
   echo -n "### DELETING OLD CALMET OUTPUT FILES"

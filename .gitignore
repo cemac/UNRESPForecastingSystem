@@ -12,7 +12,7 @@
 *.o
 *.con
 
-NAM_data/*/
+NAM_data/raw/*/
 vis/*/
 
 CALPUFF_INP/calmet.inp
