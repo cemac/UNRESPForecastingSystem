@@ -13,6 +13,8 @@
 *.con
 
 NAM_data/raw/*/
+CALPUFF_OUT/CALMET/*/
+CALPUFF_OUT/CALPUFF/*/
 vis/*/
 
 CALPUFF_INP/calmet.inp
