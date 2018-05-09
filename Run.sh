@@ -21,13 +21,13 @@ endMonth=${enddate:4:2}
 endDay=${enddate:6:2}
 
 #Set flags
-runTERREL=false
-runCTGPROC=false
-runMAKEGEO=false
-run3DDAT=false
-runCALMET=false
+runTERREL=true
+runCTGPROC=true
+runMAKEGEO=true
+run3DDAT=true
+runCALMET=true
 runCALPUFF=true
-runVIS=false
+runVIS=true
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
