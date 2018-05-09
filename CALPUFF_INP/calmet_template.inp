@@ -71,7 +71,7 @@ MM4/MM5/3D.DAT files (consecutive or overlapping)
 ------------------------------------------------
 Default Name  Type       File Name
 ------------  ----       ---------
-MM51.DAT       input     1  ! M3DDAT=data/3d.dat!    !END!
+MM51.DAT       input     1  ! M3DDAT=data/?3DDAT? !    !END!
 --------------------------------------------------------------------------------
 Subgroup (e)
 -------------------------------------------------

@@ -21,7 +21,7 @@ runCTGPROC=false
 runMAKEGEO=false
 run3DDAT=false
 runCALMET=true
-runCALPUFF=false
+runCALPUFF=true
 runVIS=false
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
@@ -176,21 +176,19 @@ if [ "$runCALMET" = true ]; then
       echo "### CTGPROC ALREADY COMPILED ###"
   fi
   cd ..
-  #Remove any old files and copy relevant new files into the data directory
+  #Remove any old data files and copy relevant new files into the data directory
   echo -n "### SETTING UP DATA DIRECTORY"
   rm -f data/geo_masaya.dat
   cp -f ./CALPUFF_OUT/MAKEGEO/geo_masaya.dat data/.
   rm -f data/met_*.dat
   cp -f ./NAM_data/processed/met_${rundate}.dat data/.
   echo " ---> FINISHED ###"
-  #Remove any old files before running:
+  #Remove any old CALMET files before running:
   echo -n "### DELETING OLD CALMET OUTPUT FILES"
   rm -rf *.dat *.DAT *.bna *.lst *.aux
-  cd CALPUFF_OUT/CALMET
-  find . ! -name 'README' -type f -exec rm -f {} +
-  cd ../..
+  rm -rf ./CALPUFF_OUT/CALMET/${rundate}
   echo " ---> FINISHED ###"
-  #Update dates in input file:
+  #Update input file:
   echo -n "### SETTING UP CALMET INPUT FILE"
   sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$endYear/g" \
 -e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?3DDAT?/met_${rundate}.dat/g" ./CALPUFF_INP/calmet_template.inp > ./CALPUFF_INP/calmet.inp
@@ -201,7 +199,8 @@ if [ "$runCALMET" = true ]; then
   echo " ---> FINISHED ###"
   #Move output files:
   echo -n "### MOVING CALMET OUTPUT FILES"
-  mv *.dat *.DAT *.bna *.lst *.aux ./CALPUFF_OUT/CALMET/.
+  mkdir ./CALPUFF_OUT/CALMET/${rundate}
+  mv *.dat *.DAT *.bna *.lst *.aux ./CALPUFF_OUT/CALMET/${rundate}/.
   echo " ---> FINISHED ###"
 fi
 
@@ -219,9 +218,10 @@ if [ "$runCALPUFF" = true ]; then
   else
       echo "### CALPUFF ALREADY COMPILED ###"
   fi
-  #Copy data file from CALMET across to the data directory
-  echo -n "### COPYING CALMET OUTPUT DATA FILE ACROSS"
-  cp -f ./CALPUFF_OUT/CALMET/calmet.dat data/.
+  #Remove old and copy new CALMET data file across to the data directory
+  echo -n "### SETTING UP DATA DIRECTORY"
+  rm -f data/calmet_*.dat
+  cp -f ./CALPUFF_OUT/CALMET/${rundate}/calmet.dat data/calmet_${rundate}.dat
   echo " ---> FINISHED ###"
   #Remove any old files before running:
   echo -n "### DELETING OLD CALPUFF OUTPUT FILES"
@@ -229,16 +229,16 @@ if [ "$runCALPUFF" = true ]; then
   rm -rf ./CALPUFF_OUT/CALPUFF/${rundate}
   echo " ---> FINISHED ###"
   #Update dates in input file:
-  echo -n "### SETTING DATES IN CALPUFF INPUT FILE"
+  echo -n "### SETTING UP CALPUFF INPUT FILE"
   sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$endYear/g" \
--e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
+-e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
   #Run CALPUFF:
   echo "### RUNNING CALPUFF"
   ./CALPUFF_EXE/calpuff_intel.exe ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
   #Move output files:
-  echo -n "### MOVING CALMET OUTPUT FILES"
+  echo -n "### MOVING CALPUFF OUTPUT FILES"
   mkdir ./CALPUFF_OUT/CALPUFF/${rundate}
   mv *.con *.lst *.dat *.clr *.bna *.grd ./CALPUFF_OUT/CALPUFF/${rundate}/.
   echo " ---> FINISHED ###"
