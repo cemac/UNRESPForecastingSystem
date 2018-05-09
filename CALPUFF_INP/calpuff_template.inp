@@ -17,7 +17,7 @@ INPUT GROUP: 0 -- Input and Output File Names
 
 Default Name  Type          File Name
 ------------  ----          ---------
-CALMET.DAT    input    ! METDAT =data/calmet.dat   !
+CALMET.DAT    input    ! METDAT = data/?METDAT?   !
     or
 ISCMET.DAT    input    * ISCDAT =             *
     or
