@@ -25,7 +25,7 @@ PLMMET.DAT    input    * PLMDAT =             *
     or
 PROFILE.DAT   input    * PRFDAT =             *
 SURFACE.DAT   input    * SFCDAT =             *
-RESTARTB.DAT  input    * RSTARTB=  restart_so2_e.dat *
+RESTARTB.DAT  input    ! RSTARTB= ?RSTARTB? !
 --------------------------------------------------------------------------------
 CALPUFF.LST   output   ! PUFLST =CALPUFF.LST  !
 CONC.DAT      output   ! CONDAT =CALPUFF.CON     !
@@ -35,7 +35,7 @@ WFLX.DAT      output   * WFDAT  =CALPUFF.WET     *
 VISB.DAT      output   * VISDAT =CALPUFF.VIS     *
 TK2D.DAT      output   * T2DDAT =             *
 RHO2D.DAT     output   * RHODAT =             *
-RESTARTE.DAT  output   ! RSTARTE= restart_so2_e.dat !
+RESTARTE.DAT  output   ! RSTARTE= ?RSTARTE? !
 --------------------------------------------------------------------------------
 Other Files
 -----------
@@ -327,7 +327,7 @@ INPUT GROUP: 1 -- General run control parameters
 
      Restart Configuration:
 
-        Control flag (MRESTART)      Default: 0       ! MRESTART =  2   !
+        Control flag (MRESTART)      Default: 0       ! MRESTART =  ?MRES?   !
 
            0 = Do not read or write a restart file
            1 = Read a restart file at the beginning of

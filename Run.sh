@@ -7,10 +7,15 @@ module load python2 python-libs
 
 #Read in command line arguments and set subsequent variables
 rundate=$1
+prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
+middate=$(date -d "$rundate + 1 day" +%Y%m%d)
+enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
 startYear=${rundate:0:4}
 startMonth=${rundate:4:2}
 startDay=${rundate:6:2}
-enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
+midYear=${middate:0:4}
+midMonth=${middate:4:2}
+midDay=${middate:6:2}
 endYear=${enddate:0:4}
 endMonth=${enddate:4:2}
 endDay=${enddate:6:2}
@@ -20,7 +25,7 @@ runTERREL=false
 runCTGPROC=false
 runMAKEGEO=false
 run3DDAT=false
-runCALMET=true
+runCALMET=false
 runCALPUFF=true
 runVIS=false
 
@@ -39,7 +44,7 @@ if [ "$runTERREL" = true ]; then
   fi
   cd ..
   #Remove any old files before running:
-  echo -n "### DELETING OLD TERREL OUTPUT FILES"
+  echo -n "### DELETING ANY OLD TERREL OUTPUT FILES"
   rm -rf *.dat *.grd *.lst *.sav *.log
   cd CALPUFF_OUT/TERREL
   find . ! -name 'README' -type f -exec rm -f {} +
@@ -68,7 +73,7 @@ if [ "$runCTGPROC" = true ]; then
   fi
   cd ..
   #Remove any old files before running:
-  echo -n "### DELETING OLD CTGPROC OUTPUT FILES"
+  echo -n "### DELETING ANY OLD CTGPROC OUTPUT FILES"
   rm -rf *.dat *.lst *.log
   cd CALPUFF_OUT/CTGPROC
   find . ! -name 'README' -type f -exec rm -f {} +
@@ -102,7 +107,7 @@ if [ "$runMAKEGEO" = true ]; then
   cp -f ./CALPUFF_OUT/CTGPROC/lulc1km_masaya.dat data/.
   echo " ---> FINISHED ###"
   #Remove any old files before running:
-  echo -n "### DELETING OLD MAKEGEO OUTPUT FILES"
+  echo -n "### DELETING ANY OLD MAKEGEO OUTPUT FILES"
   rm -rf *.dat *.lst *.clr *.log *.grd
   cd CALPUFF_OUT/MAKEGEO
   find . ! -name 'README' -type f -exec rm -f {} +
@@ -184,7 +189,7 @@ if [ "$runCALMET" = true ]; then
   cp -f ./NAM_data/processed/met_${rundate}.dat data/.
   echo " ---> FINISHED ###"
   #Remove any old CALMET files before running:
-  echo -n "### DELETING OLD CALMET OUTPUT FILES"
+  echo -n "### DELETING ANY OLD CALMET OUTPUT FILES"
   rm -rf *.dat *.DAT *.bna *.lst *.aux
   rm -rf ./CALPUFF_OUT/CALMET/${rundate}
   echo " ---> FINISHED ###"
@@ -224,23 +229,58 @@ if [ "$runCALPUFF" = true ]; then
   cp -f ./CALPUFF_OUT/CALMET/${rundate}/calmet.dat data/calmet_${rundate}.dat
   echo " ---> FINISHED ###"
   #Remove any old files before running:
-  echo -n "### DELETING OLD CALPUFF OUTPUT FILES"
+  echo -n "### DELETING ANY OLD CALPUFF OUTPUT FILES"
   rm -rf *.con *.lst *.dat *.clr *.bna *.grd
   rm -rf ./CALPUFF_OUT/CALPUFF/${rundate}
   echo " ---> FINISHED ###"
-  #Update dates in input file:
-  echo -n "### SETTING UP CALPUFF INPUT FILE"
-  sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$endYear/g" \
--e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
+  #Set up input file for first 24hrs:
+  echo -n "### SETTING UP CALPUFF INPUT FILE FOR FIRST 24 HOURS"
+  if [ -f ./CALPUFF_OUT/CALPUFF/${prevdate}/restart_${rundate}.dat ]; then
+    mres=3
+    cp CALPUFF_OUT/CALPUFF/${prevdate}/restart_${rundate}.dat .
+    echo -n " ---> RESTART FILE FOUND"
+  else
+    mres=2
+    echo -n " ---> NO RESTART FILE FOUND"
+  fi
+  sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$midYear/g" \
+-e "s/MMe/$midMonth/g" -e "s/DDe/$midDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
+-e "s/?RSTARTB?/restart_$rundate.dat/g" -e "s/?RSTARTE?/restart_$middate.dat/g" \
+-e "s/?MRES?/$mres/g" ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
-  #Run CALPUFF:
-  echo "### RUNNING CALPUFF"
+  #Run CALPUFF for first 24 hours:
+  echo "### RUNNING CALPUFF FOR FIRST 24 HOURS"
   ./CALPUFF_EXE/calpuff_intel.exe ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
-  #Move output files:
-  echo -n "### MOVING CALPUFF OUTPUT FILES"
+  #Move output files from first 24 hours:
+  echo -n "### MOVING CALPUFF OUTPUT FILES FROM FIRST 24 HOURS"
   mkdir ./CALPUFF_OUT/CALPUFF/${rundate}
-  mv *.con *.lst *.dat *.clr *.bna *.grd ./CALPUFF_OUT/CALPUFF/${rundate}/.
+  mv concrec*.dat restart_${middate}.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
+  rm -rf *.con *.lst *.dat *.clr *.bna *.grd
+  cp CALPUFF_OUT/CALPUFF/${rundate}/restart_${middate}.dat .
+  echo " ---> FINISHED ###"
+  #Set up input file for second 24hrs:
+  echo -n "### SETTING UP CALPUFF INPUT FILE FOR SECOND 24 HOURS"
+  sed -e "s/YYYYb/$midYear/g" -e "s/MMb/$midMonth/g" -e "s/DDb/$midDay/g" -e "s/YYYYe/$endYear/g" \
+-e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
+-e "s/?RSTARTB?/restart_$middate.dat/g" -e "s/?RSTARTE?/restart_$enddate.dat/g" \
+-e "s/?MRES?/1/g" ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
+  echo " ---> FINISHED ###"
+  #Run CALPUFF for second 24 hours:
+  echo "### RUNNING CALPUFF FOR SECOND 24 HOURS"
+  ./CALPUFF_EXE/calpuff_intel.exe ./CALPUFF_INP/calpuff.inp
+  echo " ---> FINISHED ###"
+  #Rename and move output files from second 24 hours:
+  echo -n "### RENAMING AND MOVING CALPUFF OUTPUT FILES FROM SECOND 24 HOURS"
+  for i in `seq 1 24`; do
+    let "j = i + 24"
+    i2=`printf "%02d" $i`
+    j2=`printf "%02d" $j`
+    mv concrec0100${i2}.dat concrec0100${j2}.dat
+    mv concrec0200${i2}.dat concrec0200${j2}.dat
+  done
+  mv concrec*.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
+  rm -rf *.con *.lst *.dat *.clr *.bna *.grd
   echo " ---> FINISHED ###"
 fi
 
