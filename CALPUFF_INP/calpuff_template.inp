@@ -1728,7 +1728,7 @@ Subgroup (13a)
 ---------------
 
      Number of point sources with
-     parameters provided below      (NPT1)  No default  !  NPT1 =  0  !
+     parameters provided below      (NPT1)  No default  !  NPT1 =  1  !
 
      Units used for point source
      emissions below                (IPTU)  Default: 1  !  IPTU =   1  !
@@ -1770,6 +1770,9 @@ Subgroup (13b)
               (km)      (km)       (m)      (m)       (m)  (m/s) (deg. K)         
   ------   ---------- ---------- ------  ------   -------- ----- -------- ----- --------
 
+1 ! SRCNAM = MASAYA1 !
+1 ! X    =  590.689, 1324.874,       0,     520,   500,   1.0, 350, 0.,    3400 !
+!END!
 
 --------
 
@@ -1912,7 +1915,7 @@ Subgroup (14a)
 ---------------
 
      Number of polygon area sources with
-     parameters specified below (NAR1)       No default  !  NAR1 =  1   !
+     parameters specified below (NAR1)       No default  !  NAR1 =  0   !
 
      Units used for area source
      emissions below            (IARU)       Default: 1  !  IARU =   1  !
@@ -1950,9 +1953,9 @@ Source           Effect.    Base      Initial    Emission
  No.             Height   Elevation   Sigma z     Rates
                    (m)       (m)        (m)      
 -------          ------    ------     --------   ---------
-! SRCNAM = MASAYA2 !
-! X = 0, 520, 50, 0.004 !
-!END!
+* SRCNAM = MASAYA2 *
+* X = 0, 520, 50, 0.004 *
+*END*
 
 --------
     a
@@ -1973,10 +1976,10 @@ Subgroup (14c)
 Source                                                               a
  No.       Ordered list of X followed by list of Y, grouped by source
 ------     ------------------------------------------------------------
-1 ! SRCNAM = MASAYA2 !
-1 ! XVERT = 590.495, 590.740, 590.702, 590.435!
-1 ! YVERT = 1324.876, 1324.831, 1325.058, 1325.078!
-!END!
+1 * SRCNAM = MASAYA2 *
+1 * XVERT = 590.495, 590.740, 590.702, 590.435*
+1 * YVERT = 1324.876, 1324.831, 1325.058, 1325.078*
+*END*
 
 --------
     a
