@@ -6,7 +6,13 @@ module load intel/17.0.0
 module load python2 python-libs
 
 #Read in command line arguments and set subsequent variables
-rundate=$1
+if [ $# -eq 0 ]
+  then
+    rundate=$(date +%Y%m%d)
+else
+  rundate=$1
+fi
+echo ${rundate}
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
 enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
