@@ -15,10 +15,11 @@ Output: vis/<date>/static_concrec0100**.png and vis/<date>/google_concrec0100**.
 """
 
 import numpy as np
+import matplotlib as mpl
+mpl.use('Agg')
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import matplotlib as mpl
 import os
 import utm
 import datetime as dt

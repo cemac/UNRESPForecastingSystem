@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/bash --login
 
 #Setup environment
 set -e #stop at first error
