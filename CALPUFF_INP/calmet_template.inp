@@ -278,10 +278,10 @@ INPUT GROUP: 2 -- Map Projection and Grid control parameters
      Rectangular grid defined for projection PMAP,
      with X the Easting and Y the Northing coordinate
 
-            No. X grid cells (NX)      No default     ! NX =   91  !
-            No. Y grid cells (NY)      No default     ! NY =   55  !
+            No. X grid cells (NX)      No default     ! NX =   ?NX?  !
+            No. Y grid cells (NY)      No default     ! NY =   ?NY?  !
 
-     Grid spacing (DGRIDKM)            No default     ! DGRIDKM = 1. !
+     Grid spacing (DGRIDKM)            No default     ! DGRIDKM = ?DGRIDKM? !
                                        Units: km
 
      Reference grid coordinate of

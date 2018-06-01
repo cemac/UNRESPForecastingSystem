@@ -3838,7 +3838,7 @@ c --- Open the file
 c       open(ioinp,file=datafil(k),form='UNFORMATTED',status='OLD',
 c    &               access='TRANSPARENT',recl=1)
         open(ioinp,file=datafil(k),form=cform,status='OLD',
-     &               access=caccess,recl=irecl,iostat=ierr)
+     &               recl=irecl,iostat=ierr)
 c                    Read the binary data with "transparent access".
       if(ierr.NE.0) call OPEN_ERR(iolst,'SETSRTM','Data File',
      &                            datafil(k),ioinp)
