@@ -198,9 +198,9 @@ INPUT GROUP: 2 -- Map Projection and Grid Information for Output
      (YREFKM)                   No Default      ! YREFKM = 1294.23926 !
 
      Cartesian grid definition
-     No. X grid cells (NX)      No default      ! NX =   91  !
-     No. Y grid cells (NY)      No default      ! NY =   55  !
-     Grid Spacing (DGRIDKM)     No default      ! DGRIDKM = 1. !
+     No. X grid cells (NX)      No default      ! NX =   ?NX?  !
+     No. Y grid cells (NY)      No default      ! NY =   ?NY?  !
+     Grid Spacing (DGRIDKM)     No default      ! DGRIDKM = ?DGRIDKM? !
      in kilometers
 
 

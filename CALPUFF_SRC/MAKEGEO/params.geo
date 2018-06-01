@@ -6,7 +6,7 @@ c --- Specify model version
       parameter(mver='3.2',mlevel='110401')
 c
 c --- Specify parameters
-      parameter(mxnx=464,mxny=400,mxcat=52,mxocat=52)
+      parameter(mxnx=901,mxny=541,mxcat=52,mxocat=52)
       parameter(ncell=mxnx*mxny)
       parameter(iomesg=0)
       parameter(io2=2,io3=3,io4=4,io5=5,io6=16,io7=7,io8=8)

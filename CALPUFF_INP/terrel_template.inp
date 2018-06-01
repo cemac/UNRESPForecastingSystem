@@ -29,7 +29,7 @@ Subgroup (0a)
      the specified modeling domain.  This information can be helpful
      when assembling the data files for an application.
 
-     (NTDF)                     Default: 0      ! NTDF = 1 !
+     (NTDF)                     Default: 0      ! NTDF = 4 !
 
 
      Other Input and Output files:
@@ -99,7 +99,11 @@ Subgroup (0b)
     (GEN)      designates Generic data files
     (GEOTIFF)  designates GEOTIFF data files
 
-     1 !GTOPO30 = data/w100n40.dem !     !END!
+     1 *GTOPO30 = data/w100n40.dem *     *END*
+     1 !SRTM3 = data/n11w086.bil !     !END!
+     2 !SRTM3 = data/n11w087.bil !     !END!
+     3 !SRTM3 = data/n12w086.bil !     !END!
+     4 !SRTM3 = data/n12w087.bil !     !END!
 
 
 -------------
@@ -446,9 +450,9 @@ INPUT GROUP: 2 -- Map Projection and Grid Information for Output
 
      Cartesian grid definition
      (Used only if IGRID=1,2)
-     No. X grid cells (NX)      No default      ! NX =   91  !
-     No. Y grid cells (NY)      No default      ! NY =   55  !
-     Grid Spacing (km)(DGRIDKM) No default      ! DGRIDKM = 1.0 !
+     No. X grid cells (NX)      No default      ! NX =   ?NX?  !
+     No. Y grid cells (NY)      No default      ! NY =   ?NY?  !
+     Grid Spacing (km)(DGRIDKM) No default      ! DGRIDKM = ?DGRIDKM? !
 
      Polar grid definition -- enter ring distances and ray angles
                               in Input Group 3

@@ -10,7 +10,7 @@ c --- Specify parameters
 c      parameter(mxpuff=100000)
       parameter(mxpuff=300000)
       parameter(mxspec=35)
-      parameter(mxnx=400,mxny=400,mxnz=27)
+      parameter(mxnx=901,mxny=541,mxnz=27)
       parameter(mxnxg=400,mxnyg=400,mxrec=20000,mxrgrp=20)
       parameter(mxrfog=40)
       parameter(mxss=350,mxus=99,mxps=700)

@@ -838,11 +838,11 @@ METEOROLOGICAL Grid (outermost if nested CALMET grids are used):
      Rectangular grid defined for projection PMAP,
      with X the Easting and Y the Northing coordinate
 
-            No. X grid cells (NX)      No default     ! NX =  91   !
-            No. Y grid cells (NY)      No default     ! NY =  55   !
+            No. X grid cells (NX)      No default     ! NX =  ?NX?   !
+            No. Y grid cells (NY)      No default     ! NY =  ?NY?   !
          No. vertical layers (NZ)      No default     ! NZ =  24   !
 
-           Grid spacing (DGRIDKM)      No default     ! DGRIDKM = 1.0 !
+           Grid spacing (DGRIDKM)      No default     ! DGRIDKM = ?DGRIDKM? !
                                        Units: km
 
                 Cell face heights
@@ -874,10 +874,10 @@ COMPUTATIONAL Grid:
                   (1 <= JBCOMP <= NY)
 
 
-        X index of UR corner (IECOMP)      No default     ! IECOMP =  91   !
+        X index of UR corner (IECOMP)      No default     ! IECOMP =  ?NX?   !
                   (1 <= IECOMP <= NX)
 
-        Y index of UR corner (JECOMP)      No default     ! JECOMP =  55   !
+        Y index of UR corner (JECOMP)      No default     ! JECOMP =  ?NY?   !
                   (1 <= JECOMP <= NY)
 
 

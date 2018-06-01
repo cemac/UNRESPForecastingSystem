@@ -12,7 +12,6 @@ if [ $# -eq 0 ]
 else
   rundate=$1
 fi
-echo ${rundate}
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
 enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
@@ -35,6 +34,13 @@ runCALMET=true
 runCALPUFF=true
 runVIS=true
 
+#Set other parameters
+res=500 #Resolution (m) of intended CALPUFF grid. Should be an integer that is > 100 and < 1000
+let NX=90000/$res+1
+let NY=54000/$res+1
+DGRIDKM=$(echo "scale=3; $res/1000" | bc)
+let MESHGLAZ=1000/$res+1
+
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
 ###TERREL###
@@ -56,6 +62,10 @@ if [ "$runTERREL" = true ]; then
   find . ! -name 'README' -type f -exec rm -f {} +
   cd ../..
   echo " ---> FINISHED ###"
+  #Update input file:
+  echo -n "### SETTING UP TERREL INPUT FILE"
+  sed -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/terrel_template.inp > ./CALPUFF_INP/terrel.inp
+  echo " ---> FINISHED ###"
   #Run TERREL:
   echo "### RUNNING TERREL"
   ./CALPUFF_EXE/terrel_intel.exe ./CALPUFF_INP/terrel.inp > terrel.log
@@ -72,7 +82,7 @@ if [ "$runCTGPROC" = true ]; then
   cd CALPUFF_EXE
   if [ ! -f ./ctgproc_intel.exe ]; then
       echo -n "### COMPILING CTGPROC"
-      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/CTGPROC/ctgproc.for -o ctgproc_intel.exe
+      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CTGPROC/ctgproc.for -o ctgproc_intel.exe
       echo " ---> FINISHED ###"
   else
       echo "### CTGPROC ALREADY COMPILED ###"
@@ -84,6 +94,10 @@ if [ "$runCTGPROC" = true ]; then
   cd CALPUFF_OUT/CTGPROC
   find . ! -name 'README' -type f -exec rm -f {} +
   cd ../..
+  echo " ---> FINISHED ###"
+  #Update input file:
+  echo -n "### SETTING UP CTGPROC INPUT FILE"
+  sed -e "s/?MESHGLAZ?/$MESHGLAZ/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/ctgproc_template.inp > ./CALPUFF_INP/ctgproc.inp
   echo " ---> FINISHED ###"
   #Run CTGPROC:
   echo "### RUNNING CTGPROC"
@@ -118,6 +132,10 @@ if [ "$runMAKEGEO" = true ]; then
   cd CALPUFF_OUT/MAKEGEO
   find . ! -name 'README' -type f -exec rm -f {} +
   cd ../..
+  echo " ---> FINISHED ###"
+  #Update input file:
+  echo -n "### SETTING UP MAKEGEO INPUT FILE"
+  sed -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/makegeo_template.inp > ./CALPUFF_INP/makegeo.inp
   echo " ---> FINISHED ###"
   #Run MAKEGEO:
   echo "### RUNNING MAKEGEO"
@@ -181,7 +199,7 @@ if [ "$runCALMET" = true ]; then
   cd CALPUFF_EXE
   if [ ! -f ./calmet_intel.exe ]; then
       echo -n "### COMPILING CALMET"
-      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/CALMET/calmet.for -o calmet_intel.exe
+      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALMET/calmet.for -o calmet_intel.exe
       echo " ---> FINISHED ###"
   else
       echo "### CTGPROC ALREADY COMPILED ###"
@@ -202,7 +220,8 @@ if [ "$runCALMET" = true ]; then
   #Update input file:
   echo -n "### SETTING UP CALMET INPUT FILE"
   sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$endYear/g" \
--e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?3DDAT?/met_${rundate}.dat/g" ./CALPUFF_INP/calmet_template.inp > ./CALPUFF_INP/calmet.inp
+-e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?3DDAT?/met_${rundate}.dat/g" \
+-e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/calmet_template.inp > ./CALPUFF_INP/calmet.inp
   echo " ---> FINISHED ###"
   #Run CALMET:
   echo "### RUNNING CALMET"
@@ -223,7 +242,7 @@ if [ "$runCALPUFF" = true ]; then
       cd CALPUFF_SRC/CALPUFF
       ifort -c modules.for
       cd ../../CALPUFF_EXE
-      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/CALPUFF/calpuff.for ../CALPUFF_SRC/CALPUFF/modules.o -o calpuff_intel.exe
+      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALPUFF/calpuff.for ../CALPUFF_SRC/CALPUFF/modules.o -o calpuff_intel.exe
       cd ..
       echo " ---> FINISHED ###"
   else
@@ -252,7 +271,8 @@ if [ "$runCALPUFF" = true ]; then
   sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$midYear/g" \
 -e "s/MMe/$midMonth/g" -e "s/DDe/$midDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
 -e "s/?RSTARTB?/restart_$rundate.dat/g" -e "s/?RSTARTE?/restart_$middate.dat/g" \
--e "s/?MRES?/$mres/g" ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
+-e "s/?MRES?/$mres/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" \
+./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
   #Run CALPUFF for first 24 hours:
   echo "### RUNNING CALPUFF FOR FIRST 24 HOURS"
@@ -270,7 +290,8 @@ if [ "$runCALPUFF" = true ]; then
   sed -e "s/YYYYb/$midYear/g" -e "s/MMb/$midMonth/g" -e "s/DDb/$midDay/g" -e "s/YYYYe/$endYear/g" \
 -e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
 -e "s/?RSTARTB?/restart_$middate.dat/g" -e "s/?RSTARTE?/restart_$enddate.dat/g" \
--e "s/?MRES?/1/g" ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
+-e "s/?MRES?/1/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" \
+./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
   #Run CALPUFF for second 24 hours:
   echo "### RUNNING CALPUFF FOR SECOND 24 HOURS"

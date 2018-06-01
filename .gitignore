@@ -17,6 +17,9 @@ CALPUFF_OUT/CALMET/*/
 CALPUFF_OUT/CALPUFF/*/
 vis/*/
 
+CALPUFF_INP/terrel.inp
+CALPUFF_INP/ctgproc.inp
+CALPUFF_INP/makegeo.inp
 CALPUFF_INP/calmet.inp
 CALPUFF_INP/calpuff.inp
 updateNDrive.sh

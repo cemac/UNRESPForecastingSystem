@@ -8,7 +8,7 @@ c --- Specify model version
       parameter(mver='7.0.0',mlevel='150211')
 
 c --- Specify parameters
-      parameter (mxnx=464,mxny=400,mxcat=38)
+      parameter (mxnx=901,mxny=541,mxcat=38)
       parameter (iocnt=1,ioinp=2,ioprev=3,ioout=4,iolst=16,iomesg=0)
       parameter (iogshhs=31,iobln=32)
       parameter (iosnow=33,iosng=34,iolug=35)
