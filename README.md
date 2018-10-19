@@ -9,10 +9,11 @@ An automated forecasting system has been created that uses the CALPUFF dispersio
 
 ## Requirements ##
 
-This has been designed to run on CentOS systems.
+This has been designed to run on CentOS systems. **ecCodes does not work with 
+python 3**
 
 * [ecCodes python API](https://confluence.ecmwf.int//display/ECC/Releases)
-* [Python 3](https://www.anaconda.com/download)
+* [Python 2](https://www.anaconda.com/download)
 
 ## Usage ##
 
