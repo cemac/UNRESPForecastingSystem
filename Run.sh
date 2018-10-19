@@ -1,5 +1,7 @@
 #!/usr/bin/bash --login
 
+#This script was created by CEMAC (University of Leeds) as part of the UNRESP
+#Project
 #Setup environment
 set -e #stop at first error
 module load intel/17.0.0
@@ -35,7 +37,7 @@ runCALPUFF=true
 runVIS=true
 
 #Set other parameters
-res=500 #Resolution (m) of intended CALPUFF grid. Should be an integer that is > 100 and < 1000
+res=1000 #Resolution (m) of intended CALPUFF grid. Should be an integer that is > 100 and < 1000
 let NX=90000/$res+1
 let NY=54000/$res+1
 DGRIDKM=$(echo "scale=3; $res/1000" | bc)
@@ -49,7 +51,7 @@ if [ "$runTERREL" = true ]; then
   cd CALPUFF_EXE
   if [ ! -f ./terrel_intel.exe ]; then
       echo -n "### COMPILING TERREL"
-      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/TERREL/terrel.for -o terrel_intel.exe 
+      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/TERREL/terrel.for -o terrel_intel.exe
       echo " ---> FINISHED ###"
   else
       echo "### TERREL ALREADY COMPILED ###"
@@ -170,7 +172,7 @@ if [ "$run3DDAT" = true ]; then
       if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
 	echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
 	#Entire GRIB file:
-	#wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2 
+	#wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2
 	#Subset of GRIB file using GRIB filter (http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl):
 	curl "http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl?file=nam.t00z.afwaca"${hour}".tm00.grib2&"\
 "lev_1000_mb=on&lev_100_mb=on&lev_10_mb=on&lev_150_mb=on&lev_200_mb=on&lev_20_mb=on&lev_250_mb=on&"\
