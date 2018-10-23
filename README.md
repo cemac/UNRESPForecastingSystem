@@ -1,3 +1,9 @@
+<div align="center">
+<a href="https://www.cemac.leeds.ac.uk/">
+  <img src="https://github.com/cemac/cemac_generic/blob/master/Images/cemac.png"></a>
+  <br>
+</div>
+
 # UNRESP Forecasting System
 
 Repository for the [UNRESP](https://vumo.cloud/) Forecasting System:
@@ -5,11 +11,12 @@ Repository for the [UNRESP](https://vumo.cloud/) Forecasting System:
 An automated forecasting system has been created that uses the CALPUFF dispersion model to predict S02 and S04 concentrations around the Masaya volcano. This is based on the current forecasting system implemented by IMO, but with modifications and improvements.
 
 ## Description ##
-*Coming soon*
+
+The repository hosts the scripts required to run the CALPUFF dispersion model to predict SO2 concentrations around the Masaya volcano forecasting for 48 hours using NAM data. The hourly output is plotted in individual png files and collated into a mp4 movie.
 
 ## Requirements ##
 
-This has been designed to run on CentOS systems. **ecCodes does not work with 
+This has been designed to run on CentOS systems. **[currently](https://confluence.ecmwf.int/display/ECC/ecCodes+installation) ecCodes does not work with
 python 3**
 
 * [ecCodes python API](https://confluence.ecmwf.int//display/ECC/Releases)
