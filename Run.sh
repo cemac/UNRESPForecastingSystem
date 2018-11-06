@@ -328,7 +328,7 @@ if [ "$runVIS" = true ]; then
 fi
 cwd=$(pwd)
 FNAME=$(date +%Y%m%d)
-VIZPATH=$'~/public_html/UNRESP/UNRESP_VIZ/'
+VIZPATH=~/public_html/UNRESP/UNRESP_VIZ/
 cd vis/$FNAME
 mogrify -format jpg *.png
 if [ ! -e $VIZPATH$FNAME ]
