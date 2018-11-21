@@ -1,0 +1,76 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+html {
+  background: #0e1a25;
+  font-size: 0.625em;
+}
+
+.soc {
+  display: block;
+  font-size: 0;
+  list-style: none;
+  margin: 0;
+  padding: 48px;
+  padding: 4.8rem;
+  text-align: center;
+}
+.soc li {
+  display: inline-block;
+  margin: 12px;
+  margin: 1.2rem;
+}
+.soc a, .soc svg {
+  display: block;
+}
+.soc a {
+  position: relative;
+  height: 96px;
+  height: 9.6rem;
+  width: 96px;
+  width: 9.6rem;
+}
+.soc svg {
+  height: 100%;
+  width: 100%;
+}
+
+.icon-1:hover, .icon-2:hover, .icon-3:hover {
+  border-radius: 100%;
+  color: #343638;
+  fill: #343638;
+  -webkit-transform: scale(1.25);
+          transform: scale(1.25);
+  transition: background-color 0.5s, -webkit-transform 0.5s ease-out;
+  transition: background-color 0.5s, transform 0.5s ease-out;
+  transition: background-color 0.5s, transform 0.5s ease-out, -webkit-transform 0.5s ease-out;
+}
+
+.icon-1 {
+  color: #0e1a25;
+  fill: #0e1a25;
+}
+.icon-1:hover {
+  background: #26d991;
+}
+
+.icon-2 {
+  color: #2691d9;
+  fill: #2691d9;
+}
+.icon-2:hover {
+  background: #26d991;
+}
+
+.icon-3 {
+  color: #0077B5;
+  fill: #0077B5;
+}
+.icon-3:hover {
+  background: #26d991;
+}

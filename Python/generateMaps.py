@@ -203,7 +203,44 @@ for j, file in enumerate(filePaths):
         PNGpath = os.path.join(outDir, PNGfile)
         plt.savefig(PNGpath, dpi=250)
         plt.close()
+
+        plt.figure(figsize=(16, 12))
+        bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin, urcrnrlon=lonMax, urcrnrlat=latMax)
+        bmap.etopo() # try shadedrelief() too
+        bmap.pcolormesh(glon, glat, concMask, norm=norm, cmap=cmap, alpha=0.5)
+        cbar = bmap.colorbar(location='bottom', pad='20%', cmap=cmap, norm=norm, boundaries=[0.] + binLims + [100000.],
+                             extend='both', extendfrac='auto', ticks=binLims,
+                             spacing='uniform')
+        cbar.set_label(label=r'SO$_{2}$ concentration (ug/m$^{3}$)', fontsize=18)
+        cbar.ax.tick_params(labelsize=16)
+        cbar.solids.set(alpha=1)
+        latTicks = np.arange(round(latMin, 1), round(latMax, 1)+0.1, 0.1)
+        lonTicks = np.arange(round(lonMin, 1), round(lonMax, 1)+0.1, 0.2)
+        bmap.drawparallels(latTicks, labels=[1, 0, 0, 0], linewidth=0.0, fontsize=16)
+        bmap.drawmeridians(lonTicks, labels=[0, 0, 0, 1], linewidth=0.0, fontsize=16)
+        font = FontProperties()
+        font.set_weight('bold')
+        #font.set_family('sans-serif')
+        font.set_family('monospace')
+        for i, town in enumerate(towns):
+            plt.plot(townCoords[i][0], townCoords[i][1], 'ok', markersize=4)
+            plt.text(townCoords[i][0], townCoords[i][1], town, color='white', fontproperties=font, fontsize=11)
+        for i, city in enumerate(cities):
+            plt.plot(cityCoords[i][0], cityCoords[i][1], 'sk', markersize=6)
+            plt.text(cityCoords[i][0], cityCoords[i][1], city, fontproperties=font, fontsize=16)
+        font0 = FontProperties()
+        font0.set_family('monospace')
+        plt.plot(volcCoords[0], volcCoords[1], '^r', markersize=6)
+        plt.suptitle(so2title, fontsize=24)
+        plt.title(dates[j].strftime('%c'), fontsize=18)
+        PNGfile = 'static_topo' + file[-17:-4] + '.png'
+        print("Writing out file "+PNGfile)
+        PNGpath = os.path.join(outDir, PNGfile)
+        plt.savefig(PNGpath, dpi=250)
+        plt.close()
     # Plot google maps:
+    '''
+
     if generateGoogleMaps:
         gmap = gmplot.GoogleMapPlotter(min(lat)+np.ptp(lat)/2.,min(lon)+np.ptp(lon)/2.,zoom=11)
         for i in np.arange(0, nx):
@@ -221,3 +258,4 @@ for j, file in enumerate(filePaths):
         print("Writing out file "+HTMLfile)
         gmap.draw(os.path.join(outDir, HTMLfile))
 plt.ion()  # turn on interactive ploting
+'''
