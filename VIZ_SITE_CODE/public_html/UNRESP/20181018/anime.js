@@ -15,7 +15,7 @@ function animate_fwd(){
                 viewPic(current_image);
                 current_image++;
                 setTimeout("animate_fwd()",300);
-        }
+        }       
 }
 function viewPic(nr){
         document.animation.src=theImages[nr].src;
@@ -49,7 +49,7 @@ var viewporthalfwidth=300;
 var xposclick=400;
 function clickflip(e){
     var evt=window.event || e
-    if (evt.pageX)
+    if (evt.pageX) 
       xposclick = evt.pageX
     if (typeof window.innerWidth != 'undefined')
       { viewportwidth = window.innerWidth  }

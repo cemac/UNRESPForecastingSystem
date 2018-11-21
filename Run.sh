@@ -338,5 +338,7 @@ fi
 mv *.jpg $VIZPATH$FNAME
 cd $VIZPATH
 ln -sf $VIZPATH$FNAME/*.jpg .
+setfacl -m other:r-x *
+chmod og+rx *
 cd $cwd
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"
