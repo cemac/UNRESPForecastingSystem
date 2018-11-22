@@ -157,6 +157,17 @@ format=png32&\
 f=image" %\
 (bmap.llcrnrlon, bmap.llcrnrlat, bmap.urcrnrlon, bmap.urcrnrlat, bmap.epsg, bmap.epsg, xpixels, bmap.aspect*xpixels,96)
     ESRIimg = mpimg.imread(esri_url)
+    esri_url2 = \
+        "http://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/export?\
+bbox=%s,%s,%s,%s&\
+bboxSR=%s&\
+imageSR=%s&\
+size=%s,%s&\
+dpi=%s&\
+format=png32&\
+f=image" %\
+(bmap.llcrnrlon, bmap.llcrnrlat, bmap.urcrnrlon, bmap.urcrnrlat, bmap.epsg, bmap.epsg, xpixels, bmap.aspect*xpixels,96)
+    ESRIimg2 = mpimg.imread(esri_url2)
 for j, file in enumerate(filePaths):
     # Read in concentration data:
     f = open(file, 'r')
@@ -206,7 +217,7 @@ for j, file in enumerate(filePaths):
 
         plt.figure(figsize=(16, 12))
         bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin, urcrnrlon=lonMax, urcrnrlat=latMax)
-        bmap.etopo() # try shadedrelief() too
+        bmap.imshow(ESRIimg2, origin='upper')
         bmap.pcolormesh(glon, glat, concMask, norm=norm, cmap=cmap, alpha=0.5)
         cbar = bmap.colorbar(location='bottom', pad='20%', cmap=cmap, norm=norm, boundaries=[0.] + binLims + [100000.],
                              extend='both', extendfrac='auto', ticks=binLims,
@@ -224,7 +235,7 @@ for j, file in enumerate(filePaths):
         font.set_family('monospace')
         for i, town in enumerate(towns):
             plt.plot(townCoords[i][0], townCoords[i][1], 'ok', markersize=4)
-            plt.text(townCoords[i][0], townCoords[i][1], town, color='white', fontproperties=font, fontsize=11)
+            plt.text(townCoords[i][0], townCoords[i][1], town, color='white', fontproperties=font, fontsize=14)
         for i, city in enumerate(cities):
             plt.plot(cityCoords[i][0], cityCoords[i][1], 'sk', markersize=6)
             plt.text(cityCoords[i][0], cityCoords[i][1], city, fontproperties=font, fontsize=16)
