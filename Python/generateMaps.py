@@ -199,7 +199,7 @@ for j, file in enumerate(filePaths):
         font.set_family('monospace')
         for i, town in enumerate(towns):
             plt.plot(townCoords[i][0], townCoords[i][1], 'ok', markersize=4)
-            plt.text(townCoords[i][0], townCoords[i][1], town, color='white', fontproperties=font, fontsize=11)
+            plt.text(townCoords[i][0], townCoords[i][1], town, color='white', fontproperties=font, fontsize=12)
         for i, city in enumerate(cities):
             plt.plot(cityCoords[i][0], cityCoords[i][1], 'sk', markersize=6)
             plt.text(cityCoords[i][0], cityCoords[i][1], city, fontproperties=font, fontsize=16)
@@ -235,7 +235,7 @@ for j, file in enumerate(filePaths):
         font.set_family('monospace')
         for i, town in enumerate(towns):
             plt.plot(townCoords[i][0], townCoords[i][1], 'ok', markersize=4)
-            plt.text(townCoords[i][0], townCoords[i][1], town, color='white', fontproperties=font, fontsize=14)
+            plt.text(townCoords[i][0], townCoords[i][1], town, color='black', fontproperties=font, fontsize=12)
         for i, city in enumerate(cities):
             plt.plot(cityCoords[i][0], cityCoords[i][1], 'sk', markersize=6)
             plt.text(cityCoords[i][0], cityCoords[i][1], city, fontproperties=font, fontsize=16)
