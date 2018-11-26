@@ -22,7 +22,6 @@ Output: vis/<date>/static_concrec0100**.png and
 
 import numpy as np
 import matplotlib as mpl
-mpl.use('Agg')
 from mpl_toolkits.basemap import Basemap
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -34,6 +33,7 @@ import pytz
 from dateutil.parser import parse
 import argparse
 import gmplot
+mpl.use('Agg')
 
 
 def Read_Two_Column_File(file_name):
@@ -111,8 +111,8 @@ xunq, yunq = np.unique(x), np.unique(y)  # get unique x,y coordinates
 nx, ny = len(xunq), len(yunq)  # number of unique x,y coordinates
 # Use utm package to convert from x,y to lat,lon...
 # ...Nicaragua is UTM zone 16P, and we must convert to metres first:
-lat = [utm.to_latlon(x[i]*1000,y[i]*1000,16,'P')[0] for i in np.arange(0,len(x)) ]
-lon = [utm.to_latlon(x[i]*1000,y[i]*1000,16,'P')[1] for i in np.arange(0,len(x)) ]
+lat = [utm.to_latlon(x[i]*1000,y[i]*1000,16,'P')[0] for i in np.arange(0,len(x))]
+lon = [utm.to_latlon(x[i]*1000,y[i]*1000,16,'P')[1] for i in np.arange(0,len(x))]
 # Create gridded field of lat,lon of appropriate size:
 glat, glon = np.reshape(lat, (ny, nx)),  np.reshape(lon, (ny, nx))
 # Also grab range for static plots
@@ -129,8 +129,8 @@ y2unq.append(y2unq[-1]+(yunq[1]-yunq[0]))
 nx2, ny2 = len(x2unq), len(y2unq)
 x2grd, y2grd = np.meshgrid(x2unq, y2unq)
 x2, y2 = np.reshape(x2grd, (nx2*ny2)), np.reshape(y2grd, (nx2*ny2))
-lat2 = [utm.to_latlon(x2[i]*1000,y2[i]*1000,16,'P')[0] for i in np.arange(0,len(x2)) ]
-lon2 = [utm.to_latlon(x2[i]*1000,y2[i]*1000,16,'P')[1] for i in np.arange(0,len(x2)) ]
+lat2 = [utm.to_latlon(x2[i]*1000,y2[i]*1000,16,'P')[0] for i in np.arange(0,len(x2))]
+lon2 = [utm.to_latlon(x2[i]*1000,y2[i]*1000,16,'P')[1] for i in np.arange(0,len(x2))]
 glat2, glon2 = np.reshape(lat2, (ny2, nx2)),  np.reshape(lon2, (ny2, nx2))
 #####
 
