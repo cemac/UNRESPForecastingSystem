@@ -42,6 +42,8 @@ let NX=90000/$res+1
 let NY=54000/$res+1
 DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
+# VISUALISATION  PATH
+VIZPATH=~/public_html/UNRESP/UNRESP_VIZ/
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
@@ -326,19 +328,20 @@ if [ "$runVIS" = true ]; then
   cd ../..
   echo " ---> FINISHED ###"
 fi
-cwd=$(pwd)
-FNAME=$(date +%Y%m%d)
-VIZPATH=~/public_html/UNRESP/UNRESP_VIZ/
-cd vis/$FNAME
+
+echo "Adding latest VISUALISATION to website"
+
+cd vis/${rundate}
 mogrify -format jpg *.png
-if [ ! -e $VIZPATH$FNAME ]
+setfacl -m other:r-x *.jpg *.html
+chmod og+rx *.jpg *.html
+if [ ! -e $VIZPATH${rundate} ]
 then
-  mkdir $VIZPATH$FNAME
+  mkdir $VIZPATH${rundate}
 fi
-mv *.jpg $VIZPATH$FNAME
+mv *.jpg *.html $VIZPATH${rundate}
 cd $VIZPATH
-ln -sf $VIZPATH$FNAME/*.jpg .
-setfacl -m other:r-x *
-chmod og+rx *
+ln -sf $VIZPATH${rundate}/*.jpg .
+ln -sf $VIZPATH${rundate}/*.html .
 cd $cwd
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"
