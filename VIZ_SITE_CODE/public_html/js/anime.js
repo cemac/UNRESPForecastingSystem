@@ -6,6 +6,15 @@ function GoToImage(number){
         viewPic(number);
         document.control_form.SequenceForm.value=nameSequence;
 }
+function GoToImageG(){
+        var iframe = document.createElement("iframe"),
+        iframeWindow;
+        iframe.src = "google_concrec010001.html";
+        document.body.appendChild(iframe);
+        iframeWindow = iframe.contentWindow || iframe.contentDocument.parentWindow;
+        iframeWindow.onload = function(){
+        };
+}
 function animate_fwd(){
         if(play_mode==0){return;}
         if(current_image>last_pict){

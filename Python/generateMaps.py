@@ -85,6 +85,14 @@ font.set_weight('bold')
 font.set_family('monospace')
 #####
 
+if generateGoogleMaps:
+    codesFile = os.path.join('GM_API_KEY.txt')
+    assert os.path.exists(codesFile), "Can't find file GM_API_KEY.txt in same directory as python script"
+    f = open(codesFile, 'r')
+    lines = f.readlines()
+    f.close()
+    googlekey = lines[0].strip()
+
 # CHECK PATHS/FILES EXIST
 assert os.path.exists(concDir), "CALPUFF output directory does not exist for this date."
 assert os.path.exists(xyFile), "Cannot find data/xy_masaya.dat coordinate data file."
@@ -229,7 +237,8 @@ for fle, dat in zip(filePaths, dates):
 
     if generateGoogleMaps:
         gmap = gmplot.GoogleMapPlotter(min(lat) + np.ptp(lat) / 2.,
-                                       min(lon) + np.ptp(lon) / 2., zoom=11)
+                                       min(lon) + np.ptp(lon) / 2., zoom=11,
+                                       apikey=googlekey)
         for i in np.arange(0, nx):
             for j in np.arange(0, ny):
                 for k in np.arange(0, len(binLims)-1):
