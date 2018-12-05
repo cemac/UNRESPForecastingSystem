@@ -44,6 +44,7 @@ DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
 # VISUALISATION  PATH
 VIZPATH=~/public_html/UNRESP/UNRESP_VIZ/
+cwd=$(pwd)
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 

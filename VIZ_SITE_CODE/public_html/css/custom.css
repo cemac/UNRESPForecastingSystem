@@ -342,7 +342,7 @@ fieldset[disabled] .btn-default.active {
 
 .btn-primary {
     border-color: #3386da;
-    color: #fff;
+    color: #C0C0C0;
     background-color: #3386da;
     -webkit-transition: all .35s;
     -moz-transition: all .35s;
@@ -401,6 +401,11 @@ fieldset[disabled] .btn-primary.active {
 
 .btn-lg {
     padding: 15px 30px;
+}
+
+.btn-sm {
+    border-radius: 10px;
+    padding: 1px 2px;
 }
 
 ::-moz-selection {
