@@ -11,14 +11,14 @@ Although you can use them, for a more unique website, replace these images with 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <title>SO2 concentrations Masaya</title>
+    <title>SO2 and NO2 concentrations Masaya</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS: You can use this stylesheet to override any Bootstrap styles and/or apply your own styles -->
-    <link href="../../css/custom.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../../css/styles.css">
+    <link href="../../../css/custom.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../../../css/styles.css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -28,7 +28,7 @@ Although you can use them, for a more unique website, replace these images with 
 
     <!-- Custom Fonts from Google -->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-    <script language="javascript" type="text/javascript" src="../../js/anime.js"></script>
+    <script language="javascript" type="text/javascript" src="../../../js/anime.js"></script>
     <script language="javascript" type="text/javascript" >
       var last_pict=47;
       var nameSequence="Run";
@@ -37,13 +37,13 @@ Although you can use them, for a more unique website, replace these images with 
       for(var i=0;i<47;i++) {
                   theImages[i]=new Image();
                 }
-                  theImages[0].src="./NO2Recent.png";
-                  theImages[1].src="./NO2Jan2Apr.png";
-                  theImages[2].src="./NO2Apr2Jun.png";
-                  theImages[3].src="./NO2Jul2Oct.png";
-                  theImages[4].src="./SO2Jan2Apr.png";
-                  theImages[5].src="./SO2Apr2Jun.png";
-                  theImages[6].src="./SO2Jul2Oct.png";
+                  theImages[0].src="StationB/NO2Recent.png";
+                  theImages[1].src="ElPanama/NO2Jan2Apr.png";
+                  theImages[2].src="ElPanama/NO2Apr2Jun.png";
+                  theImages[3].src="ElPanama/NO2Jul2Oct.png";
+                  theImages[4].src="ElPanama/SO2Jan2Apr.png";
+                  theImages[5].src="ElPanama/SO2Apr2Jun.png";
+                  theImages[6].src="ElPanama/SO2Jul2Oct.png";
 
     </script>
 </head>
@@ -70,40 +70,40 @@ Although you can use them, for a more unique website, replace these images with 
             <div class="collapse navbar-collapse" id="navbar">
               <ul class="nav navbar-nav navbar-left">
                 <li>
-                  <a href="../../index.html">Home</a>
+                  <a href="../../../index.html">Home</a>
                 </li>
                 <li>
-                  <a href="../../About.html">About</a>
+                  <a href="../../../About.html">About</a>
                 </li>
 					      <li class="dropdown">
 						    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">UNRESP <span class="caret"></span></a>
 						    <ul class="dropdown-menu" aria-labelledby="about-us">
-							  <li><a href="../../UNRESP.html">UNRESP_HOME</a></li>
-                <li><a href="../20181018" >Original</a></li>
-                <li><a href="../20181019" >Update 1</a></li>
-							  <li><a href="./index.html" >Prototype</a></li>
+							  <li><a href="../../../UNRESP.html">UNRESP_HOME</a></li>
+                <li><a href="../../20181018" >Original</a></li>
+                <li><a href="../../20181019" >Update 1</a></li>
+							  <li><a href="./../../index.html" >Prototype</a></li>
 						    </ul>
 					      </li>
               </ul>
               <ul class="nav navbar-nav navbar-right">
                 <li>
-                <a href="./index.html">Satellite</a>
+                <a href="../index.html">Satellite</a>
                 </li>
                 <li>
-                <a href="./index_topo.html">Topo</a>
+                <a href="../index_topo.html">Topo</a>
                 </li>
-                <li class="active">
-                <a href="./index_AQts.html">SensorData</a>
+                <li>
+                <a href="../index_AQts.html">SensorData</a>
                 </li>
                 <li class="dropdown">
 						    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">AQSensor<span class="caret"></span></a>
 						    <ul class="dropdown-menu" aria-labelledby="about-us">
-							  <li><a href="./index_AQts.html">Today</a></li>
-                <li><a href="AQSensor/EP_index.html" >El Panama</a></li>
-                <li><a href="AQSensor/EC_index.html" >El Crucero</a></li>
-							  <li><a href="AQSensor/SJ_index.html" >San Juan</a></li>
-                <li><a href="AQSensor/A_index.html" >Station A</a></li>
-                <li><a href="AQSensor/B_index.html" >Station B</a></li>
+							  <li><a href="../index_AQts.html">Today</a></li>
+                <li><a href="./EP_index.html" >El Panama</a></li>
+                <li><a href="./EC_index.html" >El Crucero</a></li>
+							  <li><a href="./SJ_index.html" >San Juan</a></li>
+                <li class="active"><a href="./A_index.html" >Station A</a></li>
+                <li><a href="./B_index.html" >Station B</a></li>
 						    </ul>
 					      </li>
                 </ul>
@@ -117,13 +117,29 @@ Although you can use them, for a more unique website, replace these images with 
             <div class="col-sm-9">
               <center>
               <h1 class="section-heading"> UNRESP Sulphur Dioxide - SO<sub>2</sub> and NO<sub>2</sub> </h1>
-              <h2 style="color:#800000;"><span style="color:#800000;">Preliminary Sensor Data</span></h2>
-              <iframe width="650" height="300" frameborder="0" style="border:0" id="animation" src="./google_concrec010001.html" name="animation" alt="UNRESP - University of Leeds 2018"></iframe>
-              <h3 style="color:#800000;"><span style="color:#800000;">GoogleMaps in Free Mode will not load afer 25,000 loads / month</span></h2>
-              <table border="0" cellspacing="0" cellpadding="0" align="center">
+              <h2 style="color:#800000;"><span style="color:#800000;">Preliminary Station A Sensor Data</span></h2>
+               </center>
+              <p> Overview of down time  </p>
+              <div>
+              <div class="umid-left"> <span style="color:#800000;">NO<sub>2</sub> J-D 2018</span></div>
+        		  <p style="float: right;"><img src="StationA/NO22018.png " id="TimeSeires" name="TimeSeires" alt="UNRESP - University of Leeds 2018" style="width:100%;" height: auto;></p>
+              <p style="float: right;"><img src="StationA/SO22018.png " id="TimeSeires" name="TimeSeires" alt="UNRESP - University of Leeds 2018" style="width:100%;" height: auto;></p>
+              <div class="bmid-left"> <span style="color:#800000;">SO<sub>2</sub> J-D 2018</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="col-sm-9">
+              <p> Data Periods </p>
+              <img src="#" id="animation" name="animation" alt="UNRESP - University of Leeds 2018" style="width:100%;" height: auto;>
+
+              <table border="0" cellspacing="0" cellpadding="0">
             			<td>
-                    <a href="./google_concrec010001.html" target="animation" class="btn btn-primary btn-sm"> + NO2</a><br/>
-                    <a href="./google_concrec010002.html" target="animation" class="btn btn-primary btn-sm"> + SO2</a><br/>
+                    <a href="#" name="a1" onClick="GoToImage(0);"> NO2 Recent</a><br />
+                  </td>
+                  <td>
+                    <a href="#" name="a4" onClick="GoToImage(6);"> SO2 Recent</a><br />
+                  </td>
                   </table>
             </div>
         </div>
@@ -143,16 +159,16 @@ Although you can use them, for a more unique website, replace these images with 
   </footer>
 
   <!-- jQuery -->
-  <script src="../../js/jquery-1.11.3.min.js"></script>
+  <script src="../../../js/jquery-1.11.3.min.js"></script>
 
   <!-- Bootstrap Core JavaScript -->
-  <script src="../../js/bootstrap.min.js"></script>
+  <script src="../../../js/bootstrap.min.js"></script>
 
   <!-- Plugin JavaScript -->
-  <script src="../../js/jquery.easing.min.js"></script>
+  <script src="../../../js/jquery.easing.min.js"></script>
 
   <!-- Custom Javascript -->
-  <script src="../../js/custom.js"></script>
+  <script src="../../../js/custom.js"></script>
 
 </body>
 
