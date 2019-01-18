@@ -43,7 +43,7 @@ let NY=54000/$res+1
 DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
 # VISUALISATION  PATH
-VIZPATH=~/public_html/UNRESP/UNRESP_VIZ/
+VIZPATH=~/public_html/UNRESP_VIZ/
 cwd=$(pwd)
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
@@ -342,7 +342,6 @@ then
 fi
 mv *.jpg *.html $VIZPATH${rundate}
 cd $VIZPATH
-ln -sf $VIZPATH${rundate}/*.jpg .
-ln -sf $VIZPATH${rundate}/*.html .
+ln -sf $VIZPATH${rundate} Today
 cd $cwd
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"

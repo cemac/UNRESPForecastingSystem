@@ -16,7 +16,7 @@ if [ "$runVIS" = true ]; then
 fi
 cwd=$(pwd)
 FNAME=$(date +%Y%m%d)
-VIZPATH=~/public_html/UNRESP/UNRESP_VIZ/
+VIZPATH=~/public_html/UNRESP_VIZ/
 cd vis/$FNAME
 # mogrify -format jpg *.png
 setfacl -m other:r-x *
@@ -25,8 +25,7 @@ if [ ! -e $VIZPATH$FNAME ]
 then
   mkdir $VIZPATH$FNAME
 fi
-mv *.jpg *.html $VIZPATH$FNAME
+#mv *.jpg *.html $VIZPATH$FNAME
 cd $VIZPATH
-ln -sf $VIZPATH$FNAME/*.jpg .
-ln -sf $VIZPATH$FNAME/*.html .
+ln -sf $VIZPATH$FNAME/ Today
 cd $cwd
