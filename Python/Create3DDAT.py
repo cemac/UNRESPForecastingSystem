@@ -11,19 +11,6 @@ Output: File written to <root>/NAM_data/processed/met_<date>.dat
    https://github.com/cemac/UNRESPForecastingSystem
 """
 
-import gribapi
-import numpy as np
-from dateutil.parser import parse
-import datetime as dt
-import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
-import argparse
-import sys
-import os
-
-# Ensure most recent eccodes python packages are used
-sys.path.insert(1, os.getenv("HOME")+'/SW/eccodes-2.6.0/lib/python2.7/site-packages')
-
 
 def writeRec1():
     # DATASET='3D.DAT' #Dataset name
@@ -50,29 +37,25 @@ def writeRec3():
     IOUTI = 0  # ice/snow MR flag
     IOUTG = 0  # graupel MP flag
     IOSRF = 0  # create surface 2D files flag
-    fout.write(('{:3d}'*6+'\n').format(IOUTW, IOUTQ, IOUTC, IOUTI,
-                                       IOUTG, IOSRF))
+    fout.write(('{:3d}'*6+'\n').format(IOUTW,IOUTQ,IOUTC,IOUTI,IOUTG,IOSRF))
 
 
 def writeRec4():
     MAPTXT = 'LLC'  # Map projection (LLC=lat/lon)
-    RLATC = (lats[iLatMinGRIB]+lats[iLatMaxGRIB])/2.  # centre lat of GRIB subset grid
-    RLONC = (lons[iLonMinGRIB]+lons[iLonMaxGRIB])/2.  # centre lon of GRIB subset grid
+    RLATC = (lats[iLatMinGRIB]+lats[iLatMaxGRIB])/2.  # centre latitude of GRIB subset grid
+    RLONC = (lons[iLonMinGRIB]+lons[iLonMaxGRIB])/2.  # centre longitude of GRIB subset grid
     TRUELAT1 = lats[iLatMinGRIB]  # First latitude in GRIB subset grid
     TRUELAT2 = lats[iLatMinGRIB+1]  # Second latitude in GRIB subset grid
     X1DMN = 0.0  # Not used so set to zero
     Y1DMN = 0.0  # Not used so set to zero
     DXY = 0.0  # Not used so set to zero
-    fout.write(('{:4}{:9.4f}{:10.4f}'+'{:7.2f}'*2+'{:10.3f}'*2+'{:8.3f}'
-                + '{:4d}'*2+'{:3d}\n').
-               format(MAPTXT, RLATC, RLONC, TRUELAT1, TRUELAT2, X1DMN, Y1DMN,
-                      DXY, NX, NY, NZ))
+    fout.write(('{:4}{:9.4f}{:10.4f}'+'{:7.2f}'*2+'{:10.3f}'*2+'{:8.3f}'+'{:4d}'*2+'{:3d}\n').
+               format(MAPTXT,RLATC,RLONC,TRUELAT1,TRUELAT2,X1DMN,Y1DMN,DXY,NX,NY,NZ))
 
 
 def writeRec5():
     # Flags that aren't used unless using MM5 model
-    fout.write(('{:3d}'*23+'\n').format(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+    fout.write(('{:3d}'*23+'\n').format(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
 
 
 def writeRec6():
@@ -80,10 +63,8 @@ def writeRec6():
     IBMOM = int(date[4:6])  # Beginning month of GRIB data
     IBDYM = int(date[6:8])  # Beginning day of GRIB data
     IBHRM = 0  # Beginning hour (GMT) of GRIB data
-    NHRSMM5 = nfiles-1  # Length of period (hours of data in file
-    # (Replicate Sara's file but should possibly be 3* this value?)
-    fout.write(('{:4d}'+'{:02d}'*3+'{:5d}'+'{:4d}'*3 +
-                '\n').format(IBYRM, IBMOM, IBDYM, IBHRM, NHRSMM5, NX, NY, NZ))
+    NHRSMM5 = nfiles-1 #Length of period (hours of data in file (Replicate Sara's file but should possibly be 3* this value?)
+    fout.write(('{:4d}'+'{:02d}'*3+'{:5d}'+'{:4d}'*3+'\n').format(IBYRM,IBMOM,IBDYM,IBHRM,NHRSMM5,NX,NY,NZ))
 
 
 def writeRec7():
@@ -97,10 +78,7 @@ def writeRec7():
     RXMAX = lons[iLonMaxGRIB]  # E-most E longitude
     RYMIN = lats[iLatMinGRIB]  # S-most N latitude
     RYMAX = lats[iLatMaxGRIB]  # N-most N latitude
-    fout.write(('{:4d}'*6+'{:10.4f}'*2+'{:9.4f}'*2 +
-                '\n').format(NX1, NY1, NX2, NY2, NZ1, NZ2, RXMIN, RXMAX,
-                             RYMIN, RYMAX))
-
+    fout.write(('{:4d}'*6+'{:10.4f}'*2+'{:9.4f}'*2+'\n').format(NX1,NY1,NX2,NY2,NZ1,NZ2,RXMIN,RXMAX,RYMIN,RYMAX))
     SIGMA = np.array(levsIncl)/1013.25
     # Sigma-p values for each vertical layer (pressure/reference pressure)
     for s in SIGMA:
@@ -108,7 +86,7 @@ def writeRec7():
 
 
 def writeRec8():
-    IELEVDOT = 0  # terrain elevation above MSL (m). 0 to replicate Sara's file
+    IELEVDOT = 0  # terrain elevation above MSL (m). Set to zero for now to replicate Sara's file
     ILAND = -9  # Lansuse categories (set to -9 to replicae Sara's file)
     XLATCRS = -999  # Not used
     XLONGCRS = -999  # Not used
@@ -165,73 +143,63 @@ def writeRec9():
             RHgrd[:, :, k] = np.reshape(RHvals, (Nj, Ni), 'C')
         WSgrd = np.sqrt(Ugrd**2+Vgrd**2)  # Calculate wins speed (pythagoras)
         # Calculate wind direction:
-        # R, between [-pi,pi], +ve anticlock from +ve x-axis
-        WDgrd = np.arctan2(Vgrd, Ugrd)
-        # degrees, between [-180,180], +ve anticlock from +ve x-axis
-        WDgrd *= 180/np.pi
-        # degrees, between [0,360], +ve anticlock from negative x-axis (Since we specify the direction the wind is blowing FROM, not TO)
-        WDgrd += 180
-        # degrees, between [-360,0], +ve clockwise from negative x-axis (Since wind direction is +ve clockwise)
-        WDgrd =- WDgrd
-        # degrees, between [-270,90], +ve clockwise from +ve y-axis (Since wind direction is from North)
-        WDgrd += 90
-        # degrees, between [0,360], +ve clockwise from +ve y-axis (DONE!)
-        WDgrd = np.mod(WDgrd, 360)
+        WDgrd = np.arctan2(Vgrd,Ugrd) #radians, between [-pi,pi], positive anticlockwise from positive x-axis
+        WDgrd *= 180/np.pi # degrees, between [-180,180], positive anticlockwise from positive x-axis
+        WDgrd += 180 # degrees, between [0,360], positive anticlockwise from negative x-axis (Since we specify the direction the wind is blowing FROM, not TO)
+        WDgrd =- WDgrd #degrees, between [-360,0], positive clockwise from negative x-axis (Since wind direction is positive clockwise)
+        WDgrd += 90 #degrees, between [-270,90], positive clockwise from positive y-axis (Since wind direction is from North)
+        WDgrd = np.mod(WDgrd, 360)  # degrees, between [0,360], positive clockwise from positive y-axis (DONE!)
         # Loop over grid cells:
         for j in range(NY):
             JX = j+1  # J-index of grid cell
             for i in range(NX):
                 IX = i+1  # i-index of grid cell
-                fout.write(('{:4d}'+'{:02d}'*3+'{:3d}'*2+'{:7.1f}{:5.2f}{:2d}'+
-                            '{:8.1f}'*2+'\n').format(MYR, MMO, MDAY, MHR, IX,
-                                                     JX, PRES, RAIN, SC, RADSW, RADLW))
+                fout.write(('{:4d}'+'{:02d}'*3+'{:3d}'*2+'{:7.1f}{:5.2f}{:2d}'+'{:8.1f}'*2+'\n').format(MYR,MMO,MDAY,MHR,IX,JX,PRES,RAIN,SC,RADSW,RADLW))
                 for k in range(NZ):
                     PRES2 = levsIncl[k]  # Pressure (mb)
-                    # Elevation (m above sea level)
-                    Z = int(HGTgrd[iLatMinGRIB + j, iLonMinGRIB + i, k])
-                    # Temperature (Kelvin)
-                    TEMPK = TMPgrd[iLatMinGRIB + j, iLonMinGRIB + i, k]
-                    # Wind direction (degrees)
-                    WD = int(WDgrd[iLatMinGRIB + j, iLonMinGRIB + i, k])
-                    # Wind speed (m/s)
-                    WS = WSgrd[iLatMinGRIB + j, iLonMinGRIB + i, k]
-                     # Vertical velocity (m/s)
-                    W = Wgrd[iLatMinGRIB + j, iLonMinGRIB + i, k]
-                    # Relative humidity (%)
-                    RH = int(RHgrd[iLatMinGRIB + j, iLonMinGRIB + i, k])
-
+                    Z = int(HGTgrd[iLatMinGRIB+j,iLonMinGRIB+i,k]) #Elevation (m above sea level)
+                    TEMPK=TMPgrd[iLatMinGRIB+j,iLonMinGRIB+i,k] #Temperature (Kelvin)
+                    WD=int(WDgrd[iLatMinGRIB+j,iLonMinGRIB+i,k]) #Wind direction (degrees)
+                    WS=WSgrd[iLatMinGRIB+j,iLonMinGRIB+i,k] #Wind speed (m/s)
+                    W=Wgrd[iLatMinGRIB+j,iLonMinGRIB+i,k] #Vertical velocity (m/s)
+                    RH=int(RHgrd[iLatMinGRIB+j,iLonMinGRIB+i,k]) #Relative humidity (%)
                     fout.write(('{:4d}{:6d}{:6.1f}{:4d}{:5.1f}{:6.2f}{:3d}{:5.2f}\n').format(PRES2,Z,TEMPK,WD,WS,W,RH,VAPMR))
         # Release all messages:
         for i in range(mcount):
             gribapi.grib_release(i+1)
 
 
-# READ IN COMMAND LINE ARGUMENTS
-parser = argparse.ArgumentParser(description="Script to generate input file to CALMET from NAM met data",
-                                 epilog="Example of use: ./Create3DDAT.py 20171204")
-parser.add_argument("date", help="Start date of NAM data in format YYYYMMDD, e.g. 20171204", type=str)
+import sys
+import os
+# Ensure most recent eccodes python packages are used
+sys.path.insert(1, os.getenv("HOME")+'/SW/eccodes-2.6.0/lib/python2.7/site-packages')
+import gribapi
+import numpy as np
+from dateutil.parser import parse
+import datetime as dt
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+import argparse
+
+######READ IN COMMAND LINE ARGUMENTS
+parser = argparse.ArgumentParser(description="Script to generate input file to CALMET from NAM met data",\
+   epilog="Example of use: ./Create3DDAT.py 20171204")
+parser.add_argument("date", help="Start date of NAM data in format YYYYMMDD, e.g. 20171204",type=str)
 args = parser.parse_args()
 date = args.date
 
-
-# PARAMETERS
+#####PARAMETERS
 latMinCP = 11.7  # Min lat of CALPUFF grid
 latMaxCP = 12.2  # Max lat of CALPUFF grid
 lonMinCP = 273.2  # Min lon of CALPUFF grid
 lonMaxCP = 274.1  # Max lon of CALPUFF grid
-inDir = '../NAM_data/raw/' + date  # Directory containing GRIB files
-# Number of GRIB files (files are 3 hourly, so 48 hours is 17 files
-# including hours 0 and 48)
-nfiles = 17
-outFile = '../NAM_data/processed/met_' + date + '.dat'  # Output file path
-# pressure levels to include in output
-levsIncl = [1000, 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 250, 200,
-            150, 100, 75, 50, 30, 20, 10, 7, 5, 2]
+inDir = '../NAM_data/raw/'+date  # Directory containing GRIB files
+nfiles = 17 #Number of GRIB files (files are 3 hourly, so 48 hours is 17 files including hours 0 and 48)
+outFile = '../NAM_data/processed/met_'+date+'.dat' #Output file path
+levsIncl = [1000,950,925,900,850,800,700,600,500,400,300,250,200,150,100,75,50,30,20,10,7,5,2] #pressure levels to include in output
 #####
 
-
-# SET FILENAMES
-
+#####SET FILENAMES
 filePrefix = 'nam.t00z.afwaca'
 fileSuffix = '.tm00.grib2'
 filenames = []
@@ -258,8 +226,7 @@ for i in range(mcount):
     levels.append(gribapi.grib_get(gid, 'level'))
 #####
 
-# GET REQUIRED GIDS (AT REQUIRED LEVELS)
-
+#####GET REQUIRED GIDS (AT REQUIRED LEVELS)
 gidPRMSL = varNames.index("prmsl")+1  # Pressure reduced to mean sea level
 gidHGT = np.flipud([i+1 for i in range(len(varNames)) if (varNames[i] == 'gh' and levels[i] in levsIncl)]) #Height
 gidTMP = np.flipud([i+1 for i in range(len(varNames)) if (varNames[i] == 't' and levels[i] in levsIncl)]) #Temperature
@@ -269,76 +236,65 @@ gidW = np.flipud([i+1 for i in range(len(varNames)) if (varNames[i] == 'wz' and 
 gidRH = np.flipud([i+1 for i in range(len(varNames)) if (varNames[i] == 'r' and levels[i] in levsIncl)]) #Relative humidity
 #####
 
-# GET LATS, LONS, NI AND NJ
-lats = gribapi.grib_get_array(gidPRMSL, 'distinctLatitudes')
-lons = gribapi.grib_get_array(gidPRMSL, 'distinctLongitudes')
-Ni = gribapi.grib_get(gidPRMSL, 'Ni')
-Nj = gribapi.grib_get(gidPRMSL, 'Nj')
+#####GET LATS, LONS, NI AND NJ
+lats = gribapi.grib_get_array(gidPRMSL,'distinctLatitudes')
+lons = gribapi.grib_get_array(gidPRMSL,'distinctLongitudes')
+Ni = gribapi.grib_get(gidPRMSL,'Ni')
+Nj = gribapi.grib_get(gidPRMSL,'Nj')
 #####
 
-
-# DETERMINE SUBDOMAIN INDICES BASED ON CALPUFF GRID EXTENT
-for i in range(len(lats) - 1):
-    if lats[i + 1] >= latMinCP:
-        iLatMinGRIB = i
+#####DETERMINE SUBDOMAIN INDICES BASED ON CALPUFF GRID EXTENT
+for i in range(len(lats)-1):
+    if lats[i+1] >= latMinCP:
+        iLatMinGRIB=i
         break
-for i in range(len(lats) - 1):
-    if lats[i + 1] > latMaxCP:
-        iLatMaxGRIB = i + 1
+for i in range(len(lats)-1):
+    if lats[i+1] > latMaxCP:
+        iLatMaxGRIB=i+1
         break
-for i in range(len(lons) - 1):
-    if lons[i + 1] >= lonMinCP:
-        iLonMinGRIB = i
+for i in range(len(lons)-1):
+    if lons[i+1] >= lonMinCP:
+        iLonMinGRIB=i
         break
-for i in range(len(lons) - 1):
-    if lons[i + 1] > lonMaxCP:
-        iLonMaxGRIB = i + 1
+for i in range(len(lons)-1):
+    if lons[i+1] > lonMaxCP:
+        iLonMaxGRIB=i+1
         break
 #####
 
-
-# SET SUBDOMAIN SIZE
-# NX, i.e. number of longitudes in GRIB subset grid
-NX = iLonMaxGRIB - iLonMinGRIB + 1
-# NY, i.e. number of latitudes in GRIB subset grid
-NY = iLatMaxGRIB - iLatMinGRIB + 1
-# NZ, i.e. number of levels to be extracted from GRIB subset grid
-NZ = len(levsIncl)
+#####SET SUBDOMAIN SIZE
+NX=iLonMaxGRIB-iLonMinGRIB+1 #NX, i.e. number of longitudes in GRIB subset grid
+NY=iLatMaxGRIB-iLatMinGRIB+1 #NY, i.e. number of latitudes in GRIB subset grid
+NZ=len(levsIncl) #NZ, i.e. number of levels to be extracted from GRIB subset grid
 #####
 
-
-# PLOT A MESSAGE
-# gidPlot=gidHGT[-2]
-# Ni=gribapi.grib_get(gidPlot,'Ni')
-# Nj=gribapi.grib_get(gidPlot,'Nj')
-# missingValue=gribapi.grib_get(gidPlot,"missingValue")
-# values=gribapi.grib_get_values(gidPlot)
-# msg=np.reshape(values,(Nj,Ni),'C')
-# msgmasked = np.ma.masked_values(msg,missingValue)
-# xx,yy=np.meshgrid(lons,lats)
-# map = Basemap(llcrnrlon=250,llcrnrlat=-10,urcrnrlon=310,urcrnrlat=40)
-# map.drawcoastlines()
-# map.drawcountries()
-# cs=map.contourf(xx,yy,msgmasked)
-# map.colorbar(cs)
-# plt.show()
+#####PLOT A MESSAGE
+#gidPlot=gidHGT[-2]
+#Ni=gribapi.grib_get(gidPlot,'Ni')
+#Nj=gribapi.grib_get(gidPlot,'Nj')
+#missingValue=gribapi.grib_get(gidPlot,"missingValue")
+#values=gribapi.grib_get_values(gidPlot)
+#msg=np.reshape(values,(Nj,Ni),'C')
+#msgmasked = np.ma.masked_values(msg,missingValue)
+#xx,yy=np.meshgrid(lons,lats)
+#map = Basemap(llcrnrlon=250,llcrnrlat=-10,urcrnrlon=310,urcrnrlat=40)
+#map.drawcoastlines()
+#map.drawcountries()
+#cs=map.contourf(xx,yy,msgmasked)
+#map.colorbar(cs)
+#plt.show()
 #####
 
-
-# RELEASE ALL MESSAGES
-
+#####RELEASE ALL MESSAGES
 for i in range(mcount):
     gribapi.grib_release(i+1)
 #####
 
-# OPEN OUTPUT FILE
-
-fout = open(outFile, 'w')
-
+#####OPEN OUTPUT FILE
+fout=open(outFile,'w')
 #####
 
-# WRITE RECORDS
-
+#####WRITE RECORDS
 writeRec1()
 writeRec2()
 writeRec3()
@@ -349,7 +305,6 @@ writeRec7()
 writeRec8()
 writeRec9()
 
-# CLOSE OUTPUT FILE
-
+#####CLOSE OUTPUT FILE
 fout.close()
 #####
