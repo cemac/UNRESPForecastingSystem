@@ -342,6 +342,6 @@ then
 fi
 mv *.jpg *.html $VIZPATH${rundate}
 cd $VIZPATH
-ln -sf $VIZPATH${rundate} Today
+ln -sf ${rundate} Today
 cd $cwd
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"
