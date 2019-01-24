@@ -27,5 +27,5 @@ then
 fi
 #mv *.jpg *.html $VIZPATH$FNAME
 cd $VIZPATH
-ln -sf $VIZPATH$FNAME/ Today
+ln -sf $FNAME Today
 cd $cwd
