@@ -328,20 +328,22 @@ if [ "$runVIS" = true ]; then
   ffmpeg -f image2 -r 4 -i static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
   cd ../..
   echo " ---> FINISHED ###"
-fi
 
-echo "Adding latest VISUALISATION to website"
+  echo "Adding latest VISUALISATION to website"
 
-cd vis/${rundate}
-mogrify -format jpg *.png
-setfacl -m other:r-x *.jpg *.html
-chmod og+rx *.jpg *.html
-if [ ! -e $VIZPATH${rundate} ]
-then
-  mkdir $VIZPATH${rundate}
+  cd vis/${rundate}
+  mogrify -format jpg *.png
+  rm -f *.png
+  setfacl -m other:r-x *.jpg *.html
+  chmod og+rx *.jpg *.html
+  if [ ! -e $VIZPATH${rundate} ]
+  then
+    mkdir $VIZPATH${rundate}
+  fi
+  mv *.jpg *.html $VIZPATH${rundate}
+  cd $VIZPATH
+  rm -f Today
+  ln -sf ${rundate} Today
+  cd $cwd
 fi
-mv *.jpg *.html $VIZPATH${rundate}
-cd $VIZPATH
-ln -sf ${rundate} Today
-cd $cwd
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"
