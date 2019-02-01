@@ -7,7 +7,6 @@ Purpose: Generate input file to CALMET from NAM met data
 Usage: ./Create3DDAT.py <date>
         <date> - Start date of NAM data in format YYYYMMDD, e.g. 20171204
 Output: File written to <root>/NAM_data/processed/met_<date>.dat
-
 .. CEMAC_UNRESP:
    https://github.com/cemac/UNRESPForecastingSystem
 """
