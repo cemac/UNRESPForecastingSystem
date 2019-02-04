@@ -1,6 +1,5 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-import matplotlib.pyplot as plt  # MUST BE AFTER mpl.use(Agg)!!
 """
 Script name: generateMaps.py
 Author: JO'N, CEMAC (University of Leeds)
@@ -34,6 +33,7 @@ from dateutil.parser import parse
 import argparse
 import gmplot
 mpl.use('Agg')
+import matplotlib.pyplot as plt  # MUST BE AFTER mpl.use(Agg)!!
 
 
 def Read_Two_Column_File(file_name):
