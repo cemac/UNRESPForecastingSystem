@@ -36,10 +36,14 @@ runCALMET=true
 runCALPUFF=true
 runVIS=true
 <<<<<<< HEAD
+<<<<<<< HEAD
 runffmepg=false
 =======
 runfmepg=false
 >>>>>>> :evergreen_tree: SO4 branch created
+=======
+runfmepg=false
+>>>>>>> :wrench: ffmeg turn on /off
 
 #Set other parameters
 res=1000 #Resolution (m) of intended CALPUFF grid. Should be an integer that is > 100 and < 1000
@@ -331,10 +335,14 @@ if [ "$runVIS" = true ]; then
   cd ..
   cd vis/${rundate}
 <<<<<<< HEAD
+<<<<<<< HEAD
   if [ "$runffmepg" = true ]; then
 =======
   if [ "$runfmepg" = true ]; then
 >>>>>>> :evergreen_tree: SO4 branch created
+=======
+  if [ "$runfmepg" = true ]; then
+>>>>>>> :wrench: ffmeg turn on /off
     ffmpeg -f image2 -r 4 -i static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
   fi
   cd ../..
