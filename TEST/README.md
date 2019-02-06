@@ -18,15 +18,21 @@ NAM data not downloading
 
 # Testing
 
-changes
+1. changing `Run.sh`
 
 ```bash
 curl "http://nomads.ncep.noaa.gov/c...."
 ```
 to
 
-
-
 ```bash
 curl "https://nomads.ncep.noaa.gov/c...."
 ```
+
+run ``.Run.sh`
+
+**UNSUCESSFUL**
+
+2. remove files then run `./Run.sh`
+
+**SUCCESS**
