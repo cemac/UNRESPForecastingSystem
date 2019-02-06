@@ -35,6 +35,7 @@ run3DDAT=true
 runCALMET=true
 runCALPUFF=true
 runVIS=true
+runfmepg=false
 
 #Set other parameters
 res=1000 #Resolution (m) of intended CALPUFF grid. Should be an integer that is > 100 and < 1000
@@ -325,7 +326,9 @@ if [ "$runVIS" = true ]; then
   ./generateMaps.py ${rundate}
   cd ..
   cd vis/${rundate}
-  ffmpeg -f image2 -r 4 -i static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
+  if [ "$runfmepg" = true ]; then
+    ffmpeg -f image2 -r 4 -i static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
+  fi
   cd ../..
   echo " ---> FINISHED ###"
 
