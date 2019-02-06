@@ -98,7 +98,11 @@ The directory structure of the repository is as follows:
 |  Version            | Release          |
 |---------------------|------------------|
 | **UoL original**  | [![GitHubrelease](https://img.shields.io/badge/release-v.1.0-blue.svg)](https://github.com/cemac/DECAF_workflow/releases/tag/v1.0)|
+<<<<<<< HEAD
 | **Viz update**    |  [![GitHubrelease](https://img.shields.io/badge/release-v.2.0.2-blue.svg)](https://github.com/cemac/UNRESPForcastingSystem/releases/tag/v2.0.2) |
+=======
+| **Viz update**    |  [![GitHubrelease](https://img.shields.io/badge/release-v.2.0-blue.svg)](https://github.com/cemac/UNRESPForcastingSystem/releases/tag/v2.0) |
+>>>>>>> :evergreen_tree: SO4 branch created
 | **SO4** |  *coming soon*     |
 <!--- table --->
 
