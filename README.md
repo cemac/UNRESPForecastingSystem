@@ -10,7 +10,7 @@ Repository for the [UNRESP](https://vumo.cloud/) Forecasting System:
 
 An automated forecasting system has been created that uses the [CALPUFF](http://www.src.com/) dispersion model to predict S02 and S04 concentrations around the Masaya volcano. This is based on the current forecasting system implemented by IMO, but with modifications and improvements.
 
-This work is displayed [here]([~earunres](https://homepages.see.leeds.ac.uk/~earunres))
+This work is displayed [here](~earunres](https://homepages.see.leeds.ac.uk/~earunres)
 
 ## Description ##
 
