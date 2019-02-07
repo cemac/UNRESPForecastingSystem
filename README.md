@@ -10,6 +10,8 @@ Repository for the [UNRESP](https://vumo.cloud/) Forecasting System:
 
 An automated forecasting system has been created that uses the [CALPUFF](http://www.src.com/) dispersion model to predict S02 and S04 concentrations around the Masaya volcano. This is based on the current forecasting system implemented by IMO, but with modifications and improvements.
 
+This work is displayed [here]([~earunres](https://homepages.see.leeds.ac.uk/~earunres))
+
 ## Description ##
 
 The repository hosts the scripts required to run the CALPUFF dispersion model to predict SO2 concentrations around the Masaya volcano forecasting for 48 hours using NAM data. The hourly output is plotted in individual png files and collated into a mp4 movie.
@@ -26,6 +28,15 @@ python 3**
 
 Aimed at running on the Leeds Linux systems
 
+```bash
+./Run.sh
+optional arguments
+-d Date YYYYMMDD, defaults to  
+-n specify home directory, defaults to ~earunres
+-h help prints Usage statement and exits
+```
+This set up defaults to production behaviour to run as a chronjob displaying at [~earunres](https://homepages.see.leeds.ac.uk/~earunres/UNRESP_VIZ/index.html)
+
 * In Run.sh various parameters can be set:
   1. `res` to alter the resolution between 100 - 1000 m
   2. `runVis=True` Enable visualization  creating static and movie visualisations of the CALPUFF model output via a python script (generateMaps.py) and the Linux tool 'ffmpeg', respectively.
@@ -35,13 +46,13 @@ Aimed at running on the Leeds Linux systems
   6. `run3DDAT=true` - Downloads the required met (NAM) data and runs a python script (Create3DDAT.py) to extract the required data into a file appropriate for input to CALMET.
   7. `runCALMET=true` - The 3-D diagnostic meteorological model part of the CALPUFF system
   8. `runCALPUFF=true` - The main dispersion model part of the CALPUFF system
-* To forecast for the current day:
+* To forecast for the current day default visualization home to ~earunres (production):
   ```bash
   ./Run.sh
   ```
 * To forecast for a specific day:
   ```bash
-  ./Run.sh YYYYMMDD
+  ./Run.sh -d YYYYMMDD
   ```
   Note, however, that the external met (NAM) data that the script will try to download is only accessible for around 10 days after the original date before it is removed from the ftp site.
 * Chronjobs: 2 chronjobs are required
