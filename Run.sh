@@ -6,14 +6,28 @@
 set -e #stop at first error
 module load intel/17.0.0
 module load python2 python-libs
+# Defaults
+rundate=$(date +%Y%m%d)
+vizhome=~earunres
 
-#Read in command line arguments and set subsequent variables
-if [ $# -eq 0 ]
-  then
-    rundate=$(date +%Y%m%d)
-else
-  rundate=$1
-fi
+print_usage() {
+  echo "Usage:
+ -d date YMD defaults to today
+ -n name of viz defaults to ~earunres"
+}
+
+while getopts 'dn:hv' flag; do
+  case "${flag}" in
+    d) rundate="${OPTARG}" ;;
+    n) vizhome="${OPTARG}" ;;
+    v) verbose=true ;;
+    h) print_usage
+       exit 1 ;;
+    *) print_usage
+       exit 1 ;;
+  esac
+done
+
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
 enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
@@ -35,16 +49,7 @@ run3DDAT=true
 runCALMET=true
 runCALPUFF=true
 runVIS=true
-<<<<<<< HEAD
-<<<<<<< HEAD
-runffmepg=false
-=======
-runfmepg=false
->>>>>>> :evergreen_tree: SO4 branch created
-=======
-runfmepg=false
->>>>>>> :wrench: ffmeg turn on /off
-
+runffmpeg=false
 #Set other parameters
 res=1000 #Resolution (m) of intended CALPUFF grid. Should be an integer that is > 100 and < 1000
 let NX=90000/$res+1
@@ -52,7 +57,7 @@ let NY=54000/$res+1
 DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
 # VISUALISATION  PATH
-VIZPATH=~/public_html/UNRESP_VIZ/
+VIZPATH=$vizhome/public_html/UNRESP_VIZ/
 cwd=$(pwd)
 
 echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
@@ -334,23 +339,17 @@ if [ "$runVIS" = true ]; then
   ./generateMaps.py ${rundate}
   cd ..
   cd vis/${rundate}
-<<<<<<< HEAD
-<<<<<<< HEAD
-  if [ "$runffmepg" = true ]; then
-=======
-  if [ "$runfmepg" = true ]; then
->>>>>>> :evergreen_tree: SO4 branch created
-=======
-  if [ "$runfmepg" = true ]; then
->>>>>>> :wrench: ffmeg turn on /off
-    ffmpeg -f image2 -r 4 -i static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
+  if [ "$runffmpeg" = true]; then
+  echo "Running ffmpeg"
+  ffmpeg -f image2 -r 4 -i static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
   fi
   cd ../..
   echo " ---> FINISHED ###"
 
-  echo "Adding latest VISUALISATION to website"
+  echo "Adding latest VISUALISATION to website at "$VIZPATH
 
   cd vis/${rundate}
+  echo "Reformatting png to jpg"
   mogrify -format jpg *.png
   rm -f *.png
   setfacl -m other:r-x *.jpg *.html
