@@ -24,6 +24,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from mpl_toolkits.mplot3d import axes3d
+import matplotlib as mpl
 from matplotlib.font_manager import FontProperties
 import os
 import datetime as dt
@@ -36,13 +37,6 @@ import cartopy.feature as cfeat
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import netCDF4
 from dateutil.parser import parse
-
-
-# Flags
-StaticMaps = True
-GoogleMaps = True
-
-# Standalone Functions
 
 
 def Read_Two_Column_File(file_name):
@@ -112,31 +106,21 @@ def genGxy(xyFile):
     return glat, glon, lat, lon, ny, nx
 
 
-def conc_array(ny, nx, filePaths, dates):
-    for fle, dat in zip(filePaths, dates):
-        # Read in concentration data:
-        f = open(filePaths[30], 'r')
-        lines = f.read().splitlines()
-        f.close
-        # Process concentration data into desired format:
-        conc = np.array([float(X) for X in lines]) * 100**3  # ug/cm^3 -> ug/m^3
-        concAry = np.reshape(conc, (ny, nx))  # Reshape data onto latlon grid
+def conc_array(ny, nx, filePaths):
+    # Read in concentration data:
+    f = open(filePaths[30], 'r')
+    lines = f.read().splitlines()
+    f.close
+    # Process concentration data into desired format:
+    conc = np.array([float(X) for X in lines]) * 100**3  # ug/cm^3 -> ug/m^3
+    concAry = np.reshape(conc, (ny, nx))  # Reshape data onto latlon grid
     return concAry
 
-# READ IN COMMAND LINE ARGUMENTS
-parser = argparse.ArgumentParser(description="Used to generate a series (48hrs) of static and interactive (google) maps \
-         showing SO2 concentrations around the Masaya volcano, as predicted by the CALPUFF dispersion model")
-parser.add_argument("date", help="Date string, format YYYYMMDD, of the current CALPUFF run. Used to locate \
-                    directory containing the SO2 output files (with assumed naming convention 'concrec0100**.dat', \
-                    where '**' goes from '01' through to '48'", type=str)
-args = parser.parse_args()
-date = args.date
 
-
-class Masaya_Maps(object):
-
-    def _init_(s, date, generateStaticMaps=StaticMaps,
-               generateGoogleMaps=GoogleMaps):
+class Masaya_Maps():
+    '''
+    '''
+    def __init__(s, date):
         concDir = "../CALPUFF_OUT/CALPUFF/" + date
         xyFile = "../data/xy_masaya.dat"
         outDir = "../vis/" + date
@@ -167,7 +151,7 @@ class Masaya_Maps(object):
         assert os.path.exists(
             xyFile), "Cannot find data/xy_masaya.dat coordinate data file."
         assert os.path.exists(outDir), "Output directory vis/<date> does not exist."
-        filenames, filePaths = concfiles(nConcFiles, concDir)
+        s.filenames, s.filePaths = concfiles(nConcFiles, concDir)
 
         # GET DATES/TIMES
         startDate = pytz.utc.localize(parse(date))
@@ -175,18 +159,19 @@ class Masaya_Maps(object):
         for i in range(nConcFiles):
             iDate = startDate + dt.timedelta(hours=i + 1)
             dates.append(iDate)
-
+        s.dates = dates
+        s.filePaths
         # SET BIN COLOURS
-        s.cmap = mpl.colors.ListedColormap(colsHex[1:-1])
-        s.cmap.set_under(colsHex[0])
-        s.cmap.set_over(colsHex[-1])
-        s.norm = mpl.colors.BoundaryNorm(boundaries=binLims, ncolors=5)
+        s.cmap = mpl.colors.ListedColormap(s.colsHex[1:-1])
+        s.cmap.set_under(s.colsHex[0])
+        s.cmap.set_over(s.colsHex[-1])
+        s.norm = mpl.colors.BoundaryNorm(boundaries=s.binLims, ncolors=5)
 
         def plot_staticmap(s, concA, xyFile, im, tc, out, SOX, fle):
             """
             """
             glat, glon, latMin, latMax, lonMin, lonMax, ny, nx = genxy(xyFile)
-            so2title = ('Atmospheric' SOX 'concentrations at ground level' +
+            so2title = ('Atmospheric'+ SOX + 'concentrations at ground level' +
                         ' (hourly means). \n GCRF UNRESP')
             plt.figure(figsize=(16, 12))
             bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
@@ -230,35 +215,35 @@ class Masaya_Maps(object):
             plt.savefig(PNGpath, dpi=250)
 
         def plot_googlemaps(s, concA, xyFile):
-
-            if generateGoogleMaps:
-                codesFile = os.path.join('GM_API_KEY.txt')
-                gmstring = ("Can't find file GM_API_KEY.txt in same" +
-                            " directory as python script")
-                assert os.path.exists(codesFile), gmstring
-                glat, glon, lat, lon, ny, nx = genGxy(xyFile)
-                f = open(codesFile, 'r')
-                lines = f.readlines()
-                f.close()
-                googlekey = lines[0].strip()
-                gmap = gmplot.GoogleMapPlotter(min(lat) + np.ptp(lat) / 2.,
-                                               min(lon) + np.ptp(lon) / 2., zoom=11,
-                                               apikey=googlekey)
-                for i in np.arange(0, nx):
-                    for j in np.arange(0, ny):
-                        for k in np.arange(0, len(s.binLims) - 1):
-                            if concA[j, i] > s.binLims[k] and concA[j, i] <= s.binLims[k + 1]:
-                                gmap.polygon((glat[j + 1, i], glat[j, i],
-                                              glat[j, i + 1], glat[j + 1, i + 1]),
-                                             (glon[j + 1, i], glon[j, i],
-                                              glon[j, i + 1], glon[j + 1, i + 1]),
-                                             color=colsHex[k + 1], edge_width=0.001)
-                        if conc[j] > s.binLims[-1]:
+            """
+            """
+            codesFile = os.path.join('GM_API_KEY.txt')
+            gmstring = ("Can't find file GM_API_KEY.txt in same" +
+                        " directory as python script")
+            assert os.path.exists(codesFile), gmstring
+            glat, glon, lat, lon, ny, nx = genGxy(xyFile)
+            f = open(codesFile, 'r')
+            lines = f.readlines()
+            f.close()
+            googlekey = lines[0].strip()
+            gmap = gmplot.GoogleMapPlotter(min(lat) + np.ptp(lat) / 2.,
+                                           min(lon) + np.ptp(lon) / 2., zoom=11,
+                                           apikey=googlekey)
+            for i in np.arange(0, nx):
+                for j in np.arange(0, ny):
+                    for k in np.arange(0, len(s.binLims) - 1):
+                        if concA[j, i] > s.binLims[k] and concA[j, i] <= s.binLims[k + 1]:
                             gmap.polygon((glat[j + 1, i], glat[j, i],
                                           glat[j, i + 1], glat[j + 1, i + 1]),
                                          (glon[j + 1, i], glon[j, i],
                                           glon[j, i + 1], glon[j + 1, i + 1]),
-                                         color=colsHex[-1], edge_width=0.001)
-                HTMLfile = 'google_' + fle[-17:-4] + '.html'
-                print("Writing out file " + HTMLfile)
-                gmap.draw(os.path.join(outDir, HTMLfile))
+                                         color=s.colsHex[k + 1], edge_width=0.001)
+                    if conc[j] > s.binLims[-1]:
+                        gmap.polygon((glat[j + 1, i], glat[j, i],
+                                      glat[j, i + 1], glat[j + 1, i + 1]),
+                                     (glon[j + 1, i], glon[j, i],
+                                      glon[j, i + 1], glon[j + 1, i + 1]),
+                                     color=s.colsHex[-1], edge_width=0.001)
+            HTMLfile = 'google_' + fle[-17:-4] + '.html'
+            print("Writing out file " + HTMLfile)
+            gmap.draw(os.path.join(outDir, HTMLfile))
