@@ -118,24 +118,25 @@ def conc_array(ny, nx, filePaths):
     return concAry
 
 
-def gen_im(lonMin, latMin, lonMax, latMax, imtype='World_Imagery',):
+def gen_im(lonMin, latMin, lonMax, latMax, imtype="World_Imagery",):
     """imtype='World_Imagery' or imtype='World_Shaded_Relief'
     """
+    xpixels = 1700  # Zoom lvl for satellite basemap (higher=bigger file sizes)
     bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
                    urcrnrlon=lonMax, urcrnrlat=latMax)
     esri_url = \
-        "http://server.arcgisonline.com/ArcGIS/rest/services/"
-    + imtype + "/MapServer/export?\
-    bbox=%s,%s,%s,%s&\
-    bboxSR=%s&\
-    imageSR=%s&\
-    size=%s,%s&\
-    dpi=%s&\
-    format=png32&\
-    f=image" %\
+        "http://server.arcgisonline.com/ArcGIS/rest/services/" + imtype + "/MapServer/export?\
+bbox=%s,%s,%s,%s&\
+bboxSR=%s&\
+imageSR=%s&\
+size=%s,%s&\
+dpi=%s&\
+format=png32&\
+f=image" %\
         (bmap.llcrnrlon, bmap.llcrnrlat, bmap.urcrnrlon, bmap.urcrnrlat,
          bmap.epsg, bmap.epsg, xpixels, bmap.aspect * xpixels, 96)
-    return mpimg.imread(esri_url)
+    ESRIimg = mpimg.imread(esri_url)
+    return ESRIimg
 
 
 class Masaya_Maps():
@@ -158,7 +159,7 @@ class Masaya_Maps():
         """
         concDir = "../CALPUFF_OUT/CALPUFF/" + date
         s.xyFile = "../data/xy_masaya.dat"
-        outDir = "../vis/" + date
+        s.outDir = "../vis/" + date
         s.sat = 'World_Imagery'
         s.topo = 'World_Shaded_Relief'
         nConcFiles = 48  # Number of conc files to process (48 = full 2 days)
@@ -223,13 +224,13 @@ class Masaya_Maps():
             tc = 'k'
             out = 'topo'
         im = gen_im(s.lonMin, s.latMin, s.lonMax, s.latMax, imtype=Imflag)
-        for i in enumerate(s.filePaths):
-            plot_staticmap(s, i, im, tc, out, SOX=SOX)
+        for i, fname in enumerate(s.filePaths):
+            s.plot_staticmap(i, im, tc, out, SOX=SOX)
 
     def plot_staticmap(s, ita, im, tc, out, SOX=r'SO_2'):
         """Plot static maps
         """
-        so2title = ('Atmospheric' + SOX + 'concentrations at ground level'
+        so2title = ('Atmospheric ' + SOX + ' concentrations at ground level'
                     + ' (hourly means). \n GCRF UNRESP')
         plt.figure(figsize=(16, 12))
         conc = s.concA[ita]
@@ -239,7 +240,7 @@ class Masaya_Maps():
         bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
                        urcrnrlon=lonMax, urcrnrlat=latMax)
         bmap.imshow(im, origin='upper')
-        bmap.pcolormesh(s.glon, s.glat, concA,
+        bmap.pcolormesh(s.glon, s.glat, s.concA,
                         norm=s.norm, cmap=s.cmap, alpha=0.5)
         cbar = bmap.colorbar(location='bottom', pad='20%', cmap=s.cmap,
                              norm=s.norm, boundaries=[0.] + s.binLims
@@ -270,7 +271,7 @@ class Masaya_Maps():
         font0.set_family('monospace')
         plt.plot(s.volcCoords[0], s.volcCoords[1], '^r', markersize=6)
         plt.suptitle(so2title, fontsize=24)
-        plt.title(dat.strftime('%c'), fontsize=18)
+        plt.title(s.dates[ita].strftime('%c'), fontsize=18)
         PNGfile = 'static_' + out + fle[-17:-4] + '.png'
         print("Writing out file " + PNGfile)
         PNGpath = os.path.join(s.outDir, PNGfile)
@@ -308,7 +309,7 @@ class Masaya_Maps():
                                  color=s.colsHex[-1], edge_width=0.001)
         HTMLfile = 'google_' + fle[-17:-4] + '.html'
         print("Writing out file " + HTMLfile)
-        gmap.draw(os.path.join(outDir, HTMLfile))
+        gmap.draw(os.path.join(s.outDir, HTMLfile))
 
     def plot_diff(s):
         """
