@@ -157,10 +157,6 @@ class Masaya_Maps(object):
         s.cities = (' MANAGUA',)
         s.cityCoords = ((-86.29, 12.12),)
         s.volcCoords = (-86.1608, 11.9854)
-        s.so2title = ('Atmospheric SO$_{2}$ concentrations at ground level' +
-                      ' (hourly means). \n GCRF UNRESP')
-        s.so4title = ('Atmospheric SO$_{4}$ concentrations at ground level' +
-                      ' (hourly means). \n GCRF UNRESP')
         s.font = FontProperties()
         s.font.set_weight('bold')
         s.font.set_family('monospace')
@@ -185,9 +181,53 @@ class Masaya_Maps(object):
         s.cmap.set_under(colsHex[0])
         s.cmap.set_over(colsHex[-1])
         s.norm = mpl.colors.BoundaryNorm(boundaries=binLims, ncolors=5)
-        #####
 
-        s.glat, s.glon, s.latMin, s.latMax, s.lonMin, s.lonMax, s.ny, s.nx =  genxy(xyFile)
+        def plot_staticmap(s, concA, xyFile, im, tc, out, SOX, fle):
+            """
+            """
+            glat, glon, latMin, latMax, lonMin, lonMax, ny, nx = genxy(xyFile)
+            so2title = ('Atmospheric' SOX 'concentrations at ground level' +
+                        ' (hourly means). \n GCRF UNRESP')
+            plt.figure(figsize=(16, 12))
+            bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
+                           urcrnrlon=lonMax, urcrnrlat=latMax)
+            bmap.imshow(im, origin='upper')
+            bmap.pcolormesh(glon, glat, concMask,
+                            norm=norm, cmap=cmap, alpha=0.5)
+            cbar = bmap.colorbar(location='bottom', pad='20%', cmap=cmap,
+                                 norm=norm, boundaries=[0.] + s.binLims
+                                 + [100000.], extend='both', extendfrac='auto',
+                                 ticks=s.binLims, spacing='uniform')
+            cbar.ax.set_xticklabels(['v low', 'low', 'moderate', 'mod high',
+                                     'high', 'v high'])  # horizontal colorbar
+            cbar.set_label(label=(SOX + ' concentration'), fontsize=18)
+            cbar.ax.tick_params(labelsize=16)
+            cbar.solids.set(alpha=1)
+            latTicks = np.arange(round(latMin, 1), round(latMax, 1) + 0.1, 0.1)
+            lonTicks = np.arange(round(lonMin, 1), round(lonMax, 1) + 0.1, 0.2)
+            bmap.drawparallels(latTicks, labels=[1, 0, 0, 0], linewidth=0.0,
+                               fontsize=16)
+            bmap.drawmeridians(lonTicks, labels=[0, 0, 0, 1], linewidth=0.0,
+                               fontsize=16)
+            for i, town in enumerate(s.towns):
+                plt.plot(s.townCoords[i][0], s.townCoords[i]
+                         [1], 'ok', markersize=4)
+                plt.text(s.townCoords[i][0], s.townCoords[i][1], town,
+                         color=tc, fontproperties=s.font, fontsize=12)
+            for i, city in enumerate(s.cities):
+                plt.plot(s.cityCoords[i][0], s.cityCoords[i]
+                         [1], 'sk', markersize=6)
+                plt.text(s.cityCoords[i][0], s.cityCoords[i][1], city,
+                         fontproperties=s.font, fontsize=16)
+            font0 = FontProperties()
+            font0.set_family('monospace')
+            plt.plot(s.volcCoords[0], s.volcCoords[1], '^r', markersize=6)
+            plt.suptitle(so2title, fontsize=24)
+            plt.title(dat.strftime('%c'), fontsize=18)
+            PNGfile = 'static_' + out + fle[-17:-4] + '.png'
+            print("Writing out file " + PNGfile)
+            PNGpath = os.path.join(outDir, PNGfile)
+            plt.savefig(PNGpath, dpi=250)
 
         def plot_googlemaps(s, concA, xyFile):
 
@@ -196,7 +236,7 @@ class Masaya_Maps(object):
                 gmstring = ("Can't find file GM_API_KEY.txt in same" +
                             " directory as python script")
                 assert os.path.exists(codesFile), gmstring
-                glat, glon, lat, lon, ny, nx= genGxy(xyFile)
+                glat, glon, lat, lon, ny, nx = genGxy(xyFile)
                 f = open(codesFile, 'r')
                 lines = f.readlines()
                 f.close()
