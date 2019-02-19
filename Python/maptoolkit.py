@@ -118,9 +118,23 @@ def conc_array(ny, nx, filePaths):
 
 
 class Masaya_Maps():
-    '''
+    '''Plot Masaya Maps
+    Consitsts of X plotting functions that output 48 static maps
+    members:
+        plot_staticmap: plot either topo or statellite
+        plot_googlemaps: plot google maps html
+        plot_diff: comming soon
+        plot_NAMWIND: comming soon
+        plot_CAL_WIND_IN: comming soon
+        plot_CAL_WIND_OUT: comming soon
+
     '''
     def __init__(s, date):
+        """Initialise with date
+
+        Args:
+            date (str): YYYYMMDD string
+        """
         concDir = "../CALPUFF_OUT/CALPUFF/" + date
         xyFile = "../data/xy_masaya.dat"
         outDir = "../vis/" + date
@@ -168,7 +182,7 @@ class Masaya_Maps():
         s.norm = mpl.colors.BoundaryNorm(boundaries=s.binLims, ncolors=5)
 
         def plot_staticmap(s, concA, xyFile, im, tc, out, SOX, fle):
-            """
+            """Plot static maps
             """
             glat, glon, latMin, latMax, lonMin, lonMax, ny, nx = genxy(xyFile)
             so2title = ('Atmospheric'+ SOX + 'concentrations at ground level' +
@@ -215,7 +229,7 @@ class Masaya_Maps():
             plt.savefig(PNGpath, dpi=250)
 
         def plot_googlemaps(s, concA, xyFile):
-            """
+            """plot goolemaps
             """
             codesFile = os.path.join('GM_API_KEY.txt')
             gmstring = ("Can't find file GM_API_KEY.txt in same" +
@@ -247,3 +261,23 @@ class Masaya_Maps():
             HTMLfile = 'google_' + fle[-17:-4] + '.html'
             print("Writing out file " + HTMLfile)
             gmap.draw(os.path.join(outDir, HTMLfile))
+
+        def plot_diff(s):
+            """
+            """
+            print('This feature does not exist yet')
+
+        def plot_NAMWIND(s):
+            """
+            """
+            print('This feature does not exist yet')
+
+        def plot_CAL_WIND_IN(s):
+            """
+            """
+            print('This feature does not exist yet')
+
+        def plot_CAL_WIND_OUT(s):
+            """
+            """
+            print('This feature does not exist yet')
