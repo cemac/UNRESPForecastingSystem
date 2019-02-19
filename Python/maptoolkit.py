@@ -25,6 +25,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from mpl_toolkits.mplot3d import axes3d
 import matplotlib as mpl
+from mpl_toolkits.basemap import Basemap
 from matplotlib.font_manager import FontProperties
 import os
 import datetime as dt
@@ -117,6 +118,26 @@ def conc_array(ny, nx, filePaths):
     return concAry
 
 
+def gen_im(lonMin, latMin, lonMax, latMax, imtype='World_Imagery',):
+    """imtype='World_Imagery' or imtype='World_Shaded_Relief'
+    """
+    bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
+                   urcrnrlon=lonMax, urcrnrlat=latMax)
+    esri_url = \
+        "http://server.arcgisonline.com/ArcGIS/rest/services/"
+    + imtype + "/MapServer/export?\
+    bbox=%s,%s,%s,%s&\
+    bboxSR=%s&\
+    imageSR=%s&\
+    size=%s,%s&\
+    dpi=%s&\
+    format=png32&\
+    f=image" %\
+        (bmap.llcrnrlon, bmap.llcrnrlat, bmap.urcrnrlon, bmap.urcrnrlat,
+         bmap.epsg, bmap.epsg, xpixels, bmap.aspect * xpixels, 96)
+    return mpimg.imread(esri_url)
+
+
 class Masaya_Maps():
     '''Plot Masaya Maps
     Consitsts of X plotting functions that output 48 static maps
@@ -136,8 +157,10 @@ class Masaya_Maps():
             date (str): YYYYMMDD string
         """
         concDir = "../CALPUFF_OUT/CALPUFF/" + date
-        xyFile = "../data/xy_masaya.dat"
+        s.xyFile = "../data/xy_masaya.dat"
         outDir = "../vis/" + date
+        s.sat = 'World_Imagery'
+        s.topo = 'World_Shaded_Relief'
         nConcFiles = 48  # Number of conc files to process (48 = full 2 days)
         s.binLims = [10, 350, 600, 2600, 9000, 14000]  # SO2 bin limits
         s.colsHex = ['#FFFFFF', '#0cec0c', '#FFFF00', '#FF6600', '#FF0000',
@@ -163,7 +186,7 @@ class Masaya_Maps():
         assert os.path.exists(
             concDir), "CALPUFF output directory does not exist for this date."
         assert os.path.exists(
-            xyFile), "Cannot find data/xy_masaya.dat coordinate data file."
+            s.xyFile), "Cannot find data/xy_masaya.dat coordinate data file."
         assert os.path.exists(outDir), "Output directory vis/<date> does not exist."
         s.filenames, s.filePaths = concfiles(nConcFiles, concDir)
 
@@ -180,104 +203,129 @@ class Masaya_Maps():
         s.cmap.set_under(s.colsHex[0])
         s.cmap.set_over(s.colsHex[-1])
         s.norm = mpl.colors.BoundaryNorm(boundaries=s.binLims, ncolors=5)
+        s.filenames, s.filePaths = concfiles(nConcFiles, concDir)
+        s.glat, s.glon, s.latMin, s.latMax, s.lonMin, s.lonMax, s.ny, s.nx = genxy(s.xyFile)
+        concA = conc_array(s.ny, s.nx, s.filePaths)
+        s.concA = np.ma.masked_array(concA, concA < s.binLims[0])
 
-        def plot_staticmap(s, concA, xyFile, im, tc, out, SOX, fle):
-            """Plot static maps
-            """
-            glat, glon, latMin, latMax, lonMin, lonMax, ny, nx = genxy(xyFile)
-            so2title = ('Atmospheric'+ SOX + 'concentrations at ground level' +
-                        ' (hourly means). \n GCRF UNRESP')
-            plt.figure(figsize=(16, 12))
-            bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
-                           urcrnrlon=lonMax, urcrnrlat=latMax)
-            bmap.imshow(im, origin='upper')
-            bmap.pcolormesh(glon, glat, concMask,
-                            norm=norm, cmap=cmap, alpha=0.5)
-            cbar = bmap.colorbar(location='bottom', pad='20%', cmap=cmap,
-                                 norm=norm, boundaries=[0.] + s.binLims
-                                 + [100000.], extend='both', extendfrac='auto',
-                                 ticks=s.binLims, spacing='uniform')
-            cbar.ax.set_xticklabels(['v low', 'low', 'moderate', 'mod high',
-                                     'high', 'v high'])  # horizontal colorbar
-            cbar.set_label(label=(SOX + ' concentration'), fontsize=18)
-            cbar.ax.tick_params(labelsize=16)
-            cbar.solids.set(alpha=1)
-            latTicks = np.arange(round(latMin, 1), round(latMax, 1) + 0.1, 0.1)
-            lonTicks = np.arange(round(lonMin, 1), round(lonMax, 1) + 0.1, 0.2)
-            bmap.drawparallels(latTicks, labels=[1, 0, 0, 0], linewidth=0.0,
-                               fontsize=16)
-            bmap.drawmeridians(lonTicks, labels=[0, 0, 0, 1], linewidth=0.0,
-                               fontsize=16)
-            for i, town in enumerate(s.towns):
-                plt.plot(s.townCoords[i][0], s.townCoords[i]
-                         [1], 'ok', markersize=4)
-                plt.text(s.townCoords[i][0], s.townCoords[i][1], town,
-                         color=tc, fontproperties=s.font, fontsize=12)
-            for i, city in enumerate(s.cities):
-                plt.plot(s.cityCoords[i][0], s.cityCoords[i]
-                         [1], 'sk', markersize=6)
-                plt.text(s.cityCoords[i][0], s.cityCoords[i][1], city,
-                         fontproperties=s.font, fontsize=16)
-            font0 = FontProperties()
-            font0.set_family('monospace')
-            plt.plot(s.volcCoords[0], s.volcCoords[1], '^r', markersize=6)
-            plt.suptitle(so2title, fontsize=24)
-            plt.title(dat.strftime('%c'), fontsize=18)
-            PNGfile = 'static_' + out + fle[-17:-4] + '.png'
-            print("Writing out file " + PNGfile)
-            PNGpath = os.path.join(outDir, PNGfile)
-            plt.savefig(PNGpath, dpi=250)
+    def plot_staticmaps(s, maptype, SOX=r'SO_2'):
+        if maptype == 'satellite':
+            Imflag = s.sat
+            tc = 'w'
+            out = ''
+        elif maptype == 'topo':
+            Imflag = s.topo
+            tc = 'k'
+            out = 'topo'
+        else:
+            print('Not a valid option... setting to topo')
+            Imflag = s.topo
+            tc = 'k'
+            out = 'topo'
+        im = gen_im(s.lonMin, s.latMin, s.lonMax, s.latMax, imtype=Imflag)
+        for i in enumerate(s.filePaths):
+            plot_staticmap(s, i, im, tc, out, SOX=SOX)
 
-        def plot_googlemaps(s, concA, xyFile):
-            """plot goolemaps
-            """
-            codesFile = os.path.join('GM_API_KEY.txt')
-            gmstring = ("Can't find file GM_API_KEY.txt in same" +
-                        " directory as python script")
-            assert os.path.exists(codesFile), gmstring
-            glat, glon, lat, lon, ny, nx = genGxy(xyFile)
-            f = open(codesFile, 'r')
-            lines = f.readlines()
-            f.close()
-            googlekey = lines[0].strip()
-            gmap = gmplot.GoogleMapPlotter(min(lat) + np.ptp(lat) / 2.,
-                                           min(lon) + np.ptp(lon) / 2., zoom=11,
-                                           apikey=googlekey)
-            for i in np.arange(0, nx):
-                for j in np.arange(0, ny):
-                    for k in np.arange(0, len(s.binLims) - 1):
-                        if concA[j, i] > s.binLims[k] and concA[j, i] <= s.binLims[k + 1]:
-                            gmap.polygon((glat[j + 1, i], glat[j, i],
-                                          glat[j, i + 1], glat[j + 1, i + 1]),
-                                         (glon[j + 1, i], glon[j, i],
-                                          glon[j, i + 1], glon[j + 1, i + 1]),
-                                         color=s.colsHex[k + 1], edge_width=0.001)
-                    if conc[j] > s.binLims[-1]:
+    def plot_staticmap(s, ita, im, tc, out, SOX=r'SO_2'):
+        """Plot static maps
+        """
+        so2title = ('Atmospheric' + SOX + 'concentrations at ground level'
+                    + ' (hourly means). \n GCRF UNRESP')
+        plt.figure(figsize=(16, 12))
+        conc = s.concA[ita]
+        fle = s.filePaths[ita]
+        latMin, latMax, lonMin = s.latMin, s.latMax, s.lonMin
+        lonMax = s.lonMax
+        bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
+                       urcrnrlon=lonMax, urcrnrlat=latMax)
+        bmap.imshow(im, origin='upper')
+        bmap.pcolormesh(s.glon, s.glat, concA,
+                        norm=s.norm, cmap=s.cmap, alpha=0.5)
+        cbar = bmap.colorbar(location='bottom', pad='20%', cmap=s.cmap,
+                             norm=s.norm, boundaries=[0.] + s.binLims
+                             + [100000.], extend='both', extendfrac='auto',
+                             ticks=s.binLims, spacing='uniform')
+        cbar.ax.set_xticklabels(['v low', 'low', 'moderate', 'mod high',
+                                 'high', 'v high'])  # horizontal colorbar
+        cbar.set_label(label=(SOX + ' concentration'), fontsize=18)
+        cbar.ax.tick_params(labelsize=16)
+        cbar.solids.set(alpha=1)
+        latTicks = np.arange(round(latMin, 1), round(latMax, 1) + 0.1, 0.1)
+        lonTicks = np.arange(round(lonMin, 1), round(lonMax, 1) + 0.1, 0.2)
+        bmap.drawparallels(latTicks, labels=[1, 0, 0, 0], linewidth=0.0,
+                           fontsize=16)
+        bmap.drawmeridians(lonTicks, labels=[0, 0, 0, 1], linewidth=0.0,
+                           fontsize=16)
+        for i, town in enumerate(s.towns):
+            plt.plot(s.townCoords[i][0], s.townCoords[i]
+                     [1], 'ok', markersize=4)
+            plt.text(s.townCoords[i][0], s.townCoords[i][1], town,
+                     color=tc, fontproperties=s.font, fontsize=12)
+        for i, city in enumerate(s.cities):
+            plt.plot(s.cityCoords[i][0], s.cityCoords[i]
+                     [1], 'sk', markersize=6)
+            plt.text(s.cityCoords[i][0], s.cityCoords[i][1], city,
+                     fontproperties=s.font, fontsize=16)
+        font0 = FontProperties()
+        font0.set_family('monospace')
+        plt.plot(s.volcCoords[0], s.volcCoords[1], '^r', markersize=6)
+        plt.suptitle(so2title, fontsize=24)
+        plt.title(dat.strftime('%c'), fontsize=18)
+        PNGfile = 'static_' + out + fle[-17:-4] + '.png'
+        print("Writing out file " + PNGfile)
+        PNGpath = os.path.join(s.outDir, PNGfile)
+        plt.savefig(PNGpath, dpi=250)
+
+    def plot_googlemaps(s, concA, xyFile):
+        """plot goolemaps
+        """
+        codesFile = os.path.join('GM_API_KEY.txt')
+        gmstring = ("Can't find file GM_API_KEY.txt in same" +
+                    " directory as python script")
+        assert os.path.exists(codesFile), gmstring
+        glat, glon, lat, lon, ny, nx = genGxy(xyFile)
+        f = open(codesFile, 'r')
+        lines = f.readlines()
+        f.close()
+        googlekey = lines[0].strip()
+        gmap = gmplot.GoogleMapPlotter(min(lat) + np.ptp(lat) / 2.,
+                                       min(lon) + np.ptp(lon) / 2., zoom=11,
+                                       apikey=googlekey)
+        for i in np.arange(0, nx):
+            for j in np.arange(0, ny):
+                for k in np.arange(0, len(s.binLims) - 1):
+                    if concA[j, i] > s.binLims[k] and concA[j, i] <= s.binLims[k + 1]:
                         gmap.polygon((glat[j + 1, i], glat[j, i],
                                       glat[j, i + 1], glat[j + 1, i + 1]),
                                      (glon[j + 1, i], glon[j, i],
                                       glon[j, i + 1], glon[j + 1, i + 1]),
-                                     color=s.colsHex[-1], edge_width=0.001)
-            HTMLfile = 'google_' + fle[-17:-4] + '.html'
-            print("Writing out file " + HTMLfile)
-            gmap.draw(os.path.join(outDir, HTMLfile))
+                                     color=s.colsHex[k + 1], edge_width=0.001)
+                if conc[j] > s.binLims[-1]:
+                    gmap.polygon((glat[j + 1, i], glat[j, i],
+                                  glat[j, i + 1], glat[j + 1, i + 1]),
+                                 (glon[j + 1, i], glon[j, i],
+                                  glon[j, i + 1], glon[j + 1, i + 1]),
+                                 color=s.colsHex[-1], edge_width=0.001)
+        HTMLfile = 'google_' + fle[-17:-4] + '.html'
+        print("Writing out file " + HTMLfile)
+        gmap.draw(os.path.join(outDir, HTMLfile))
 
-        def plot_diff(s):
-            """
-            """
-            print('This feature does not exist yet')
+    def plot_diff(s):
+        """
+        """
+        print('This feature does not exist yet')
 
-        def plot_NAMWIND(s):
-            """
-            """
-            print('This feature does not exist yet')
+    def plot_NAMWIND(s):
+        """
+        """
+        print('This feature does not exist yet')
 
-        def plot_CAL_WIND_IN(s):
-            """
-            """
-            print('This feature does not exist yet')
+    def plot_CAL_WIND_IN(s):
+        """
+        """
+        print('This feature does not exist yet')
 
-        def plot_CAL_WIND_OUT(s):
-            """
-            """
-            print('This feature does not exist yet')
+    def plot_CAL_WIND_OUT(s):
+        """
+        """
+        print('This feature does not exist yet')
