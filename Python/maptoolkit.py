@@ -242,7 +242,7 @@ class Masaya_Maps(object):
         """Plot static maps
         """
         SOXf = r'SO$_'+SOX[-1]+'$'
-        so2title = ('Atmospheric ' + "%r" % SOXf + ' concentrations at ' +
+        so2title = ('Atmospheric ' + SOXf + ' concentrations at ' +
                     'ground level (hourly means). \n GCRF UNRESP')
         plt.figure(figsize=(16, 12))
         fle = filePaths[ita]
