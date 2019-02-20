@@ -121,28 +121,28 @@ mpt = mtk(date)
 
 if StaticMaps:
     if SO24:
-        mpt.plot_staticmaps('topo', SOX=r'SO$_2$')
-        mpt.plot_staticmaps('topo', SOX=r'SO$_4$')
-        mpt.plot_staticmaps('satellite', SOX=r'SO$_2$')
-        mpt.plot_staticmaps('satellite', SOX=r'SO$_4$')
+        mpt.plot_staticmaps('topo', SOX='SO2')
+        mpt.plot_staticmaps('topo', SOX='SO4')
+        mpt.plot_staticmaps('satellite', SOX='SO2')
+        mpt.plot_staticmaps('satellite', SOX='SO4')
     elif SO2:
-        mpt.plot_staticmaps('topo', SOX=r'SO$_2$')
-        mpt.plot_staticmaps('satellite', SOX=r'SO$_2$')
+        mpt.plot_staticmaps('topo', SOX='SO2')
+        mpt.plot_staticmaps('satellite', SOX='SO2')
     elif SO4:
-        mpt.plot_staticmaps('topo', SOX=r'SO$_4$')
-        mpt.plot_staticmaps('satellite', SOX=r'SO$_4$')
+        mpt.plot_staticmaps('topo', SOX='SO4')
+        mpt.plot_staticmaps('satellite', SOX='SO4')
     else:
         print(r'Conc must be set to SO$_2$ or SO$_4$ or both (default)')
         print(r'most likely the --custom flag has been used with out:')
         print(' --SO24', ' --SO2', 'or  --SO4',)
 if GoogleMaps:
     if SO24:
-        mpt.plot_google(SOX=r'SO$_2$')
-        mpt.plot_google(SOX=r'SO$_4$')
+        mpt.plot_google(SOX='SO2')
+        mpt.plot_google(SOX='SO4')
     elif SO2:
-        mpt.plot_google(SOX=r'SO$_2$')
+        mpt.plot_google(SOX='SO2')
     elif SO4:
-        mpt.plot_google(SOX=r'SO$_4$')
+        mpt.plot_google(SOX='SO4')
     else:
         print(r'Conc must be set to SO$_2$ or SO$_4$ or both (default)')
         print(r'most likely the --custom flag has been used with out:')
