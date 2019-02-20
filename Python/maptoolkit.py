@@ -53,12 +53,20 @@ def Read_Two_Column_File(file_name):
     return x, y
 
 
-def concfiles(nConcFiles, concDir):
+def concfiles(nConcFiles, concDir, SOX='SO2'):
     filenames = []
     filePaths = []
+    if SOX == 'SO2':
+        concrecx = 'concrec0100'
+    elif SOX == 'SO4':
+        concrecx = 'concrec0200'
+    else:
+        concrecx = 'concrec0100'
+        print("WARNING: SOX option not valid setting to 'SO2'")
+        print("Options available are 'SO2' or 'SO4'")
     for i in range(nConcFiles):
         s = str('{:02}'.format(i + 1))  # Ensures e.g. '1' is converted to '01'
-        fileName = 'concrec0100' + s + '.dat'
+        fileName = concrecx + s + '.dat'
         filenames.append(fileName)
         filePath = os.path.join(concDir, fileName)
         filePaths.append(filePath)
@@ -143,7 +151,7 @@ f=image" %\
 
 class Masaya_Maps(object):
     '''Plot Masaya Maps
-    Consitsts of X plotting funs.concA = np.ma.masked_array(concA, concA < s.binLims[0])ctions that output 48 static maps
+    Consitsts of X plotting functions that output 48 static maps
     members:
         plot_staticmap: plot either topo or statellite
         plot_googlemaps: plot google maps html
@@ -159,12 +167,12 @@ class Masaya_Maps(object):
         Args:
             date (str): YYYYMMDD string
         """
-        concDir = "../CALPUFF_OUT/CALPUFF/" + date
+        s.concDir = "../CALPUFF_OUT/CALPUFF/" + date
         s.xyFile = "../data/xy_masaya.dat"
         s.outDir = "../vis/" + date
         s.sat = 'World_Imagery'
         s.topo = 'World_Shaded_Relief'
-        nConcFiles = 48  # Number of conc files to process (48 = full 2 days)
+        s.nConcFiles = 48  # Number of conc files to process (48 = full 2 days)
         s.binLims = [10, 350, 600, 2600, 9000, 14000]  # SO2 bin limits
         s.colsHex = ['#FFFFFF', '#0cec0c', '#FFFF00', '#FF6600', '#FF0000',
                      '#800080', '#8F246B']  # Hex codes for SO2 colour bins
@@ -187,30 +195,29 @@ class Masaya_Maps(object):
 
         # CHECK PATHS/FILES EXIST
         assert os.path.exists(
-            concDir), "CALPUFF output directory does not exist for this date."
+            s.concDir), "CALPUFF output directory does not exist for this date."
         assert os.path.exists(
             s.xyFile), "Cannot find data/xy_masaya.dat coordinate data file."
         assert os.path.exists(s.outDir), "Output directory vis/<date> does not exist."
-        s.filenames, s.filePaths = concfiles(nConcFiles, concDir)
+        s.filenames, s.filePaths = concfiles(s.nConcFiles,
+                                             s.concDir, SOX='SO2')
 
         # GET DATES/TIMES
         startDate = pytz.utc.localize(parse(date))
         dates = []
-        for i in range(nConcFiles):
+        for i in range(s.nConcFiles):
             iDate = startDate + dt.timedelta(hours=i + 1)
             dates.append(iDate)
         s.dates = dates
-        s.filePaths
         # SET BIN COLOURS
         s.cmap = mpl.colors.ListedColormap(s.colsHex[1:-1])
         s.cmap.set_under(s.colsHex[0])
         s.cmap.set_over(s.colsHex[-1])
         s.norm = mpl.colors.BoundaryNorm(boundaries=s.binLims, ncolors=5)
-        s.filenames, s.filePaths = concfiles(nConcFiles, concDir)
         s.glat, s.glon, s.latMin, s.latMax, s.lonMin, s.lonMax, s.ny, s.nx = genxy(s.xyFile)
         s.Gglat, s.Gglon, s.Glat, s.Glon, s.Gny, s.Gnx = genGxy(s.xyFile)
 
-    def plot_staticmaps(s, maptype, SOX=r'SO_2'):
+    def plot_staticmaps(s, maptype, SOX='SO2'):
         """loop through and plot all static maps
         """
         if maptype == 'satellite':
@@ -227,16 +234,18 @@ class Masaya_Maps(object):
             tc = 'k'
             out = 'topo'
         im = gen_im(s.lonMin, s.latMin, s.lonMax, s.latMax, imtype=Imflag)
+        filenames, filePaths = concfiles(s.nConcFiles, s.concDir, SOX=SOX)
         for i, fname in enumerate(s.filePaths):
-            s.plot_staticmap1(i, im, tc, out, SOX=SOX)
+            s.plot_staticmap1(i, im, tc, filePaths, out, SOX=SOX)
 
-    def plot_staticmap1(s, ita, im, tc, out, SOX=r'SO_2'):
+    def plot_staticmap1(s, ita, im, tc, filePaths, out, SOX):
         """Plot static maps
         """
-        so2title = ('Atmospheric ' + SOX + ' concentrations at ground level'
-                    + ' (hourly means). \n GCRF UNRESP')
+        SOXf = r'SO$_'+SOX[-1]+'$'
+        so2title = ('Atmospheric ' + "%r" % SOXf + ' concentrations at ' +
+                    'ground level (hourly means). \n GCRF UNRESP')
         plt.figure(figsize=(16, 12))
-        fle = s.filePaths[ita]
+        fle = filePaths[ita]
         concA, concx = conc_array(s.ny, s.nx, fle, s.binLims)
         latMin, latMax, lonMin = s.latMin, s.latMax, s.lonMin
         lonMax = s.lonMax
@@ -275,12 +284,13 @@ class Masaya_Maps(object):
         plt.plot(s.volcCoords[0], s.volcCoords[1], '^r', markersize=6)
         plt.suptitle(so2title, fontsize=24)
         plt.title(s.dates[ita].strftime('%c'), fontsize=18)
-        PNGfile = 'static_' + out + fle[-17:-4] + '.png'
+        PNGfile = SOX + '_static_' + out + fle[-17:-4] + '.png'
         print("Writing out file " + PNGfile)
         PNGpath = os.path.join(s.outDir, PNGfile)
         plt.savefig(PNGpath, dpi=250)
+        plt.close()
 
-    def plot_google(s, SOX=r'SO_2'):
+    def plot_google(s, SOX='SO2'):
         """loop through and plot all static maps
         """
         codesFile = os.path.join('GM_API_KEY.txt')
@@ -291,14 +301,15 @@ class Masaya_Maps(object):
         lines = f.readlines()
         f.close()
         s.googlekey = lines[0].strip()
-        for i, fname in enumerate(s.filePaths):
-            s.plot_googlemap1(i, SOX=SOX)
+        filenames, filePaths = concfiles(s.nConcFiles, s.concDir, SOX=SOX)
+        for i, fname in enumerate(filePaths):
+            s.plot_googlemap1(i, filePaths, SOX)
 
-    def plot_googlemap1(s, ita, SOX):
+    def plot_googlemap1(s, ita, filePaths, SOX):
         """plot goolemaps
         """
         gKey = s.googlekey
-        fle = s.filePaths[ita]
+        fle = filePaths[ita]
         glat, glon, lat, lon = s.Gglat, s.Gglon, s.Glat, s.Glon
         concA, conc = conc_array(s.ny, s.nx, fle, s.binLims)
         gmap = gmplot.GoogleMapPlotter(min(lat) + np.ptp(lat) / 2.,
@@ -319,7 +330,7 @@ class Masaya_Maps(object):
                                  (glon[j + 1, i], glon[j, i],
                                   glon[j, i + 1], glon[j + 1, i + 1]),
                                  color=s.colsHex[-1], edge_width=0.001)
-        HTMLfile = 'google_' + fle[-17:-4] + '.html'
+        HTMLfile = SOX + '_google_' + fle[-17:-4] + '.html'
         print("Writing out file " + HTMLfile)
         gmap.draw(os.path.join(s.outDir, HTMLfile))
 
