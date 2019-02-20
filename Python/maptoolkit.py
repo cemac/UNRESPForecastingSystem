@@ -31,6 +31,7 @@ import os
 import datetime as dt
 import pytz
 import utm
+import gmplot
 import cartopy.crs as ccrs
 import cartopy.io.img_tiles as cimgt
 import cartopy
@@ -107,15 +108,16 @@ def genGxy(xyFile):
     return glat, glon, lat, lon, ny, nx
 
 
-def conc_array(ny, nx, filePaths):
+def conc_array(ny, nx, filePaths, binLims):
     # Read in concentration data:
-    f = open(filePaths[30], 'r')
+    f = open(filePaths, 'r')
     lines = f.read().splitlines()
     f.close
     # Process concentration data into desired format:
     conc = np.array([float(X) for X in lines]) * 100**3  # ug/cm^3 -> ug/m^3
     concAry = np.reshape(conc, (ny, nx))  # Reshape data onto latlon grid
-    return concAry
+    concA = np.ma.masked_array(concAry, concAry < binLims[0])
+    return concA, conc
 
 
 def gen_im(lonMin, latMin, lonMax, latMax, imtype="World_Imagery",):
@@ -139,9 +141,9 @@ f=image" %\
     return ESRIimg
 
 
-class Masaya_Maps():
+class Masaya_Maps(object):
     '''Plot Masaya Maps
-    Consitsts of X plotting functions that output 48 static maps
+    Consitsts of X plotting funs.concA = np.ma.masked_array(concA, concA < s.binLims[0])ctions that output 48 static maps
     members:
         plot_staticmap: plot either topo or statellite
         plot_googlemaps: plot google maps html
@@ -188,7 +190,7 @@ class Masaya_Maps():
             concDir), "CALPUFF output directory does not exist for this date."
         assert os.path.exists(
             s.xyFile), "Cannot find data/xy_masaya.dat coordinate data file."
-        assert os.path.exists(outDir), "Output directory vis/<date> does not exist."
+        assert os.path.exists(s.outDir), "Output directory vis/<date> does not exist."
         s.filenames, s.filePaths = concfiles(nConcFiles, concDir)
 
         # GET DATES/TIMES
@@ -206,10 +208,11 @@ class Masaya_Maps():
         s.norm = mpl.colors.BoundaryNorm(boundaries=s.binLims, ncolors=5)
         s.filenames, s.filePaths = concfiles(nConcFiles, concDir)
         s.glat, s.glon, s.latMin, s.latMax, s.lonMin, s.lonMax, s.ny, s.nx = genxy(s.xyFile)
-        concA = conc_array(s.ny, s.nx, s.filePaths)
-        s.concA = np.ma.masked_array(concA, concA < s.binLims[0])
+        s.Gglat, s.Gglon, s.Glat, s.Glon, s.Gny, s.Gnx = genGxy(s.xyFile)
 
     def plot_staticmaps(s, maptype, SOX=r'SO_2'):
+        """loop through and plot all static maps
+        """
         if maptype == 'satellite':
             Imflag = s.sat
             tc = 'w'
@@ -225,22 +228,22 @@ class Masaya_Maps():
             out = 'topo'
         im = gen_im(s.lonMin, s.latMin, s.lonMax, s.latMax, imtype=Imflag)
         for i, fname in enumerate(s.filePaths):
-            s.plot_staticmap(i, im, tc, out, SOX=SOX)
+            s.plot_staticmap1(i, im, tc, out, SOX=SOX)
 
-    def plot_staticmap(s, ita, im, tc, out, SOX=r'SO_2'):
+    def plot_staticmap1(s, ita, im, tc, out, SOX=r'SO_2'):
         """Plot static maps
         """
         so2title = ('Atmospheric ' + SOX + ' concentrations at ground level'
                     + ' (hourly means). \n GCRF UNRESP')
         plt.figure(figsize=(16, 12))
-        conc = s.concA[ita]
         fle = s.filePaths[ita]
+        concA, concx = conc_array(s.ny, s.nx, fle, s.binLims)
         latMin, latMax, lonMin = s.latMin, s.latMax, s.lonMin
         lonMax = s.lonMax
         bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
                        urcrnrlon=lonMax, urcrnrlat=latMax)
         bmap.imshow(im, origin='upper')
-        bmap.pcolormesh(s.glon, s.glat, s.concA,
+        bmap.pcolormesh(s.glon, s.glat, concA,
                         norm=s.norm, cmap=s.cmap, alpha=0.5)
         cbar = bmap.colorbar(location='bottom', pad='20%', cmap=s.cmap,
                              norm=s.norm, boundaries=[0.] + s.binLims
@@ -277,23 +280,32 @@ class Masaya_Maps():
         PNGpath = os.path.join(s.outDir, PNGfile)
         plt.savefig(PNGpath, dpi=250)
 
-    def plot_googlemaps(s, concA, xyFile):
-        """plot goolemaps
+    def plot_google(s, SOX=r'SO_2'):
+        """loop through and plot all static maps
         """
         codesFile = os.path.join('GM_API_KEY.txt')
         gmstring = ("Can't find file GM_API_KEY.txt in same" +
                     " directory as python script")
         assert os.path.exists(codesFile), gmstring
-        glat, glon, lat, lon, ny, nx = genGxy(xyFile)
         f = open(codesFile, 'r')
         lines = f.readlines()
         f.close()
-        googlekey = lines[0].strip()
+        s.googlekey = lines[0].strip()
+        for i, fname in enumerate(s.filePaths):
+            s.plot_googlemap1(i, SOX=SOX)
+
+    def plot_googlemap1(s, ita, SOX):
+        """plot goolemaps
+        """
+        gKey = s.googlekey
+        fle = s.filePaths[ita]
+        glat, glon, lat, lon = s.Gglat, s.Gglon, s.Glat, s.Glon
+        concA, conc = conc_array(s.ny, s.nx, fle, s.binLims)
         gmap = gmplot.GoogleMapPlotter(min(lat) + np.ptp(lat) / 2.,
                                        min(lon) + np.ptp(lon) / 2., zoom=11,
-                                       apikey=googlekey)
-        for i in np.arange(0, nx):
-            for j in np.arange(0, ny):
+                                       apikey=gKey)
+        for i in np.arange(0, s.nx):
+            for j in np.arange(0, s.ny):
                 for k in np.arange(0, len(s.binLims) - 1):
                     if concA[j, i] > s.binLims[k] and concA[j, i] <= s.binLims[k + 1]:
                         gmap.polygon((glat[j + 1, i], glat[j, i],
