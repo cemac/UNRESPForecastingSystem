@@ -9,18 +9,20 @@ module load python2 python-libs
 # Defaults
 rundate=$(date +%Y%m%d)
 vizhome=~earunres
+runVIS=true
 
 print_usage() {
   echo "Usage:
  -d date YMD defaults to today
- -n name of viz defaults to ~earunres"
+ -n name of viz defaults to ~earunres
+ -nov turn viz off"
 }
 
-while getopts 'd:n:h:v' flag; do
+while getopts 'd:n:h:nov' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
-    v) verbose=true ;;
+    nov) runVIS=false ;;
     h) print_usage
        exit 1 ;;
     *) print_usage
@@ -48,7 +50,6 @@ runMAKEGEO=true
 run3DDAT=true
 runCALMET=true
 runCALPUFF=true
-runVIS=true
 runffmpeg=false
 #Set other parameters
 res=1000 #Resolution (m) of intended CALPUFF grid. Should be an integer that is > 100 and < 1000
