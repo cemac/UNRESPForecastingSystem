@@ -7,34 +7,88 @@ set -e #stop at first error
 module load intel/17.0.0
 module load python2 python-libs
 
-# Defaults
+# Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
 vizhome=~earunres
 runVIS=true
+runffmpeg=false
+# Defaults that can be overwritten by editing HERE:
+runTERREL=true
+runCTGPROC=true
+runMAKEGEO=true
+run3DDAT=true
+runCALMET=true
+runCALPUFF=true
+runmodel=true
 
 print_usage() {
-  echo "Usage:
- -d date YYYYMMDD defaults to today
- -n home name of viz defaults to ~earunres
- -p plotsoff turn viz off
- long options are currently not avaible"
+  echo "
+ Run.sh
+
+ A CEMAC script to Run CALPUFF WITH NAM DATA input
+ winds and produces plots of SO2 and SO4.
+
+ Usage:
+  .\Run.sh <opts>
+
+ No options runs a default production configuration:
+ Today, Viz on, plots production area (~earunres).
+
+ Options:
+  -d <date> YYYYMMDD DEFAULT: <today's date>
+  -n <home> name of viz defaults to ~earunres
+ **
+ The following switches can be used to overwrite
+ Default behaviour.
+ **
+  -m turn OFF Forecasting model (e.g to run viz only)
+  -p turn OFF viz steps (no jpgs etc to be produced)
+  -f turn ON ffmpeg mp4 production
+ long options are currently not avaible.
+ "
 }
 
-while getopts 'd:n:p:h' flag; do
+set_viz() {
+  runVIS=false
+}
+
+set_ffmpeg() {
+  runffmpeg=true
+}
+
+set_model() {
+  runTERREL=false
+  runCTGPROC=false
+  runMAKEGEO=false
+  run3DDAT=false
+  runCALMET=false
+  runCALPUFF=false
+  runmodel=false
+}
+while getopts 'd:n:pmfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
-    p) runVIS="${OPTARG}" ;;
-    h|--help) print_usage
+    p) set_viz ;;
+    m) set_model ;;
+    f) set_ffmpeg ;;
+    h) print_usage
        exit 1 ;;
     *) print_usage
        exit 1 ;;
   esac
 done
 
-echo date=$rundate
-echo vizhome=$vizhome
-echo viz=$runVIS
+echo 'Running with the following options set:'
+echo 'date: '$rundate
+echo 'run model: '$runmodel
+echo 'vizulisation: '$runVIS
+echo 'make mp4: ' $runffmpeg
+# VISUALISATION  PATH --> public_html/UNRESP_VIZ/ folders must exist in
+# viz destination.
+VIZPATH=$vizhome/public_html/UNRESP_VIZ/
+echo 'vizulisation output to: '$VIZPATH
+
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
 enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
@@ -48,26 +102,22 @@ endYear=${enddate:0:4}
 endMonth=${enddate:4:2}
 endDay=${enddate:6:2}
 
-#Set flags
-runTERREL=true
-runCTGPROC=true
-runMAKEGEO=true
-run3DDAT=true
-runCALMET=true
-runCALPUFF=true
-runffmpeg=false
+
 #Set other parameters
-res=1000 #Resolution (m) of intended CALPUFF grid. Should be an integer that is > 100 and < 1000
+res=1000 #Resolution (m) of intended CALPUFF grid.  100 < (integer) < 1000
 let NX=90000/$res+1
 let NY=54000/$res+1
 DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
-# VISUALISATION  PATH
-VIZPATH=$vizhome/public_html/UNRESP_VIZ/
 cwd=$(pwd)
 
-echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
+#------------------------------------------------------------------------#
+#------------------- DO NOT ALTER BELOW THIS LINE------------------------#
+#------------------------------------------------------------------------#
+if [ "$runmodel" = true ]; then
+echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
+fi
 ###TERREL###
 if [ "$runTERREL" = true ]; then
   #Compile TERREL if required:
@@ -371,4 +421,8 @@ if [ "$runVIS" = true ]; then
   ln -sf $(date +%Y%m%d) Today
   cd $cwd
 fi
-echo "### SUCCESSFULLY COMPLETED FORECAST ###"
+if [ "$runmodel" = true ]; then
+  echo "### SUCCESSFULLY COMPLETED FORECAST ###"
+else
+  echo "### SUCCESSFULLY COMPLETED TASK ###"
+fi
