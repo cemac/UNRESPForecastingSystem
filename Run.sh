@@ -368,7 +368,7 @@ if [ "$runVIS" = true ]; then
   mv *.jpg *.html $VIZPATH${rundate}
   cd $VIZPATH
   rm -f Today
-  ln -sf ${rundate} Today
+  ln -sf $(date +%Y%m%d) Today
   cd $cwd
 fi
 echo "### SUCCESSFULLY COMPLETED FORECAST ###"
