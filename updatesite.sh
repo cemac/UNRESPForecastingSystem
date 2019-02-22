@@ -9,18 +9,21 @@ module load python2 python-libs
 # Defaults
 rundate=$(date +%Y%m%d)
 vizhome=~earunres
+runVIS=true
 
 print_usage() {
   echo "Usage:
  -d date YMD defaults to today
- -n name of viz defaults to ~earunres"
+ -n -home name of viz defaults to ~earunres
+ -p turn viz off
+ long options are currently not avaible"
 }
 
-while getopts 'd:n:h:v' flag; do
+while getopts 'd:n:p:h' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
-    v) verbose=true ;;
+    p) runVIS="${OPTARG}" ;;
     h) print_usage
        exit 1 ;;
     *) print_usage
@@ -28,7 +31,10 @@ while getopts 'd:n:h:v' flag; do
   esac
 done
 
-runVIS=true
+echo date=$rundate
+echo vizhome=$vizhome
+echo viz=$runVIS
+
 runffmpeg=false
 cwd=$(pwd)
 FNAME=$rundate
@@ -47,19 +53,19 @@ if [ "$runVIS" = true ]; then
   fi
   cd ../..
   echo " ---> FINISHED ###"
-fi
-cd vis/$FNAME
-echo "### REFORMATIING AND MOVING TO "$VIZPATH
-mogrify -format jpg *.png
-rm -f *.png
-setfacl -m other:r-x *
-chmod og+rx *
-if [ ! -e $VIZPATH$FNAME ]
-then
-  mkdir $VIZPATH$FNAME
-fi
-mv *.jpg *.html $VIZPATH$FNAME
-cd $VIZPATH
-ln -sf $FNAME Today
-cd $cwd
+  cd vis/$FNAME
+  echo "### REFORMATIING AND MOVING TO "$VIZPATH
+  mogrify -format jpg *.png
+  rm -f *.png
+  setfacl -m other:r-x *
+  chmod og+rx *
+  if [ ! -e $VIZPATH$FNAME ]
+  then
+    mkdir $VIZPATH$FNAME
+  fi
+  mv *.jpg *.html $VIZPATH$FNAME
+  cd $VIZPATH
+  ln -sf $FNAME Today
+  cd $cwd
+  fi
 echo "DONE"

@@ -6,6 +6,7 @@
 set -e #stop at first error
 module load intel/17.0.0
 module load python2 python-libs
+
 # Defaults
 rundate=$(date +%Y%m%d)
 vizhome=~earunres
@@ -13,23 +14,27 @@ runVIS=true
 
 print_usage() {
   echo "Usage:
- -d date YMD defaults to today
- -n name of viz defaults to ~earunres
- -nov turn viz off"
+ -d date YYYYMMDD defaults to today
+ -n home name of viz defaults to ~earunres
+ -p plotsoff turn viz off
+ long options are currently not avaible"
 }
 
-while getopts 'd:n:h:nov' flag; do
+while getopts 'd:n:p:h' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
-    nov) runVIS=false ;;
-    h) print_usage
+    p) runVIS="${OPTARG}" ;;
+    h|--help) print_usage
        exit 1 ;;
     *) print_usage
        exit 1 ;;
   esac
 done
 
+echo date=$rundate
+echo vizhome=$vizhome
+echo viz=$runVIS
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
 enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
