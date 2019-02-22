@@ -13,6 +13,7 @@ vizhome=~earunres
 runVIS=true
 runffmpeg=false
 # Defaults that can be overwritten by editing HERE:
+# Command line option m switches all to false
 runTERREL=true
 runCTGPROC=true
 runMAKEGEO=true
