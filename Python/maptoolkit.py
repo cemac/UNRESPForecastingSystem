@@ -241,7 +241,7 @@ class Masaya_Maps(object):
     def plot_staticmap1(s, ita, im, tc, filePaths, out, SOX):
         """Plot static maps
         """
-        SOXf = r'SO$_'+SOX[-1]+'$'
+        SOXf = r'SO$_' + SOX[-1] + '$'
         so2title = ('Atmospheric ' + SOXf + ' concentrations at ' +
                     'ground level (hourly means). \n GCRF UNRESP')
         plt.figure(figsize=(16, 12))
