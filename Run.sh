@@ -6,6 +6,27 @@
 set -e #stop at first error
 module load intel/17.0.0
 module load python2 python-libs
+# Defaults
+rundate=$(date +%Y%m%d)
+vizhome=~earunres
+
+print_usage() {
+  echo "Usage:
+ -d date YMD defaults to today
+ -n name of viz defaults to ~earunres"
+}
+
+while getopts 'dn:hv' flag; do
+  case "${flag}" in
+    d) rundate="${OPTARG}" ;;
+    n) vizhome="${OPTARG}" ;;
+    v) verbose=true ;;
+    h) print_usage
+       exit 1 ;;
+    *) print_usage
+       exit 1 ;;
+  esac
+done
 
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
@@ -103,13 +124,13 @@ endYear=${enddate:0:4}
 endMonth=${enddate:4:2}
 endDay=${enddate:6:2}
 
-
 #Set other parameters
 res=1000 #Resolution (m) of intended CALPUFF grid.  100 < (integer) < 1000
 let NX=90000/$res+1
 let NY=54000/$res+1
 DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
+
 cwd=$(pwd)
 
 
