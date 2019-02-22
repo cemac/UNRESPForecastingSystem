@@ -16,7 +16,7 @@ print_usage() {
  -n name of viz defaults to ~earunres"
 }
 
-while getopts 'dn:hv' flag; do
+while getopts 'd:n:h:v' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
@@ -191,7 +191,7 @@ if [ "$run3DDAT" = true ]; then
 	#Entire GRIB file:
 	#wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2
 	#Subset of GRIB file using GRIB filter (http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl):
-  #NB https not http as of Jan 2019
+  #WARNING https not http as of Jan 2019
 	curl "https://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl?file=nam.t00z.afwaca"${hour}".tm00.grib2&"\
 "lev_1000_mb=on&lev_100_mb=on&lev_10_mb=on&lev_150_mb=on&lev_200_mb=on&lev_20_mb=on&lev_250_mb=on&"\
 "lev_2_mb=on&lev_300_mb=on&lev_30_mb=on&lev_400_mb=on&lev_500_mb=on&lev_50_mb=on&lev_5_mb=on&"\
