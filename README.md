@@ -43,6 +43,7 @@ Aimed at running on the Leeds Linux systems
   -n <home> name of viz defaults to ~earunres
  The following switches can be used to overwrite
  Default behaviour.
+  -m turn OFF FORECAST Model (e.g. to run viz option only)
   -p turn OFF viz steps (no jpgs etc to be produced)
   -f turn ON ffmpeg mp4 production
 ```
