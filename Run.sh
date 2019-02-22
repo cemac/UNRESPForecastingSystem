@@ -6,27 +6,89 @@
 set -e #stop at first error
 module load intel/17.0.0
 module load python2 python-libs
-# Defaults
+
+# Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
 vizhome=~earunres
+runVIS=true
+runffmpeg=false
+# Defaults that can be overwritten by editing HERE:
+# Command line option m switches all to false
+runTERREL=true
+runCTGPROC=true
+runMAKEGEO=true
+run3DDAT=true
+runCALMET=true
+runCALPUFF=true
+runmodel=true
 
 print_usage() {
-  echo "Usage:
- -d date YMD defaults to today
- -n name of viz defaults to ~earunres"
+  echo "
+ Run.sh
+
+ A CEMAC script to Run CALPUFF WITH NAM DATA input
+ winds and produces plots of SO2 and SO4.
+
+ Usage:
+  .\Run.sh <opts>
+
+ No options runs a default production configuration:
+ Today, Viz on, plots production area (~earunres).
+
+ Options:
+  -d <date> YYYYMMDD DEFAULT: <today's date>
+  -n <home> name of viz defaults to ~earunres
+ **
+ The following switches can be used to overwrite
+ Default behaviour.
+ **
+  -m turn OFF Forecasting model (e.g to run viz only)
+  -p turn OFF viz steps (no jpgs etc to be produced)
+  -f turn ON ffmpeg mp4 production
+ long options are currently not avaible.
+ "
 }
 
-while getopts 'dn:hv' flag; do
+set_viz() {
+  runVIS=false
+}
+
+set_ffmpeg() {
+  runffmpeg=true
+}
+
+set_model() {
+  runTERREL=false
+  runCTGPROC=false
+  runMAKEGEO=false
+  run3DDAT=false
+  runCALMET=false
+  runCALPUFF=false
+  runmodel=false
+}
+while getopts 'd:n:pmfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
-    v) verbose=true ;;
+    p) set_viz ;;
+    m) set_model ;;
+    f) set_ffmpeg ;;
     h) print_usage
        exit 1 ;;
     *) print_usage
        exit 1 ;;
   esac
 done
+
+echo 'Running with the following options set:'
+echo 'date: '$rundate
+echo 'run model: '$runmodel
+echo 'vizulisation: '$runVIS
+echo 'make mp4: ' $runffmpeg
+# VISUALISATION  PATH --> public_html/UNRESP_VIZ/ folders must exist in
+# viz destination.
+VIZPATH=$vizhome/public_html/UNRESP_VIZ/
+echo 'vizulisation output to: '$VIZPATH
 
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
@@ -41,27 +103,22 @@ endYear=${enddate:0:4}
 endMonth=${enddate:4:2}
 endDay=${enddate:6:2}
 
-#Set flags
-runTERREL=true
-runCTGPROC=true
-runMAKEGEO=true
-run3DDAT=true
-runCALMET=true
-runCALPUFF=true
-runVIS=true
-runffmpeg=false
+
 #Set other parameters
-res=1000 #Resolution (m) of intended CALPUFF grid. Should be an integer that is > 100 and < 1000
+res=1000 #Resolution (m) of intended CALPUFF grid.  100 < (integer) < 1000
 let NX=90000/$res+1
 let NY=54000/$res+1
 DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
-# VISUALISATION  PATH
-VIZPATH=$vizhome/public_html/UNRESP_VIZ/
 cwd=$(pwd)
 
-echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 
+#------------------------------------------------------------------------#
+#------------------- DO NOT ALTER BELOW THIS LINE------------------------#
+#------------------------------------------------------------------------#
+if [ "$runmodel" = true ]; then
+echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
+fi
 ###TERREL###
 if [ "$runTERREL" = true ]; then
   #Compile TERREL if required:
@@ -191,7 +248,8 @@ if [ "$run3DDAT" = true ]; then
 	#Entire GRIB file:
 	#wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2
 	#Subset of GRIB file using GRIB filter (http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl):
-	curl "http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl?file=nam.t00z.afwaca"${hour}".tm00.grib2&"\
+  #WARNING https not http as of Jan 2019
+	curl "https://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl?file=nam.t00z.afwaca"${hour}".tm00.grib2&"\
 "lev_1000_mb=on&lev_100_mb=on&lev_10_mb=on&lev_150_mb=on&lev_200_mb=on&lev_20_mb=on&lev_250_mb=on&"\
 "lev_2_mb=on&lev_300_mb=on&lev_30_mb=on&lev_400_mb=on&lev_500_mb=on&lev_50_mb=on&lev_5_mb=on&"\
 "lev_600_mb=on&lev_700_mb=on&lev_75_mb=on&lev_7_mb=on&lev_800_mb=on&lev_850_mb=on&lev_900_mb=on&"\
@@ -339,7 +397,7 @@ if [ "$runVIS" = true ]; then
   ./generateMaps.py ${rundate}
   cd ..
   cd vis/${rundate}
-  if [ "$runffmpeg" = true]; then
+  if [ ${runffmpeg} = true ]; then
   echo "Running ffmpeg"
   ffmpeg -f image2 -r 4 -i static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
   fi
@@ -361,7 +419,11 @@ if [ "$runVIS" = true ]; then
   mv *.jpg *.html $VIZPATH${rundate}
   cd $VIZPATH
   rm -f Today
-  ln -sf ${rundate} Today
+  ln -sf $(date +%Y%m%d) Today
   cd $cwd
 fi
-echo "### SUCCESSFULLY COMPLETED FORECAST ###"
+if [ "$runmodel" = true ]; then
+  echo "### SUCCESSFULLY COMPLETED FORECAST ###"
+else
+  echo "### SUCCESSFULLY COMPLETED TASK ###"
+fi
