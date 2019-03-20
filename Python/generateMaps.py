@@ -97,7 +97,7 @@ if generateGoogleMaps:
         generateGoogleMaps = False
         print("### WARNING #### GM_API_KEY.txt not found \n turning off google maps plotter")
         print(" If you would like to plot goolge maps \n please see README" +
-              "for API key information.")
+              " for API key information.")
 
 # CHECK PATHS/FILES EXIST
 assert os.path.exists(

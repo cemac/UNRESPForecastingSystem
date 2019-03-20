@@ -42,8 +42,8 @@ Anaconda python, unix systems (recommended)
 
 ```
 git clone
-cd
-conda create -f environment.yml
+cd UNRESPForecastingSystem
+conda env create -f environment.yml
 ```
 
 ## Usage ##
@@ -54,6 +54,8 @@ For external users, once installed to run full forecast and visualisation with d
 cd $HOME/UNRESPForecastingSystem
 ./Run_ext.sh
 ```
+
+**NB** If no intel compilers the executables and libraries must be copied over to CALPUFF_EXE
 
 For help run `.\Run.sh -h`
 
