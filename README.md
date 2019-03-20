@@ -10,7 +10,7 @@
 |  Version            | Release          |
 |---------------------|------------------|
 | **UoL 2018**  | [![GitHubrelease](https://img.shields.io/badge/release-v.1.0-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v1.0) |
-| **Current Stable**  | [![GitHubrelease](https://img.shields.io/badge/release-v.2.1-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v2.1) |
+| **Current Stable**  | [![GitHubrelease](https://img.shields.io/badge/release-v.2.2-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v2.2) |
 | **SO4** |  *coming soon*     |
 <!--- table --->
 
@@ -27,21 +27,40 @@ The repository hosts the scripts required to run the CALPUFF dispersion model to
 
 ## Requirements ##
 
-This has been designed to run on CentOS systems. **[currently](https://confluence.ecmwf.int/display/ECC/ecCodes+installation) ecCodes does not work with
-python 3**
+* UNIX operating system (tested: CentOS Ubuntu)
+* [anaconda python](https://www.anaconda.com/distribution/#download-section)(recommended code works in python 2 and 3)
+  * requirements in environment.yml (python 3)
+  * non environment set up can be followed using requirements.txt if desired
+* Intel compiler **OR** executables and library (only for similar architecture as built)
 
+Non anaconda installations require a separate build of ecCodes python API:
 * [ecCodes python API](https://confluence.ecmwf.int//display/ECC/Releases)
-* [Python 2](https://www.anaconda.com/download)
+
+## Installation
+
+Anaconda python, unix systems (recommended)
+
+```
+git clone
+cd
+conda create -f environment.yml
+```
 
 ## Usage ##
 
-Aimed at running on the Leeds Linux systems
+For external users, once installed to run full forecast and visualisation with default options:
 
 ```bash
-./Run.sh
+cd $HOME/UNRESPForecastingSystem
+./Run_ext.sh
+```
+
+For help run `.\Run.sh -h`
+
+```
  optional arguments:
   -d <date> YYYYMMDD DEFAULT: <todays date>
-  -n <home> name of viz defaults to ~earunres
+  -n <home> name of viz defaults to $HOME/UNRESPForecastingSystem/VIZ_SITE_CODE
  The following switches can be used to overwrite
  Default behaviour.
   -m turn OFF FORECAST Model (e.g. to run viz option only)
@@ -49,9 +68,11 @@ Aimed at running on the Leeds Linux systems
   -f turn ON ffmpeg mp4 production
 ```
 
-For help run `.\Run.sh -h`
-
 This set up defaults to production behaviour to run as a chronjob displaying at [~earunres](https://homepages.see.leeds.ac.uk/~earunres/UNRESP_VIZ/index.html)
+
+The output can be viewied by opening $HOME/UNRESPForecastingSystem/VIZ_SITE_CODE/public_html/index.html with any browser e.g. firefox, chrome
+
+## Further Usage notes
 
 * In Run.sh various parameters can be set:
   1. `res` to alter the resolution between 100 - 1000 m
@@ -90,8 +111,8 @@ This set up defaults to production behaviour to run as a chronjob displaying at 
 ## Overview of Repository ##
 
 The directory structure of the repository is as follows:
-- The source code for the various parts of the CALPUFF system is stored in subdirectory `CALPUFF_SRC`. The source data corresponds to Version 7, which is downloadable from [here](http://www.src.com/calpuff/download/mod7_codes.htm), with a few minimal code changes required to allow the model to be built on a Linux system with Intel compilers; these changes are described in [this](https://github.com/cemac-tech/UNRESP/blob/master/Docs/CEMACUserGuide_UNRESP.tex) version-controlled file.
-- All user-editable input files for the various parts of the CALPUFF system are stored in subdirectory `CALPUFF_INP`. Template versions of these files have been set up specifically for the Masaya case and are version controlled. Various run-specific fields (e.g. run date) are then filled in at run-time. Information about setting up these input files for the Masaya case is also within [this](https://github.com/cemac-tech/UNRESP/blob/master/Docs/CEMACUserGuide_UNRESP.tex) file.
+- The source code for the various parts of the CALPUFF system is stored in subdirectory `CALPUFF_SRC`. The source data corresponds to Version 7, which is downloadable from [here](http://www.src.com/calpuff/download/mod7_codes.htm), with a few minimal code changes required to allow the model to be built on a Linux system with Intel compilers; these changes are described in [this](https://github.com/cemac/UNRESP/blob/master/Docs/CEMACUserGuide_UNRESP.tex) version-controlled file.
+- All user-editable input files for the various parts of the CALPUFF system are stored in subdirectory `CALPUFF_INP`. Template versions of these files have been set up specifically for the Masaya case and are version controlled. Various run-specific fields (e.g. run date) are then filled in at run-time. Information about setting up these input files for the Masaya case is also within [this](https://github.com/cemac/UNRESP/blob/master/Docs/CEMACUserGuide_UNRESP.tex) file.
 - All other input data files are stored in the `data` subdirectory. These include the 90m resolution DEM data files from the SRTM 3-sec dataset covering the Masaya region (4 .bil files), the old 1km resolution DEM data file from the GTOPO30 dataset (w100n40.dem) which isn't used any more but is retained for reference, the USGS land-use data file covering North/Central America (nalulcl20.bil), and a two-column file of UTM zone 16P coordinates which specify discrete receptor points at which we want output data (xy_masaya.dat). Some of the output files from parts of the forecasting system that serve as input files to subsequent parts are also copied into this directory during run-time.
 - All executables for the various parts of the CALPUFF system are stored in subdirectory `CALPUFF_EXE`. These are not version-controlled but will be built automatically with the run script is first used. They are only then rebuilt if deleted, so if you make any changes to the source code, be sure to delete the old executables so that new ones are made.
 - All output from the various parts of the CALPUFF system are moved to within subdirectory `CALPUFF_OUT` during runtime.
@@ -101,6 +122,8 @@ The directory structure of the repository is as follows:
 
 <hr>
 
+## Contributions ##
+
 ## Licence information ##
 
 *Coming soon*
@@ -109,7 +132,7 @@ The directory structure of the repository is as follows:
 
 ## Acknowledgements ##
 
-*Comming soon*
+*Coming soon*
 *IMO, UoL, Exponent*
 
 <hr>
