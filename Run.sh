@@ -412,7 +412,7 @@ if [ "$runVIS" = true ]; then
   rm -f *.png
   setfacl -m other:r-x *.jpg
   chmod og+rx *.jpg
-  if [ e *.htlm]
+  if [ -e *.html ]
   then
     setfacl -m other:r-x *.html
     chmod og+rx *.html
