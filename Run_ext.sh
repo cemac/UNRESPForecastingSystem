@@ -4,27 +4,6 @@
 #Project
 #Setup environment
 set -e #stop at first error
-# Defaults
-rundate=$(date +%Y%m%d)
-vizhome=~earunres
-
-print_usage() {
-  echo "Usage:
- -d date YMD defaults to today
- -n name of viz defaults to ~earunres"
-}
-
-while getopts 'dn:hv' flag; do
-  case "${flag}" in
-    d) rundate="${OPTARG}" ;;
-    n) vizhome="${OPTARG}" ;;
-    v) verbose=true ;;
-    h) print_usage
-       exit 1 ;;
-    *) print_usage
-       exit 1 ;;
-  esac
-done
 
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
