@@ -4,7 +4,8 @@
 #Project
 #Setup environment
 set -e #stop at first error
-
+source activate unresp
+source .env
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
 vizhome=$HOME/UNRESPForecastingSystem/VIZ_SITE_CODE
