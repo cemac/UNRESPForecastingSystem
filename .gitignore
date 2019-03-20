@@ -31,7 +31,8 @@ Python/GM_API_KEY.txt
 Python/test_data/
 
 
-/VIZ_SITE_CODE/public_html/UNRESP_VIZ/AQSensor/*/*.png
+VIZ_SITE_CODE/public_html/UNRESP_VIZ/AQSensor/*/*.png
+VIZ_SITE_CODE/public_html/UNRESP_VIZ/*/*.jpg
 grabAQfiles.sh
 
 Python/__pycache__/
