@@ -7,7 +7,7 @@ set -e #stop at first error
 
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
-vizhome=VIZ_SITE_CODE/
+vizhome=VIZ_SITE_CODE
 runVIS=true
 runffmpeg=false
 # Defaults that can be overwritten by editing HERE:
