@@ -410,8 +410,13 @@ if [ "$runVIS" = true ]; then
   echo "Reformatting png to jpg"
   mogrify -format jpg *.png
   rm -f *.png
-  setfacl -m other:r-x *.jpg *.html
-  chmod og+rx *.jpg *.html
+  setfacl -m other:r-x *.jpg
+  chmod og+rx *.jpg
+  if [ e *.htlm]
+  then
+    setfacl -m other:r-x *.html
+    chmod og+rx *.html
+  fi
   if [ ! -e $VIZPATH${rundate} ]
   then
     mkdir $VIZPATH${rundate}
