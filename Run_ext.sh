@@ -7,7 +7,7 @@ set -e #stop at first error
 
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
-vizhome=VIZ_SITE_CODE
+vizhome=$HOME/UNRESPForecastingSystem/VIZ_SITE_CODE
 runVIS=true
 runffmpeg=false
 # Defaults that can be overwritten by editing HERE:
@@ -410,16 +410,17 @@ if [ "$runVIS" = true ]; then
   rm -f *.png
   setfacl -m other:r-x *.jpg
   chmod og+rx *.jpg
-  if [ -e *.html ]
-  then
-    setfacl -m other:r-x *.html
-    chmod og+rx *.html
-  fi
   if [ ! -e $VIZPATH${rundate} ]
   then
     mkdir $VIZPATH${rundate}
   fi
-  mv *.jpg *.html $VIZPATH${rundate}
+  if [ -e *.html ]
+  then
+    setfacl -m other:r-x *.html
+    chmod og+rx *.html
+    mv *.html $VIZPATH${rundate}
+  fi
+  mv *.jpg $VIZPATH${rundate}
   cd $VIZPATH
   rm -f Today
   ln -sf $(date +%Y%m%d) Today
