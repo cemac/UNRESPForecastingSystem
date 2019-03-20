@@ -412,16 +412,17 @@ if [ "$runVIS" = true ]; then
   rm -f *.png
   setfacl -m other:r-x *.jpg
   chmod og+rx *.jpg
-  if [ -e *.html ]
-  then
-    setfacl -m other:r-x *.html
-    chmod og+rx *.html
-  fi
   if [ ! -e $VIZPATH${rundate} ]
   then
     mkdir $VIZPATH${rundate}
   fi
-  mv *.jpg *.html $VIZPATH${rundate}
+  if [ -e *.html ]
+  then
+    setfacl -m other:r-x *.html
+    chmod og+rx *.html
+    mv *.html $VIZPATH${rundate}
+  fi
+  mv *.jpg $VIZPATH${rundate}
   cd $VIZPATH
   rm -f Today
   ln -sf $(date +%Y%m%d) Today
