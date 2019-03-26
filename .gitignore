@@ -25,9 +25,6 @@ CALPUFF_INP/calpuff.inp
 updateNDrive.sh
 
 progress.md
-AppSecretKey.txt
-AQMeshCodes.txt
-Python/GM_API_KEY.txt
 Python/test_data/
 
 
