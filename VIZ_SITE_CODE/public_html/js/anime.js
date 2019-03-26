@@ -9,7 +9,7 @@ function GoToImage(number){
 function GoToImageG(){
         var iframe = document.createElement("iframe"),
         iframeWindow;
-        iframe.src = "google_concrec010001.html";
+        iframe.src = "Today/SO2_google_concrec010001.html";
         document.body.appendChild(iframe);
         iframeWindow = iframe.contentWindow || iframe.contentDocument.parentWindow;
         iframeWindow.onload = function(){
