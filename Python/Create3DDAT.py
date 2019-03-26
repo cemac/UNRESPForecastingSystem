@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 """
 Script name: Create3DDAT.py
 Author: JO'N, CEMAC (University of Leeds)
@@ -129,17 +129,17 @@ def writeRec9():
         RHgrd = np.zeros(shape=(Nj, Ni, NZ))
         # Loop through included levels and store the values in the appropriate k index of the 3D arrays
         for k in range(NZ):
-            HGTvals = gribapi.grib_get_values(gidHGT[k])
+            HGTvals = gribapi.grib_get_values(int(gidHGT[k]))
             HGTgrd[:, :, k] = np.reshape(HGTvals, (Nj, Ni), 'C')
-            TMPvals = gribapi.grib_get_values(gidTMP[k])
+            TMPvals = gribapi.grib_get_values(int(gidTMP[k]))
             TMPgrd[:, :, k] = np.reshape(TMPvals, (Nj, Ni), 'C')
-            Uvals = gribapi.grib_get_values(gidU[k])
+            Uvals = gribapi.grib_get_values(int(gidU[k]))
             Ugrd[:, :, k] = np.reshape(Uvals, (Nj, Ni), 'C')
-            Vvals = gribapi.grib_get_values(gidV[k])
+            Vvals = gribapi.grib_get_values(int(gidV[k]))
             Vgrd[:, :, k] = np.reshape(Vvals, (Nj, Ni), 'C')
-            Wvals = gribapi.grib_get_values(gidW[k])
+            Wvals = gribapi.grib_get_values(int(gidW[k]))
             Wgrd[:, :, k] = np.reshape(Wvals, (Nj, Ni), 'C')
-            RHvals = gribapi.grib_get_values(gidRH[k])
+            RHvals = gribapi.grib_get_values(int(gidRH[k]))
             RHgrd[:, :, k] = np.reshape(RHvals, (Nj, Ni), 'C')
         WSgrd = np.sqrt(Ugrd**2+Vgrd**2)  # Calculate wins speed (pythagoras)
         # Calculate wind direction:

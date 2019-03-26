@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Script name: generateMaps.py
@@ -88,12 +88,16 @@ font.set_family('monospace')
 
 if generateGoogleMaps:
     codesFile = os.path.join('GM_API_KEY.txt')
-    assert os.path.exists(
-        codesFile), "Can't find file GM_API_KEY.txt in same directory as python script"
-    f = open(codesFile, 'r')
-    lines = f.readlines()
-    f.close()
-    googlekey = lines[0].strip()
+    try:
+        f = open(codesFile, 'r')
+        lines = f.readlines()
+        f.close()
+        googlekey = lines[0].strip()
+    except FileNotFoundError:
+        generateGoogleMaps = False
+        print("### WARNING #### GM_API_KEY.txt not found \n turning off google maps plotter")
+        print(" If you would like to plot goolge maps \n please see README" +
+              " for API key information.")
 
 # CHECK PATHS/FILES EXIST
 assert os.path.exists(
