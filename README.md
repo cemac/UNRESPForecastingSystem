@@ -6,13 +6,9 @@
 
 # UNRESP Forecasting System
 
-<!--- release table --->
-|  Version            | Release          |
-|---------------------|------------------|
-| **UoL 2018**  | [![GitHubrelease](https://img.shields.io/badge/release-v.1.0-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v1.0) |
-| **Current Stable**  | [![GitHubrelease](https://img.shields.io/badge/release-v.2.2-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v2.2) |
-| **SO4** |  *coming soon*     |
-<!--- table --->
+
+<hr>
+![GitHub release](https://img.shields.io/github/release/cemac/UNRESPForecastingSystem.svg) ![GitHub issues](https://img.shields.io/github/issues/cemac/UNRESPForecastingSystem.svg) ![GitHub top language](https://img.shields.io/github/languages/top/cemac/UNRESPForecastingSystem.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/cemac/UNRESPForecastingSystem.svg) ![GitHub All Releases](https://img.shields.io/github/downloads/cemac/UNRESPForecastingSystem/total.svg)
 
 Repository for the [UNRESP](https://vumo.cloud/) Forecasting System:
 
@@ -123,6 +119,14 @@ The directory structure of the repository is as follows:
 - All python scripts are stored within subdirectory `Python`.
 
 <hr>
+
+<!--- release table --->
+|  Version            | Release          |
+|---------------------|------------------|
+| **UoL 2018**  | [![GitHubrelease](https://img.shields.io/badge/release-v.1.0-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v1.0) |
+| **Current Stable**  | [![GitHubrelease](https://img.shields.io/badge/release-v.2.2-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v2.2) |
+| **SO4** |  *coming soon*     |
+<!--- table --->
 
 ## Contributions ##
 
