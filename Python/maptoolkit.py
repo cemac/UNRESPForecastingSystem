@@ -32,12 +32,6 @@ import datetime as dt
 import pytz
 import utm
 import gmplot
-import cartopy.crs as ccrs
-import cartopy.io.img_tiles as cimgt
-import cartopy
-import cartopy.feature as cfeat
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-import netCDF4
 from dateutil.parser import parse
 
 
@@ -296,14 +290,18 @@ class Masaya_Maps(object):
         codesFile = os.path.join('GM_API_KEY.txt')
         gmstring = ("Can't find file GM_API_KEY.txt in same" +
                     " directory as python script")
-        assert os.path.exists(codesFile), gmstring
-        f = open(codesFile, 'r')
-        lines = f.readlines()
-        f.close()
-        s.googlekey = lines[0].strip()
-        filenames, filePaths = concfiles(s.nConcFiles, s.concDir, SOX=SOX)
-        for i, fname in enumerate(filePaths):
-            s.plot_googlemap1(i, filePaths, SOX)
+        try:
+            f = open(codesFile, 'r')
+            lines = f.readlines()
+            f.close()
+            s.googlekey = lines[0].strip()
+            filenames, filePaths = concfiles(s.nConcFiles, s.concDir, SOX=SOX)
+            for i, fname in enumerate(filePaths):
+                s.plot_googlemap1(i, filePaths, SOX)
+        except FileNotFoundError:
+            print("### WARNING #### GM_API_KEY.txt not found \n turning off google maps plotter")
+            print(" If you would like to plot goolge maps \n please see README" +
+                  " for API key information.")
 
     def plot_googlemap1(s, ita, filePaths, SOX):
         """plot goolemaps

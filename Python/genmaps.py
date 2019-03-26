@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """genmaps
 .. module:: genmaps
@@ -24,7 +24,7 @@ import argparse
 from dateutil.parser import parse
 import maptoolkit as mtk
 
-# Manual Flags (will be overwrittend by commandline flas)
+# Manual Flags (will be overwrittend by commandline flags)
 StaticMaps = True
 GoogleMaps = True
 SO24 = True
@@ -117,7 +117,7 @@ print("Plot as raster layers", Layers)
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 date = args.date
-mpt = mtk(date)
+mpt = mtk.Masaya_Maps(date)
 
 if StaticMaps:
     if SO24:
