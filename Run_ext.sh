@@ -1,15 +1,14 @@
-#!/usr/bin/bash --login
+#!/bin/bash
 
 #This script was created by CEMAC (University of Leeds) as part of the UNRESP
 #Project
 #Setup environment
 set -e #stop at first error
-module load intel/17.0.0
-module load python2 python-libs
-
+source activate unresp
+source .env
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
-vizhome=~earunres
+vizhome=$HOME/UNRESPForecastingSystem/VIZ_SITE_CODE
 runVIS=true
 runffmpeg=false
 # Defaults that can be overwritten by editing HERE:
