@@ -1,0 +1,3 @@
+AppSecretKey.txt filter=git-crypt diff=git-crypt
+AQMeshCodes.txt filter=git-crypt diff=git-crypt
+Python/GM_API_KEY.txt filter=git-crypt diff=git-crypt
