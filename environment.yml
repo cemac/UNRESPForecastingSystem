@@ -20,7 +20,7 @@ dependencies:
   - gst-plugins-base=1.14.0=hbbd80ab_1
   - gstreamer=1.14.0=hb453b48_1
   - hdf4=4.2.13=h9a582f1_1002
-  - hdf5=1.10.4=nompi_h11e915b_1105
+  - hdf5=1.10.4=nompi_h5598ddc_1105
   - icu=58.2=h9c2bf20_1
   - intel-openmp=2019.1=144
   - jasper=1.900.1=h07fcdf6_1006
@@ -78,4 +78,3 @@ dependencies:
     - idna==2.8
     - requests==2.21.0
     - urllib3==1.24.1
-
