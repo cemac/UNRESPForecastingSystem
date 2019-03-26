@@ -55,18 +55,18 @@ towns = (' El Panama', ' Rigoberto', ' Pacaya', ' El Crucero',
          ' San Rafael del Sur', ' Diriamba', ' Jinotepe',
          ' Masatepe')
 townCoords = ((-86.2058, 11.972), (-86.2021, 11.9617),
-                (-86.3013, 11.9553), (-86.3113, 11.9923),
-                (-86.189772, 11.936161), (-86.096053, 11.973523),
-                (-86.20317, 11.906584), (-86.43639, 11.847034),
-                (-86.239592, 11.85632), (-86.19993, 11.85017),
-                (-86.143758, 11.91512))
+            (-86.3013, 11.9553), (-86.3113, 11.9923),
+            (-86.189772, 11.936161), (-86.096053, 11.973523),
+            (-86.20317, 11.906584), (-86.43639, 11.847034),
+            (-86.239592, 11.85632), (-86.19993, 11.85017),
+            (-86.143758, 11.91512))
 cities = (' MANAGUA',)
 cityCoords = ((-86.29, 12.12),)
 volcCoords = (-86.1608, 11.9854)
 font = FontProperties()
 font.set_weight('bold')
 font.set_family('monospace')
-tc='k'
+tc = 'k'
 for i, town in enumerate(towns):
     plt.plot(townCoords[i][0], townCoords[i]
              [1], 'ok', markersize=4)
