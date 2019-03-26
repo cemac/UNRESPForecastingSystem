@@ -30,6 +30,7 @@ Python/test_data/
 
 VIZ_SITE_CODE/public_html/UNRESP_VIZ/AQSensor/*/*.png
 VIZ_SITE_CODE/public_html/UNRESP_VIZ/*/*.jpg
+VIZ_SITE_CODE/public_html/UNRESP_VIZ/*/*google_conc*.html
 grabAQfiles.sh
 
 Python/__pycache__/
