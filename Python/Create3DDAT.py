@@ -17,7 +17,8 @@ def writeRec1():
     # DATAVER='2.1' #Dataset version
     # DATAMOD='Created using Create3DDAT.py' #Dataset message field
     # fout.write('{:16}{:16}{}\n'.format(DATASET,DATAVER,DATAMOD))
-    fout.write('M3D file Created from ETA AWIPS 212 Grid for Falconbridge CALMET\n') #just replicate Sara's data file for now
+    fout.write('M3D file Created from ETA AWIPS 212 Grid for Falconbridge CALMET\n')
+# just replicate Sara's data file for now
 
 
 def writeRec2():
