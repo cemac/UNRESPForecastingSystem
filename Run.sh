@@ -11,6 +11,7 @@ module load python2 python-libs
 rundate=$(date +%Y%m%d)
 vizhome=~earunres
 runVIS=true
+runSO4=true
 runffmpeg=false
 # Defaults that can be overwritten by editing HERE:
 # Command line option m switches all to false
@@ -53,6 +54,9 @@ set_viz() {
   runVIS=false
 }
 
+set_SO4() {
+  runSO4=false
+}
 set_ffmpeg() {
   runffmpeg=true
 }
@@ -66,12 +70,13 @@ set_model() {
   runCALPUFF=false
   runmodel=false
 }
-while getopts 'd:n:pmfh' flag; do
+while getopts 'd:n:pmsfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
     p) set_viz ;;
     m) set_model ;;
+    s) set_SO4 ;;
     f) set_ffmpeg ;;
     h) print_usage
        exit 1 ;;
@@ -84,6 +89,7 @@ echo 'Running with the following options set:'
 echo 'date: '$rundate
 echo 'run model: '$runmodel
 echo 'vizulisation: '$runVIS
+echo 'SO4 output: '$runSO4
 echo 'make mp4: ' $runffmpeg
 # VISUALISATION  PATH --> public_html/UNRESP_VIZ/ folders must exist in
 # viz destination.
@@ -394,7 +400,10 @@ if [ "$runVIS" = true ]; then
   rm -rf ./vis/${rundate}
   mkdir ./vis/${rundate}
   cd Python
-  ./genmaps.py ${rundate}
+  if [ "$runSO4" = true ]; then
+    ./genmaps.py ${rundate}
+  else
+    ./genmaps.py ${rundate}
   cd ..
   cd vis/${rundate}
   if [ ${runffmpeg} = true ]; then
