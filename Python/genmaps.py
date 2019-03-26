@@ -28,6 +28,8 @@ import maptoolkit as mtk
 StaticMaps = True
 GoogleMaps = True
 SO24 = True
+SO2 = False
+SO4 = False
 # Not yet Functioning
 diffMaps = False
 windfield = False
@@ -64,6 +66,10 @@ parser.add_argument('--diff', help='Turn on IMO vs UoL',
 parser.add_argument('--wind', help='Turn on wind quiverplots (NAM)',
                     action='store_true')
 args = parser.parse_args()
+
+if args.SO2:
+    SO24 = False
+    SO2 = True
 
 if args.all:
     SO24 = True
