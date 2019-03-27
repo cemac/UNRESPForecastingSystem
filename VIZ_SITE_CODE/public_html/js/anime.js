@@ -1,9 +1,9 @@
 var current_image;
 var play_mode=0;
 var oldIndex=0;
-var nameSequence=0;
-var nameStop=0;
-var last_pict=0
+var last_pict = 47;
+var nameSequence = "Run";
+var nameStop = "Stop";
 function GoToImage(number){
         play_mode=0;
         viewPic(number);
@@ -31,8 +31,6 @@ function animate_fwd(){
 }
 function viewPic(nr){
         document.animation.src=theImages[nr].src;
-        document.anchors[oldIndex].style.backgroundColor='white';
-        document.anchors[nr].style.backgroundColor='LightSkyBlue ';
         oldIndex=nr;
         nextslideindex=nr;
 }

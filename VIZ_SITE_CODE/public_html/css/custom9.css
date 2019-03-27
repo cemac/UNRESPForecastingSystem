@@ -1,7 +1,7 @@
 html,
 body {
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    height: 90%;
     font-family: 'Open Sans','Helvetica Neue',Arial,sans-serif;
 }
 
@@ -102,9 +102,10 @@ header .header-content .header-content-inner p {
 }
 
 .content {
+  max-width: 60%;
   color: #fff;
-    background-color: #add8e6;
-    padding: 100px 0;
+    background-color: #fff
+    padding: 70px 0;
     text-align: center;
 }
 
@@ -198,7 +199,7 @@ header .header-content .header-content-inner p {
 
 .navbar-default {
     border-color: rgba(34,34,34,.05);
-    background-color: #fff;
+    background-color: #222;
     -webkit-transition: all .35s;
     -moz-transition: all .35s;
     transition: all .35s;
@@ -215,7 +216,7 @@ header .header-content .header-content-inner p {
 
 .navbar-default .nav > li>a,
 .navbar-default .nav>li>a:focus {
-    color: #222;
+    color: #000000;
 }
 
 .navbar-default .nav > li>a:hover,
@@ -241,23 +242,23 @@ header .header-content .header-content-inner p {
     }
 
     .navbar-default .navbar-header .navbar-brand {
-        color: rgba(255,255,255,.7);
+        color: : #0000;
         letter-spacing: 0.5em;
     }
 
     .navbar-default .navbar-header .navbar-brand:hover,
     .navbar-default .navbar-header .navbar-brand:focus {
-        color: #fff;
+        color:  #0000;
     }
 
     .navbar-default .nav > li>a,
     .navbar-default .nav>li>a:focus {
-        color: rgba(255,255,255,.7);
+        color:  #0000;
     }
 
     .navbar-default .nav > li>a:hover,
     .navbar-default .nav>li>a:focus:hover {
-        color: #fff;
+        color: #3386da;
     }
 
     .navbar-default.affix {
