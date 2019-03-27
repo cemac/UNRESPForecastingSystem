@@ -1,6 +1,9 @@
 var current_image;
 var play_mode=0;
 var oldIndex=0;
+var nameSequence=0;
+var nameStop=0;
+var last_pict=0
 function GoToImage(number){
         play_mode=0;
         viewPic(number);
