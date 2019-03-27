@@ -53,5 +53,4 @@ function declareims(imtype) {
   theImages[44].src = "./Today/" + imtype + "0045.jpg";
   theImages[45].src = "./Today/" + imtype + "0046.jpg";
   theImages[46].src = "./Today/" + imtype + "0047.jpg";
-  theImages[47].src = "./Today/" + imtype + "0048.jpg";
 }
