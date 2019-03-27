@@ -53,7 +53,7 @@ cd $HOME/UNRESPForecastingSystem
 
 **NB** If no intel compilers the executables and libraries must be copied over to CALPUFF_EXE
 
-For help run `.\Run.sh -h`
+For help run `.\Run_ext.sh -h`
 
 ```
  optional arguments:
@@ -66,9 +66,15 @@ For help run `.\Run.sh -h`
   -f turn ON ffmpeg mp4 production
 ```
 
-This set up defaults to production behaviour to run as a chronjob displaying at [~earunres](https://homepages.see.leeds.ac.uk/~earunres/UNRESP_VIZ/index.html)
+Run.sh is set up default to leeds production behaviour to run as a chronjob displaying at [~earunres](https://homepages.see.leeds.ac.uk/~earunres/UNRESP_VIZ/index.html)
 
-The output can be viewied by opening $HOME/UNRESPForecastingSystem/VIZ_SITE_CODE/public_html/index.html with any browser e.g. firefox, chrome
+The output can be viewed by running:
+
+```bash
+cd $HOME/UNRESPForecastingSystem/VIZ_SITE_CODE/publichtml
+python -m http.server
+```
+And opening http://0.0.0.0:8000/ in any browser
 
 ## Further Usage notes
 
