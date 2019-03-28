@@ -23,13 +23,24 @@ Although you can use them, for a more unique website, replace these images with 
   <script src="../js/picker.js"></script>
 </head>
 
-<body  onload="GoToImage(0)">
+<body onload="GoToImage(0)">
   <nav id="siteNav" class="navbar navbar-default navbar-fixed-top" role="navigation" w3-include-HTML="../_includes/navbar.html"></nav>
   <!-- Content 1 -->
   <br>
   <br>
   <br>
   <br>
+  <button id="clickme" class="btn btn-primary btn-m" onclick="declareims('SO4_static_concrec02'), GoToImage(0);">SO<sub>4</sub></button>
+  <button id="clickme" class="btn btn-primary btn-m" onclick="declareims('SO2_static_concrec01'), GoToImage(0);">SO<sub>2</sub></button>
+  <button class="btn btn-primary btn-m">
+    <form name="control_form" action="">
+      <font face="verdana" size="-1">
+        <input type="button" class="btn btn-primary btn-m" name="SequenceForm" value="Run" onclick="startAnimation()">
+      </font>
+    </form>
+  </button>
+  &emsp;
+  <span class="text-danger"><b> NOT FOR OPERATIONAL USE. FORECAST UNDER DEVELOPMET.</b></span>
   <div w3-include-HTML="../_includes/animation.html"></div>
   <div class="js-inline-picker"></div>
 </body>
@@ -53,4 +64,5 @@ Although you can use them, for a more unique website, replace these images with 
     hearder: true,
   });
 </script>
+
 </html>

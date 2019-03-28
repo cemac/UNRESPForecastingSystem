@@ -445,3 +445,13 @@ img::-moz-selection {
 .bg-primary {
     background-color: #3386da;
 }
+
+/* force animation button on same line as toggle*/
+form {
+  display: flex; /* 2. display flex to the rescue */
+  flex-direction: row;
+}
+
+label, input {
+  display: block; /* 1. oh noes, my inputs are styled as block... */
+}
