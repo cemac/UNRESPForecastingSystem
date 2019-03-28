@@ -5,198 +5,61 @@ Although you can use them, for a more unique website, replace these images with 
 <html lang="en">
 
 <head>
-
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-
-  <title>SO2 and NO2 concentrations Masaya</title>
-
+  <title> Sensor Data Masaya</title>
   <!-- Bootstrap Core CSS -->
   <link href="../../css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Custom CSS: You can use this stylesheet to override any Bootstrap styles and/or apply your own styles -->
-  <link href="../../css/custom.css" rel="stylesheet">
+  <!-- Custom CSS:-->
+  <link href="../../css/custom4.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="../../css/styles.css">
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
   <!-- Custom Fonts from Google -->
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
   <script language="javascript" type="text/javascript" src="../../js/anime.js"></script>
-  <script language="javascript" type="text/javascript">
-    var last_pict = 47;
-    var nameSequence = "Run";
-    var nameStop = "Stop";
-    theImages = new Array();
-    for (var i = 0; i < 47; i++) {
-      theImages[i] = new Image();
-    }
-    theImages[0].src = "./Pacaya/Jan_2016.png";
-    theImages[1].src = "./Pacaya/Feb_2016.png";
-    theImages[2].src = "./Pacaya/Mar_2016.png";
-    theImages[3].src = "./Pacaya/Apr_2016.png";
-    theImages[4].src = "./Pacaya/May_2016.png";
-    theImages[5].src = "./Pacaya/Jun_2016.png";
-    theImages[6].src = "./Pacaya/Jul_2016.png";
-    theImages[7].src = "./Pacaya/Aug_2016.png";
-    theImages[8].src = "./Pacaya/Sep_2016.png";
-    theImages[9].src = "./Pacaya/Oct_2016.png";
-    theImages[10].src = "./Pacaya/Nov_2016.png";
-    theImages[11].src = "./Pacaya/Dec_2016.png";
-    theImages[12].src = "./Pacaya/Jan_2017.png";
-    theImages[13].src = "./Pacaya/Feb_2017.png";
-    theImages[14].src = "./Pacaya/Mar_2017.png";
-    theImages[15].src = "./Pacaya/Apr_2017.png";
-    theImages[16].src = "./Pacaya/May_2017.png";
-    theImages[17].src = "./Pacaya/Jun_2017.png";
-    theImages[18].src = "./Pacaya/Jul_2017.png";
-    theImages[19].src = "./Pacaya/Aug_2017.png";
-    theImages[20].src = "./Pacaya/Sep_2017.png";
-    theImages[21].src = "./Pacaya/Oct_2017.png";
-    theImages[22].src = "./Pacaya/Nov_2017.png";
-    theImages[23].src = "./Pacaya/Dec_2017.png";
-    theImages[24].src = "./Pacaya/Jan_2018.png";
-    theImages[25].src = "./Pacaya/Feb_2018.png";
-    theImages[26].src = "./Pacaya/Mar_2018.png";
-    theImages[27].src = "./Pacaya/Apr_2018.png";
-    theImages[28].src = "./Pacaya/May_2018.png";
-    theImages[29].src = "./Pacaya/Jun_2018.png";
-    theImages[30].src = "./Pacaya/Jul_2018.png";
-    theImages[31].src = "./Pacaya/Aug_2018.png";
-    theImages[32].src = "./Pacaya/Sep_2018.png";
-    theImages[33].src = "./Pacaya/Oct_2018.png";
-    theImages[34].src = "./Pacaya/Nov_2018.png";
-    theImages[35].src = "./Pacaya/Dec_2018.png";
-  </script>
+  <script language="javascript" type="text/javascript" src="../../js/imgref.js"></script>
+  <link href="../../css/picker.css" rel="stylesheet">
+  <script src="../../js/picker.js"></script>
 </head>
-
 <body onLoad="GoToImage(0);">
   <!-- Navigation -->
-    <nav id="siteNav" class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-      <!-- Logo and responsive toggle -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="https://www.cemac.leeds.ac.uk/" target="_blank">
-          <span class="glyphicon glyphicon-cloud"></span>
-          CEMAC
-        </a>
-      </div>
-      <!-- Navbar links -->
-      <div class="collapse navbar-collapse" id="navbar">
-        <ul class="nav navbar-nav navbar-left">
-          <li>
-            <a href="../../UNRESP.html">UNRESP Home</a>
-          </li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a href="../index.html">Satellite</a>
-          </li>
-          <li>
-            <a href="../index_topo.html">Topo</a>
-          </li>
-          <li>
-            <a href="../index_google.html">GoogleMaps</a>
-          </li>
-          <li>
-            <a href="../index_AQts.html">Sensor Data</a>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">AQSensor<span class="caret"></span></a>
-            <ul class="dropdown-menu" aria-labelledby="about-us">
-              <li> <a href="SanJu1_index.html">San Juan1</a></li>
-              <li><a href="ElCrucero_index.html">El Crucero</a></li>
-              <li><a href="SanJuan2_index.html">San Juan2</a></li>
-              <li><a href="785150_index.html">785150</a></li>
-              <li class="active"><a href="Pacaya_index.html">Pacaya</a></li>
-              <li><a href="Rigoberto_index.html">Rigoberto</a></li>
-              <li><a href="861150_index.html">861150</a></li>
-              <li><a href="Met_index.html">Met</a></li>
-              <li><a href="ElPanama_index.html">ElPanama</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div><!-- /.navbar-collapse -->
-    </div><!-- /.container -->
-  </nav>
+<nav id="siteNav" class="navbar navbar-default navbar-fixed-top" role="navigation" w3-include-HTML="../../_includes/navbar_sensors.html"></nav>
+  <!-- Content 1 -->
+  <br>
+  <br>
+  <br>
+  <br>
+  <div w3-include-HTML="../../_includes/sensor.html"></div>
+  <div class="js-inline-picker"></div>
 
 
 
   <!-- Content 1 -->
   <section class="content">
-    <div class="container">
-      <div class="col-sm-9" align="center">
-        <center>
-          <h1 class="section-heading"> UNRESP Sulphur Dioxide - SO<sub>2</sub> and NO<sub>2</sub> </h1>
-          <h2 style="color:#800000;"><span style="color:#800000;">Raw Pacaya Sensor Data by Month</span></h2>
-        </center>
-      </div>
-    </div>
-    <div class="container">
-      <div class="col-sm-9">
-        <img src="#" id="animation" name="animation" alt="UNRESP - University of Leeds 2018" style="width:80%;" height: auto;>
-        <table cellspacing="10" cellpadding="0" align="left">
-          <thead>
-            <th> 2017 </th>
-          </thead>
-          <tbody>
-            <td>
-              <a href="#" name="a13" onMouseOver="GoToImage(12);" onClick="GoToImage(12);" class="btn btn-primary btn-sm"> Jan</a><br />
-              <a href="#" name="a14" onMouseOver="GoToImage(13);" onClick="GoToImage(13);" class="btn btn-primary btn-sm"> Feb</a><br />
-              <a href="#" name="a15" onMouseOver="GoToImage(14);" onClick="GoToImage(14);" class="btn btn-primary btn-sm"> Mar</a><br />
-              <a href="#" name="a16" onMouseOver="GoToImage(15);" onClick="GoToImage(15);" class="btn btn-primary btn-sm"> Apr</a><br />
-              <a href="#" name="a17" onMouseOver="GoToImage(16);" onClick="GoToImage(16);" class="btn btn-primary btn-sm"> May</a><br />
-              <a href="#" name="a18" onMouseOver="GoToImage(17);" onClick="GoToImage(17);" class="btn btn-primary btn-sm"> Jun</a><br />
-              <a href="#" name="a19" onMouseOver="GoToImage(18);" onClick="GoToImage(18);" class="btn btn-primary btn-sm"> Jul</a><br />
-              <a href="#" name="a20" onMouseOver="GoToImage(19);" onClick="GoToImage(19);" class="btn btn-primary btn-sm"> Aug</a><br />
-              <a href="#" name="a21" onMouseOver="GoToImage(20);" onClick="GoToImage(20);" class="btn btn-primary btn-sm"> Sep</a><br />
-              <a href="#" name="a22" onMouseOver="GoToImage(21);" onClick="GoToImage(21);" class="btn btn-primary btn-sm"> Oct</a><br />
-              <a href="#" name="a23" onMouseOver="GoToImage(22);" onClick="GoToImage(22);" class="btn btn-primary btn-sm"> Nov</a><br />
-              <a href="#" name="a24" onMouseOver="GoToImage(23);" onClick="GoToImage(23);" class="btn btn-primary btn-sm"> Dec</a><br />
-            </td>
-          </tbody>
-        </table>
-      </div>
-    </div>
+
   </section>
 
 </body>
+
 <!-- Footer -->
-<footer class="page-footer">
+<footer class="page-footer" w3-include-HTML="../../_includes/footer.html"></footer>
 
-  <!-- Copyright etc -->
-  <div class="small-print">
-    <div class="container">
-      <p>Copyright &copy; CEMAC (UoL) 2018</p>
-    </div>
-  </div>
-
-</footer>
-
-<!-- jQuery -->
+<!-- javascript -->
 <script src="../../js/jquery-1.11.3.min.js"></script>
-
-<!-- Bootstrap Core JavaScript -->
 <script src="../../js/bootstrap.min.js"></script>
-
-<!-- Plugin JavaScript -->
 <script src="../../js/jquery.easing.min.js"></script>
-
-<!-- Custom Javascript -->
 <script src="../../js/custom.js"></script>
-
-</body>
-
+<script language="javascript" type="text/javascript" src="../../js/w3-include-HTML.js"></script>
+<script language="javascript" type="text/javascript" src="../../js/animecontrols.js"> </script>
+<script>
+  declareims2("Pacaya");
+</script>
+<script type="text/javascript">
+  new Picker(document.querySelector('.js-inline-picker'), {
+    controls: true,
+    inline: true,
+    hearder: true,
+  });
+</script>
 </html>
