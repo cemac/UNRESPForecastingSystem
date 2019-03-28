@@ -54,3 +54,49 @@ function declareims(imtype) {
   theImages[45].src = "./Today/" + imtype + "0046.jpg";
   theImages[46].src = "./Today/" + imtype + "0047.jpg";
 }
+
+function declareims2(imtype) {
+  var last_pict = 47;
+  var nameSequence = "Run";
+  var nameStop = "Stop";
+  theImages = new Array();
+  for (var i = 0; i < 47; i++) {
+    theImages[i] = new Image();
+  }
+  theImages[0].src = imtype + "/Jan_2016.png";
+    theImages[1].src = imtype + "/Feb_2016.png";
+    theImages[2].src = imtype + "/Mar_2016.png";
+    theImages[3].src = imtype + "/Apr_2016.png";
+    theImages[4].src = imtype + "/May_2016.png";
+    theImages[5].src = imtype + "/Jun_2016.png";
+    theImages[6].src = imtype + "/Jul_2016.png";
+    theImages[7].src = imtype + "/Aug_2016.png";
+    theImages[8].src = imtype + "/Sep_2016.png";
+    theImages[9].src = imtype + "/Oct_2016.png";
+    theImages[10].src = imtype + "/Nov_2016.png";
+    theImages[11].src = imtype + "/Dec_2016.png";
+    theImages[12].src = imtype + "/Jan_2017.png";
+    theImages[13].src = imtype + "/Feb_2017.png";
+    theImages[14].src = imtype + "/Mar_2017.png";
+    theImages[15].src = imtype + "/Apr_2017.png";
+    theImages[16].src = imtype + "/May_2017.png";
+    theImages[17].src = imtype + "/Jun_2017.png";
+    theImages[18].src = imtype + "/Jul_2017.png";
+    theImages[19].src = imtype + "/Aug_2017.png";
+    theImages[20].src = imtype + "/Sep_2017.png";
+    theImages[21].src = imtype + "/Oct_2017.png";
+    theImages[22].src = imtype + "/Nov_2017.png";
+    theImages[23].src = imtype + "/Dec_2017.png";
+    theImages[24].src = imtype + "/Jan_2018.png";
+    theImages[25].src = imtype + "/Feb_2018.png";
+    theImages[26].src = imtype + "/Mar_2018.png";
+    theImages[27].src = imtype + "/Apr_2018.png";
+    theImages[28].src = imtype + "/May_2018.png";
+    theImages[29].src = imtype + "/Jun_2018.png";
+    theImages[30].src = imtype + "/Jul_2018.png";
+    theImages[31].src = imtype + "/Aug_2018.png";
+    theImages[32].src = imtype + "/Sep_2018.png";
+    theImages[33].src = imtype + "/Oct_2018.png";
+    theImages[34].src = imtype + "/Nov_2018.png";
+    theImages[35].src = imtype + "/Dec_2018.png";
+}
