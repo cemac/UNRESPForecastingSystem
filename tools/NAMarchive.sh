@@ -1,6 +1,13 @@
-#! /bin/bash
-
-# CEMAC SCRIPT to archive name date
+#!/bin/bash -
+#title          :NAMarchive.sh
+#description    :Archive NAM data
+#author         :CEMAC - Helen
+#date           :20190404
+#version        :0.1-beta
+#usage          :./NAMarchive.sh
+#notes          :
+#bash_version   :4.2.46(2)-release
+#============================================================================
 
 print_usage() {
   echo "
@@ -13,7 +20,7 @@ print_usage() {
  Options:
   -d <date> YYYYMMDD
   -i <starting loaction>
-  -o <output location>   
+  -o <output location>
  "
 }
 
