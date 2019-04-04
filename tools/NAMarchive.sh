@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #!/bin/bash -
 #title          :NAMarchive.sh
 #description    :Archive NAM data
@@ -9,11 +8,6 @@
 #notes          :
 #bash_version   :4.2.46(2)-release
 #============================================================================
-=======
-#! /bin/bash
-
-# CEMAC SCRIPT to archive name date
->>>>>>> eee31c4436db1b8c93e0247c92d141aa2d1738e5
 
 print_usage() {
   echo "
@@ -26,11 +20,7 @@ print_usage() {
  Options:
   -d <date> YYYYMMDD
   -i <starting loaction>
-<<<<<<< HEAD
   -o <output location>
-=======
-  -o <output location>   
->>>>>>> eee31c4436db1b8c93e0247c92d141aa2d1738e5
  "
 }
 
