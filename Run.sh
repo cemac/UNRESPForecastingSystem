@@ -425,7 +425,8 @@ if [ "$runVIS" = true ]; then
   then
     mkdir $VIZPATH${rundate}
   fi
-  if [ -e *.html ]
+  count=`ls -1 *.html 2>/dev/null | wc -l`
+  if [ $count != 0 ]
   then
     setfacl -m other:r-x *.html
     chmod og+rx *.html
