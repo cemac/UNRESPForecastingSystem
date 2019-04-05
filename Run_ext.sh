@@ -7,7 +7,10 @@
 #This script was created by CEMAC (University of Leeds) as part of the UNRESP
 #Project
 #Setup environment
-conda activate unresp
+if [ $CONDA_DEFAULT_ENV != unresp ]; then
+  echo "trying to activate unresp python environment..."
+  conda activate unresp
+fi
 set -e #stop at first error
 source .env
 # Defaults that can be overwritten via command line
