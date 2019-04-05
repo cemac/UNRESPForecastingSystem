@@ -71,7 +71,7 @@ Run.sh is set up default to leeds production behaviour to run as a chronjob disp
 The output can be viewed by running:
 
 ```bash
-cd $HOME/UNRESPForecastingSystem/VIZ_SITE_CODE/publichtml
+cd $HOME/UNRESPForecastingSystem/VIZ_SITE_CODE/public_html
 python -m http.server
 ```
 And opening http://0.0.0.0:8000/ in any browser
