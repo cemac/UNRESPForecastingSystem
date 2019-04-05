@@ -9,29 +9,16 @@
 #bash_version   :4.2.46(2)-release
 #============================================================================
 
-print_usage() {
-  echo "
- generic_archiving.sh
+# Archive RAW
+echo "Archiving Raw NAM data"
+in=~earmgr/CEMAC/UNRESPForecastingSystem/NAM_data/raw
+out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/UNRESPForecastingSystem/NAM_data/raw"
+./generic_archiving.sh -i $in -o $out -b
+echo "Archived Raw NAM data"
 
- A CEMAC script to create folder and move to
- Usage:
-  .\generic_archiving.sh <opts>
-
- Options:
-  -d <date> YYYYMMDD
-  -i <starting loaction>
-  -o <output location>
- "
-}
-
-while getopts 'd:i:o:h' flag; do
-  case "${flag}" in
-    d) date="${OPTARG}" ;;
-    i) in="${OPTARG}" ;;
-    o) out="${OPTARG}" ;;
-    h) print_usage
-       exit 1 ;;
-    *) print_usage
-       exit 1 ;;
-  esac
-done
+# Archive Processed
+echo "Archiving Processed NAM data"
+in=~earmgr/CEMAC/UNRESPForecastingSystem/NAM_data/processed
+out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/UNRESPForecastingSystem/NAM_data/processed"
+./generic_archiving.sh -i $in -o $out -b -n
+echo "Archived Processed NAM data"
