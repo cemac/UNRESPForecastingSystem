@@ -18,6 +18,7 @@ Although you can use them, for a more unique website, replace these images with 
   <!-- Custom Fonts from Google -->
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
   <script language="javascript" type="text/javascript" src="../js/imgref.js"></script>
+  <script language="javascript" type="text/javascript" src="../js/anime.js"></script>
 </head>
 
 <body onload="GoToImage(0)">
@@ -27,15 +28,13 @@ Although you can use them, for a more unique website, replace these images with 
   <br>
   <br>
   <br>
-  <button id="clickme" class="btn btn-primary btn-m" onclick="declareims('SO4_static_concrec02'), GoToImage(0);">SO<sub>4</sub></button>
-  <button id="clickme" class="btn btn-primary btn-m" onclick="declareims('SO2_static_concrec01'), GoToImage(0);">SO<sub>2</sub></button>
-  <button class="btn btn-primary btn-m">
-    <form name="control_form" action="">
+  <button style="display:inline" id="clickme" class="btn btn-primary btn-m" onclick="declareims('SO4_static_concrec02'), GoToImage(0);">SO<sub>4</sub></button>
+  <button style="display:inline" id="clickme" class="btn btn-primary btn-m" onclick="declareims('SO2_static_concrec01'), GoToImage(0);">SO<sub>2</sub></button>
+    <form style="display:inline" name="control_form" action="">
       <font face="verdana" size="-1">
-        <input type="button" class="btn btn-primary btn-m" name="SequenceForm" value="Run" onclick="startAnimation()">
+        <input style="display:inline" type="button" class="btn btn-primary btn-m" name="SequenceForm" value="Run" onclick="startAnimation()">
       </font>
     </form>
-  </button>
   &emsp;
   <span class="text-danger"><b> NOT FOR OPERATIONAL USE. FORECAST UNDER DEVELOPMET.</b></span>
   <div w3-include-HTML="../_includes/animation.html"></div>
@@ -55,5 +54,5 @@ Although you can use them, for a more unique website, replace these images with 
 <script>
   declareims("SO2_static_concrec01");
 </script>
-<script language="javascript" type="text/javascript" src="../js/anime.js"></script>
+<script language="javascript" type="text/javascript" src="../js/animecontrols.js"></script>
 </html>
