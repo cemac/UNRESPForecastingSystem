@@ -13,8 +13,3 @@ if (window.attachEvent)
   window.attachEvent('keydown', keyflip)
 else if (window.addEventListener) //WC3 browsers
   window.addEventListener('keydown', keyflip, false)
-new Picker(document.querySelector('.js-inline-picker'), {
-  controls: true,
-  inline: true,
-  hearder: true,
-});
