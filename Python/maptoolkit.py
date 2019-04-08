@@ -168,7 +168,8 @@ class Masaya_Maps(object):
         s.topo = 'World_Shaded_Relief'
         s.nConcFiles = 48  # Number of conc files to process (48 = full 2 days)
         s.binLims = [10, 350, 600, 2600, 9000, 14000]  # SO2 bin limits
-        s.binLimsSO4 = [1E-8, 12, 35, 55, 150, 250]  # SO4 bin limits
+        s.binLimsSO4 = [1E-8, 12, 35, 55, 150, 250]  # SO4 bin limits from:
+        # http://mkwc.ifa.hawaii.edu/vmap/hysplit/
         s.colsHex = ['#FFFFFF', '#0cec0c', '#FFFF00', '#FF6600', '#FF0000',
                      '#800080', '#8F246B']  # Hex codes for SO2 colour bins
         s.towns = (' El Panama', ' Rigoberto', ' Pacaya', ' El Crucero',
