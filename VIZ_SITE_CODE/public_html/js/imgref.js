@@ -1,7 +1,4 @@
 function declareims(imtype) {
-  var last_pict = 47;
-  var nameSequence = "Run";
-  var nameStop = "Stop";
   theImages = new Array();
   for (var i = 0; i < 47; i++) {
     theImages[i] = new Image();
@@ -56,11 +53,8 @@ function declareims(imtype) {
 }
 
 function declareims2(imtype) {
-  var last_pict = 47;
-  var nameSequence = "Run";
-  var nameStop = "Stop";
   theImages = new Array();
-  for (var i = 0; i < 47; i++) {
+  for (var i = 0; i < 35; i++) {
     theImages[i] = new Image();
   }
   theImages[0].src = imtype + "/Jan_2016.png";
