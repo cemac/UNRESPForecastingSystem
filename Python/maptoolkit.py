@@ -168,6 +168,7 @@ class Masaya_Maps(object):
         s.topo = 'World_Shaded_Relief'
         s.nConcFiles = 48  # Number of conc files to process (48 = full 2 days)
         s.binLims = [10, 350, 600, 2600, 9000, 14000]  # SO2 bin limits
+        s.binLimsSO4 = [1E-8, 12, 35, 55, 150, 250]  # SO4 bin limits
         s.colsHex = ['#FFFFFF', '#0cec0c', '#FFFF00', '#FF6600', '#FF0000',
                      '#800080', '#8F246B']  # Hex codes for SO2 colour bins
         s.towns = (' El Panama', ' Rigoberto', ' Pacaya', ' El Crucero',
@@ -207,6 +208,7 @@ class Masaya_Maps(object):
         s.cmap = mpl.colors.ListedColormap(s.colsHex[1:-1])
         s.cmap.set_under(s.colsHex[0])
         s.cmap.set_over(s.colsHex[-1])
+        s.normso4 = mpl.colors.BoundaryNorm(boundaries=s.binLimsSO4, ncolors=5)
         s.norm = mpl.colors.BoundaryNorm(boundaries=s.binLims, ncolors=5)
         s.glat, s.glon, s.latMin, s.latMax, s.lonMin, s.lonMax, s.ny, s.nx = genxy(s.xyFile)
         s.Gglat, s.Gglon, s.Glat, s.Glon, s.Gny, s.Gnx = genGxy(s.xyFile)
@@ -240,18 +242,24 @@ class Masaya_Maps(object):
                     'ground level (hourly means). \n GCRF UNRESP')
         plt.figure(figsize=(16, 12))
         fle = filePaths[ita]
-        concA, concx = conc_array(s.ny, s.nx, fle, s.binLims)
+        if SOX == "SO4":
+            binLims = s.binLimsSO4
+            norm = s.normso4
+        else:
+            binLims = s.binLims
+            norm = s.norm
+        concA, concx = conc_array(s.ny, s.nx, fle, binLims)
         latMin, latMax, lonMin = s.latMin, s.latMax, s.lonMin
         lonMax = s.lonMax
         bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
                        urcrnrlon=lonMax, urcrnrlat=latMax)
         bmap.imshow(im, origin='upper')
         bmap.pcolormesh(s.glon, s.glat, concA,
-                        norm=s.norm, cmap=s.cmap, alpha=0.5)
+                        norm=norm, cmap=s.cmap, alpha=0.5)
         cbar = bmap.colorbar(location='bottom', pad='20%', cmap=s.cmap,
-                             norm=s.norm, boundaries=[0.] + s.binLims
+                             norm=norm, boundaries=[0.] + binLims
                              + [100000.], extend='both', extendfrac='auto',
-                             ticks=s.binLims, spacing='uniform')
+                             ticks=binLims, spacing='uniform')
         cbar.ax.set_xticklabels(['v low', 'low', 'moderate', 'mod high',
                                  'high', 'v high'])  # horizontal colorbar
         cbar.set_label(label=(SOX + ' concentration'), fontsize=18)
@@ -308,21 +316,27 @@ class Masaya_Maps(object):
         """
         gKey = s.googlekey
         fle = filePaths[ita]
+        if SOX == "SO4":
+            binLims = s.binLimsSO4
+            norm = s.normso4
+        else:
+            binLims = s.binLims
+            norm = s.norm
         glat, glon, lat, lon = s.Gglat, s.Gglon, s.Glat, s.Glon
-        concA, conc = conc_array(s.ny, s.nx, fle, s.binLims)
+        concA, conc = conc_array(s.ny, s.nx, fle, binLims)
         gmap = gmplot.GoogleMapPlotter(min(lat) + np.ptp(lat) / 2.,
                                        min(lon) + np.ptp(lon) / 2., zoom=11,
                                        apikey=gKey)
         for i in np.arange(0, s.nx):
             for j in np.arange(0, s.ny):
                 for k in np.arange(0, len(s.binLims) - 1):
-                    if concA[j, i] > s.binLims[k] and concA[j, i] <= s.binLims[k + 1]:
+                    if concA[j, i] > s.binLims[k] and concA[j, i] <= binLims[k + 1]:
                         gmap.polygon((glat[j + 1, i], glat[j, i],
                                       glat[j, i + 1], glat[j + 1, i + 1]),
                                      (glon[j + 1, i], glon[j, i],
                                       glon[j, i + 1], glon[j + 1, i + 1]),
                                      color=s.colsHex[k + 1], edge_width=0.001)
-                if conc[j] > s.binLims[-1]:
+                if conc[j] > binLims[-1]:
                     gmap.polygon((glat[j + 1, i], glat[j, i],
                                   glat[j, i + 1], glat[j + 1, i + 1]),
                                  (glon[j + 1, i], glon[j, i],
