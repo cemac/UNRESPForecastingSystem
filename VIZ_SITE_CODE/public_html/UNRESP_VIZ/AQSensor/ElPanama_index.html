@@ -19,8 +19,6 @@ Although you can use them, for a more unique website, replace these images with 
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
   <script language="javascript" type="text/javascript" src="../../js/anime.js"></script>
   <script language="javascript" type="text/javascript" src="../../js/imgref.js"></script>
-  <link href="../../css/picker.css" rel="stylesheet">
-  <script src="../../js/picker.js"></script>
 </head>
 <body onLoad="GoToImage(0);">
   <!-- Navigation -->
@@ -30,16 +28,10 @@ Although you can use them, for a more unique website, replace these images with 
   <br>
   <br>
   <br>
+  <button id="clickme" class="btn btn-primary btn-m"  onclick="declareims2('ElPanama/PM25'), GoToImage(0);">PM 2.5</button>
+  <button id="clickme" class="btn btn-primary btn-m"  onclick="declareims2('ElPanama/SO2'), GoToImage(0);">SO<sub>2</sub></button>
+  <button id="clickme" class="btn btn-primary btn-m"  onclick="declareims2('ElPanama/SO2PM25'), GoToImage(0);">SO<sub>2</sub> and PM 2.5</button>
   <div w3-include-HTML="../../_includes/sensor.html"></div>
-  <div class="js-inline-picker"></div>
-
-
-
-  <!-- Content 1 -->
-  <section class="content">
-
-  </section>
-
 </body>
 
 <!-- Footer -->
@@ -54,12 +46,5 @@ Although you can use them, for a more unique website, replace these images with 
 <script language="javascript" type="text/javascript" src="../../js/animecontrols.js"> </script>
 <script>
   declareims2("ElPanama");
-</script>
-<script type="text/javascript">
-  new Picker(document.querySelector('.js-inline-picker'), {
-    controls: true,
-    inline: true,
-    hearder: true,
-  });
 </script>
 </html>
