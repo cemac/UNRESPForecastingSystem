@@ -37,7 +37,7 @@ Non anaconda installations require a separate build of ecCodes python API:
 Anaconda python, unix systems (recommended)
 
 ```
-git clone
+git clone https://github.com/cemac/UNRESPForecastingSystem.git
 cd UNRESPForecastingSystem
 conda env create -f environment.yml
 ```
