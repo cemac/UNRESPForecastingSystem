@@ -425,6 +425,7 @@ if [ "$runVIS" = true ]; then
   then
     mkdir $VIZPATH${rundate}
   fi
+  # add in a check for goolge files incase missing API key
   count=`ls -1 *.html 2>/dev/null | wc -l`
   if [ $count != 0 ]
   then
