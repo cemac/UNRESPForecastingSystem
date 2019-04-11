@@ -403,7 +403,7 @@ if [ "$runVIS" = true ]; then
   if [ "$runSO4" = true ]; then
     ./genmaps.py ${rundate}
   else
-    ./genmaps.py ${rundate}
+    ./genmaps.py ${rundate} --SO4
   cd ..
   cd vis/${rundate}
   if [ ${runffmpeg} = true ]; then
