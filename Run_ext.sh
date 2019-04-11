@@ -48,6 +48,7 @@ print_usage() {
  The following switches can be used to overwrite
  Default behaviour.
  **
+  -s turn OFF SO4 plotting
   -m turn OFF Forecasting model (e.g to run viz only)
   -p turn OFF viz steps (no jpgs etc to be produced)
   -f turn ON ffmpeg mp4 production
@@ -63,6 +64,10 @@ set_ffmpeg() {
   runffmpeg=true
 }
 
+set_SO4() {
+    setSO4=false
+}
+
 set_model() {
   runTERREL=false
   runCTGPROC=false
@@ -72,10 +77,11 @@ set_model() {
   runCALPUFF=false
   runmodel=false
 }
-while getopts 'd:n:pmfh' flag; do
+while getopts 'd:n:pmsfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
+    s) set_SO4 ;;
     p) set_viz ;;
     m) set_model ;;
     f) set_ffmpeg ;;
@@ -400,7 +406,11 @@ if [ "$runVIS" = true ]; then
   rm -rf ./vis/${rundate}
   mkdir ./vis/${rundate}
   cd Python
-  ./genmaps.py ${rundate}
+  if [ "$setSO4" = true]; then
+      ./genmaps.py ${rundate}
+  else
+      ./genmaps.py ${rundate} --SO4
+  fi
   cd ..
   cd vis/${rundate}
   if [ ${runffmpeg} = true ]; then
