@@ -21,18 +21,29 @@ Example:
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from mpl_toolkits.mplot3d import axes3d
 import matplotlib as mpl
 from mpl_toolkits.basemap import Basemap
 from matplotlib.font_manager import FontProperties
 import os
+import sys
 import datetime as dt
 import pytz
 import utm
 import gmplot
 from dateutil.parser import parse
+# University System python may be broken
+# If some one insists on using it...
+backend = mpl.get_backend()
+if backend == 'Qt4Agg' and sys.version_info[0] == 2:
+    # Fix the backend
+    print('swapping to Agg Backend')
+    print('Please consider using anaconda')
+    mpl.use('Agg')
+# DO NOT MOVE ABOVE BACKEND FIX
+import matplotlib.pyplot as plt  # KEEP ME HERE!!!
+################################
 
 
 def Read_Two_Column_File(file_name):
