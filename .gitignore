@@ -35,6 +35,7 @@ VIZ_SITE_CODE/public_html/UNRESP_VIZ/2018/
 grabAQfiles.sh
 
 Python/__pycache__/
+Python/*.pyc
 
 CALPUFF_EXE/*.exe
 CALPUFF_EXE/libraries/lib*
