@@ -6,7 +6,7 @@
 set -e #stop at first error
 module load intel/17.0.0
 module load python2 python-libs
-
+export PYTHONPATH="/nfs/see-fs-02_users/earmgr/SW/eccodes-2.6.0/lib/python2.7/site-packages:${PYTHONPATH}"
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
 vizhome=~earunres
@@ -395,15 +395,16 @@ if [ "$runCALPUFF" = true ]; then
 fi
 
 ###VISUALISATION###
-if [ "$runVIS" = true ]; then
+if [ ${runVIS} = true ]; then
   echo "### RUNNING VISUALISATION TOOLS"
   rm -rf ./vis/${rundate}
   mkdir ./vis/${rundate}
   cd Python
-  if [ "$runSO4" = true ]; then
+  if [ ${runSO4} = true ]; then
     ./genmaps.py ${rundate}
   else
     ./genmaps.py ${rundate} --SO4
+  fi
   cd ..
   cd vis/${rundate}
   if [ ${runffmpeg} = true ]; then
