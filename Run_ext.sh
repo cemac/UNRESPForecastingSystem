@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash --login
 
 # Trouble shooting:
 # source activate unresp
