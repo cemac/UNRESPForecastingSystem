@@ -41,3 +41,5 @@ CALPUFF_EXE/*.exe
 CALPUFF_EXE/libraries/lib*
 CALPUFF_EXE/libraries/*.so
 CALPUFF_EXE/libraries/*main
+
+update_site_code.sh
