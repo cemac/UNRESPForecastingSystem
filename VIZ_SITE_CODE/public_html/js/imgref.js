@@ -1,6 +1,6 @@
 function declareims(imtype) {
   theImages = new Array();
-  for (var i = 0; i < 46; i++) {
+  for (var i = 0; i < 48; i++) {
     theImages[i] = new Image();
   }
   theImages[0].src = "./Today/" + imtype + "0001.jpg";
@@ -50,6 +50,7 @@ function declareims(imtype) {
   theImages[44].src = "./Today/" + imtype + "0045.jpg";
   theImages[45].src = "./Today/" + imtype + "0046.jpg";
   theImages[46].src = "./Today/" + imtype + "0047.jpg";
+  theImages[47].src = "./Today/" + imtype + "0048.jpg";
 }
 
 function declareims2(imtype) {
@@ -93,4 +94,59 @@ function declareims2(imtype) {
     theImages[33].src = imtype + "Oct_2019.png";
     theImages[34].src = imtype + "Nov_2019.png";
     theImages[35].src = imtype + "Dec_2019.png";
+}
+
+function declareimsG(imtype) {
+  theImages = new Array();
+  for (var i = 0; i < 48; i++) {
+    theImages[i] = new Image();
+  }
+  theImages[0].src = "./Today/" + imtype + "0001.html";
+  theImages[1].src = "./Today/" + imtype + "0002.html";
+  theImages[2].src = "./Today/" + imtype + "0003.html";
+  theImages[3].src = "./Today/" + imtype + "0004.html";
+  theImages[4].src = "./Today/" + imtype + "0005.html";
+  theImages[5].src = "./Today/" + imtype + "0006.html";
+  theImages[6].src = "./Today/" + imtype + "0007.html";
+  theImages[7].src = "./Today/" + imtype + "0008.html";
+  theImages[8].src = "./Today/" + imtype + "0009.html";
+  theImages[9].src = "./Today/" + imtype + "0010.html";
+  theImages[10].src = "./Today/" + imtype + "0011.html";
+  theImages[11].src = "./Today/" + imtype + "0012.html";
+  theImages[12].src = "./Today/" + imtype + "0013.html";
+  theImages[13].src = "./Today/" + imtype + "0014.html";
+  theImages[14].src = "./Today/" + imtype + "0015.html";
+  theImages[15].src = "./Today/" + imtype + "0016.html";
+  theImages[16].src = "./Today/" + imtype + "0017.html";
+  theImages[17].src = "./Today/" + imtype + "0018.html";
+  theImages[18].src = "./Today/" + imtype + "0019.html";
+  theImages[19].src = "./Today/" + imtype + "0020.html";
+  theImages[20].src = "./Today/" + imtype + "0021.html";
+  theImages[21].src = "./Today/" + imtype + "0022.html";
+  theImages[22].src = "./Today/" + imtype + "0023.html";
+  theImages[23].src = "./Today/" + imtype + "0024.html";
+  theImages[24].src = "./Today/" + imtype + "0025.html";
+  theImages[25].src = "./Today/" + imtype + "0026.html";
+  theImages[26].src = "./Today/" + imtype + "0027.html";
+  theImages[27].src = "./Today/" + imtype + "0028.html";
+  theImages[28].src = "./Today/" + imtype + "0029.html";
+  theImages[29].src = "./Today/" + imtype + "0030.html";
+  theImages[30].src = "./Today/" + imtype + "0031.html";
+  theImages[31].src = "./Today/" + imtype + "0032.html";
+  theImages[32].src = "./Today/" + imtype + "0033.html";
+  theImages[33].src = "./Today/" + imtype + "0034.html";
+  theImages[34].src = "./Today/" + imtype + "0035.html";
+  theImages[35].src = "./Today/" + imtype + "0036.html";
+  theImages[36].src = "./Today/" + imtype + "0037.html";
+  theImages[37].src = "./Today/" + imtype + "0038.html";
+  theImages[38].src = "./Today/" + imtype + "0039.html";
+  theImages[39].src = "./Today/" + imtype + "0040.html";
+  theImages[40].src = "./Today/" + imtype + "0041.html";
+  theImages[41].src = "./Today/" + imtype + "0042.html";
+  theImages[42].src = "./Today/" + imtype + "0043.html";
+  theImages[43].src = "./Today/" + imtype + "0044.html";
+  theImages[44].src = "./Today/" + imtype + "0045.html";
+  theImages[45].src = "./Today/" + imtype + "0046.html";
+  theImages[46].src = "./Today/" + imtype + "0047.html";
+  theImages[47].src = "./Today/" + imtype + "0048.html";
 }
