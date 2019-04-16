@@ -12,9 +12,11 @@ if [ $CONDA_DEFAULT_ENV != unresp ]; then
   conda activate unresp
 fi
 set -e #stop at first error
+# Put any bespoke setup steps in .env
 source .env
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
+# All visualisation to repo location
 vizhome=$HOME/UNRESPForecastingSystem/VIZ_SITE_CODE
 runVIS=true
 runffmpeg=false
@@ -53,6 +55,14 @@ print_usage() {
   -p turn OFF viz steps (no jpgs etc to be produced)
   -f turn ON ffmpeg mp4 production
  long options are currently not avaible.
+ ** TROUBLESHOOTING
+ * Missing .so file --> most like intel library
+   Try loading system intel e.g. module load intel or set LD_LIBRARY_PATH
+ * Missing python modules --> mostly likely conda environment failure
+   try `source activate unresp`
+   or `conda activate unresp`
+   or `load your system python libraries`
+ ^^^ these fixes can be added to .env file for bespoke Setup
  "
 }
 
