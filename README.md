@@ -56,17 +56,41 @@ cd $HOME/UNRESPForecastingSystem
 For help run `.\Run_ext.sh -h`
 
 ```
- optional arguments:
-  -d <date> YYYYMMDD DEFAULT: <todays date>
-  -n <home> name of viz defaults to $HOME/UNRESPForecastingSystem/VIZ_SITE_CODE
+ Run_ext.sh
+
+ A CEMAC script to Run CALPUFF WITH NAM DATA input
+ winds and produces plots of SO2 and SO4.
+
+ Usage:
+  .\Run_ext.sh <opts>
+
+ No options runs a default production configuration:
+ Today, Viz on, plots production area (~earunres).
+
+ Options:
+  -d <date> YYYYMMDD DEFAULT: <today's date>
+  -n <home> name of viz defaults to ~earunres
+ **
  The following switches can be used to overwrite
  Default behaviour.
-  -m turn OFF FORECAST Model (e.g. to run viz option only)
+ **
+  -s turn OFF SO4 plotting
+  -m turn OFF Forecasting model (e.g to run viz only)
   -p turn OFF viz steps (no jpgs etc to be produced)
   -f turn ON ffmpeg mp4 production
+ ** TROUBLESHOOTING
+ * Missing .so file --> most like intel library
+   Try loading system intel e.g. module load intel or set LD_LIBRARY_PATH
+ * Missing python modules --> mostly likely conda environment failure
+   try `source activate unresp`
+   or `conda activate unresp`
+   or `load your system python libraries`
+ ^^^ these fixes can be added to .env file for bespoke Setup
 ```
 
 Run.sh is set up default to leeds production behaviour to run as a chronjob displaying at [~earunres](https://homepages.see.leeds.ac.uk/~earunres/UNRESP_VIZ/index.html)
+
+## Viewing Output
 
 The output can be viewed by running:
 
@@ -76,24 +100,30 @@ python -m http.server
 ```
 And opening http://0.0.0.0:8000/ in any browser
 
+All the code can be transported to desired location e.g. Apache server and the
+forecasting scripts ran with a `-n` option to move to that location.
+
 ## Further Usage notes
 
-* In Run.sh various parameters can be set:
+* In Run_ext.sh various parameters can be set:
   1. `res` to alter the resolution between 100 - 1000 m
-  2. `runVis=True` Enable visualization  creating static and movie visualisations of the CALPUFF model output via a python script (generateMaps.py) and the Linux tool 'ffmpeg', respectively.
+  2. by default the model run and visualisation can be turned on or off to be
+    run together or separately however `Run_ext.sh` can be edited to turn off
+    separate parts
   3. `runTERREL=true` - The part of the CALPUFF
   4. `runCTGPROC=true` - The part of the CALPUFF system that grids the land-use data
   5. `runMAKEGEO=true` - The part of the CALPUFF system that combines the gridded terrain and land-use data into a file appropriate for input to CALMET
   6. `run3DDAT=true` - Downloads the required met (NAM) data and runs a python script (Create3DDAT.py) to extract the required data into a file appropriate for input to CALMET.
   7. `runCALMET=true` - The 3-D diagnostic meteorological model part of the CALPUFF system
   8. `runCALPUFF=true` - The main dispersion model part of the CALPUFF system
-* To forecast for the current day default visualization home to ~earunres (production):
+* To forecast for the current day default visualization home to the GitHub repo
+  Viz site code if stored in home dir (override with `-n` flag):
   ```bash
-  ./Run.sh
+  ./Run_ext.sh
   ```
 * To forecast for a specific day:
   ```bash
-  ./Run.sh -d YYYYMMDD
+  ./Run_ext.sh -d YYYYMMDD
   ```
   Note, however, that the external met (NAM) data that the script will try to download is only accessible for around 10 days after the original date before it is removed from the ftp site.
 * Chronjobs: 2 chronjobs are required
@@ -109,6 +139,15 @@ And opening http://0.0.0.0:8000/ in any browser
   ```sh
   45 10 * * * <path-to-repo> updateNDrive.sh
   ```
+## Visualization tools
+
+* [maptoolkit.py](./Python/maptoolkit.py) A python module for plotting Masaya
+CALPUFF output and some stand alone plotting tools for working with CALPUFF output
+(*documentation coming soon*)
+* [genmaps.py](./Python/maptoolkit.py) A python wrapper script to use the map
+toolkit for production visualization - called by `Run_ext.sh` also serves as example
+of using toolkit
+
 
 <hr>
 
@@ -130,8 +169,10 @@ The directory structure of the repository is as follows:
 |  Version            | Release          |
 |---------------------|------------------|
 | **UoL 2018**  | [![GitHubrelease](https://img.shields.io/badge/release-v.1.0-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v1.0) |
-| **Current Stable**  | [![GitHubrelease](https://img.shields.io/badge/release-v.2.2-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v2.2) |
-| **SO4** |  *coming soon*     |
+| **Early 2019**  | [![GitHubrelease](https://img.shields.io/badge/release-v.2.2-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v2.2) |
+| **Current Stable** | [![GitHubrelease](https://img.shields.io/badge/release-v.2.3.1-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v2.3.1)  |
+| **automated archiving** | coming soon |
+
 <!--- table --->
 
 ## Contributions ##
