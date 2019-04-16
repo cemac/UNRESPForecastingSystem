@@ -170,7 +170,7 @@ The directory structure of the repository is as follows:
 |---------------------|------------------|
 | **UoL 2018**  | [![GitHubrelease](https://img.shields.io/badge/release-v.1.0-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v1.0) |
 | **Early 2019**  | [![GitHubrelease](https://img.shields.io/badge/release-v.2.2-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v2.2) |
-| **Current Stable** | [![GitHubrelease](https://img.shields.io/badge/release-v.2.3.1-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/v2.3.1)  |
+| **Current Stable** | [![GitHubrelease](https://img.shields.io/badge/release-2.3.1-blue.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases/tag/2.3.1)  |
 | **automated archiving** | coming soon |
 
 <!--- table --->
