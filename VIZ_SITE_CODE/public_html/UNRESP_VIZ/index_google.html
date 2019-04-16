@@ -17,19 +17,18 @@ Although you can use them, for a more unique website, replace these images with 
   <link rel="stylesheet" type="text/css" href="../css/styles.css">
   <!-- Custom Fonts from Google -->
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-  <script language="javascript" type="text/javascript" src="../js/anime.js"></script>
   <script language="javascript" type="text/javascript" src="../js/imgref.js"></script>
 </head>
 
-<body onload="GoToImage(0)">
+<body onload="GoToImageG(0)">
   <nav id="siteNav" class="navbar navbar-default navbar-fixed-top" role="navigation" w3-include-HTML="../_includes/navbar.html"></nav>
   <!-- Content 1 -->
   <br>
   <br>
   <br>
   <br>
-  <button id="clickme" class="btn btn-primary btn-m" onclick="declareims('SO4_google_concrec02'), GoToImageG(0);">SO<sub>4</sub></button>
-  <button id="clickme" class="btn btn-primary btn-m" onclick="declareims('SO2_google_concrec01'), GoToImageG(0);">SO<sub>2</sub></button>
+  <button id="clickme" class="btn btn-primary btn-m" onclick="declareimsG('SO4_google_concrec02'), GoToImageG(0);">SO<sub>4</sub></button>
+  <button id="clickme" class="btn btn-primary btn-m" onclick="declareimsG('SO2_google_concrec01'), GoToImageG(0);">SO<sub>2</sub></button>
   &emsp;
   <span class="text-danger"><b> NOT FOR OPERATIONAL USE. FORECAST UNDER DEVELOPMET.</b></span>
   <p><span id="datetime"></span></p>
@@ -46,15 +45,16 @@ Although you can use them, for a more unique website, replace these images with 
 <script src="../js/jquery.easing.min.js"></script>
 <script src="../js/custom.js"></script>
 <script language="javascript" type="text/javascript" src="../js/w3-include-HTML.js"></script>
-<script language="javascript" type="text/javascript" src="../js/animecontrols.js"> </script>
 <script>
-  declareims("SO2_google_concrec01");
+  declareimsG("SO2_google_concrec01");
 </script>
 <!-- Add Date -->
 <script>
   var dt = new Date();
-  document.getElementById("datetime").innerHTML = (("0"+dt.getDate()).slice(-2))
-  +"."+ (("0"+(dt.getMonth()+1)).slice(-2)) +"."+ (dt.getFullYear());
+  document.getElementById("datetime").innerHTML = (("0" + dt.getDate()).slice(-2)) +
+    "." + (("0" + (dt.getMonth() + 1)).slice(-2)) + "." + (dt.getFullYear());
 </script>
+<script language="javascript" type="text/javascript" src="../js/anime.js"></script>
+<script language="javascript" type="text/javascript" src="../js/animecontrols.js"> </script>
 
 </html>
