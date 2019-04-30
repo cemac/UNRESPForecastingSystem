@@ -36,6 +36,9 @@ grabAQfiles.sh
 
 Python/__pycache__/
 Python/*.pyc
+Python/*/__pycache__/
+Python/*/*.pyc
+Python/*/*av*.txt
 
 CALPUFF_EXE/*.exe
 CALPUFF_EXE/libraries/lib*
