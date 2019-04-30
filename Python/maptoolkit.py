@@ -358,6 +358,92 @@ class Masaya_Maps(object):
         print("Writing out file " + HTMLfile)
         gmap.draw(os.path.join(s.outDir, HTMLfile))
 
+    def plot_av_stamp(s, ax, mnth, let, im, fle, SOX):
+        """Plot static maps
+        """
+        font = s.font
+        SOXf = r'SO$_' + SOX[-1] + '$'
+        so2title = ('Atmospheric ' + SOX + ' concentrations at ' +
+                    'ground level (hourly means). \n GCRF UNRESP')
+        if SOX == "SO4":
+            binLims = s.binLimsSO4
+            norm = s.normso4
+        else:
+            binLims = s.binLims
+            norm = s.norm
+        concA, concx = conc_array(s.ny, s.nx, fle, binLims)
+        latMin, latMax, lonMin = s.latMin, s.latMax, s.lonMin
+        lonMax = s.lonMax
+        ax.bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
+                          urcrnrlon=lonMax, urcrnrlat=latMax)
+        ax.bmap.imshow(im, origin='upper')
+        p = ax.bmap.pcolormesh(s.glon, s.glat, concA / 100**3,
+                           norm=norm, cmap=s.cmap, alpha=0.5)
+        latTicks = np.arange(round(latMin, 1), round(latMax, 1) + 0.1, 0.1)
+        lonTicks = np.arange(round(lonMin, 1), round(lonMax, 1) + 0.1, 0.2)
+        ax.bmap.drawparallels(latTicks, labels=[1, 0, 0, 0], linewidth=0.0,
+                              fontsize=16)
+        ax.bmap.drawmeridians(lonTicks, labels=[0, 0, 0, 1], linewidth=0.0,
+                              fontsize=16)
+        for i, town in enumerate(s.towns):
+            ax.plot(s.townCoords[i][0], s.townCoords[i]
+                    [1], 'ok', markersize=4)
+            ax.text(s.townCoords[i][0], s.townCoords[i][1], town,
+                    color='k', fontproperties=font, fontsize=8)
+        for i, city in enumerate(s.cities):
+            ax.plot(s.cityCoords[i][0], s.cityCoords[i]
+                    [1], 'sk', markersize=6)
+            ax.text(s.cityCoords[i][0], s.cityCoords[i][1], city,
+                    fontproperties=font, fontsize=16)
+        font0 = FontProperties()
+        font0.set_family('monospace')
+        ax.plot(s.volcCoords[0], s.volcCoords[1], '^r', markersize=6)
+        ax.set_title(str(let)+str(mnth), fontsize=20)
+        return p
+
+    def plot_av_Prob(s, ax, mnth, let, im, fle, SOX):
+        """Plot static maps
+        """
+        font = s.font
+        SOXf = r'SO$_' + SOX[-1] + '$'
+        so2title = ('Atmospheric ' + SOX + ' concentrations at ' +
+                    'ground level (hourly means). \n GCRF UNRESP')
+        if SOX == "SO4":
+            binLims = s.binLimsSO4
+            norm = s.normso4
+        else:
+            binLims = s.binLims
+            norm = s.norm
+        binLims[0] = 0
+        concA, concx = conc_array(s.ny, s.nx, fle, binLims)
+        latMin, latMax, lonMin = s.latMin, s.latMax, s.lonMin
+        lonMax = s.lonMax
+        ax.bmap = Basemap(llcrnrlon=lonMin, llcrnrlat=latMin,
+                          urcrnrlon=lonMax, urcrnrlat=latMax)
+        ax.bmap.imshow(im, origin='upper')
+        p = ax.bmap.pcolormesh(s.glon, s.glat, concA * 1000, cmap=plt.cm.plasma_r)
+        latTicks = np.arange(round(latMin, 1), round(latMax, 1) + 0.1, 0.1)
+        lonTicks = np.arange(round(lonMin, 1), round(lonMax, 1) + 0.1, 0.2)
+        ax.bmap.drawparallels(latTicks, labels=[1, 0, 0, 0], linewidth=0.0,
+                              fontsize=16)
+        ax.bmap.drawmeridians(lonTicks, labels=[0, 0, 0, 1], linewidth=0.0,
+                              fontsize=16)
+        for i, town in enumerate(s.towns):
+            ax.plot(s.townCoords[i][0], s.townCoords[i]
+                    [1], 'ok', markersize=4)
+            ax.text(s.townCoords[i][0], s.townCoords[i][1], town,
+                    color='k', fontproperties=font, fontsize=8)
+        for i, city in enumerate(s.cities):
+            ax.plot(s.cityCoords[i][0], s.cityCoords[i]
+                    [1], 'sk', markersize=6)
+            ax.text(s.cityCoords[i][0], s.cityCoords[i][1], city,
+                    fontproperties=font, fontsize=16)
+        font0 = FontProperties()
+        font0.set_family('monospace')
+        ax.plot(s.volcCoords[0], s.volcCoords[1], '^r', markersize=6)
+        ax.set_title(str(let)+str(mnth), fontsize=20)
+        return p
+
     def plot_diff(s):
         """
         """
