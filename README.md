@@ -16,6 +16,9 @@ An automated forecasting system has been created that uses the [CALPUFF](http://
 
 This work is displayed at: [homepages.see.leeds.ac.uk/~earunres](https://homepages.see.leeds.ac.uk/~earunres)
 
+## DOCUMENTATION ##
+
+Full Documentation can be found on this Repository's [wiki](https://github.com/cemac/UNRESPForecastingSystem/wiki)
 
 ## Description ##
 
