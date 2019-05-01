@@ -1,8 +1,13 @@
 #!/bin/bash --login
 
 # Trouble shooting:
+# Certain systems may require additional setup
 # source activate unresp
+# module switch gnu/native intel
+# module load bit
+# module load licences
 # module load intel
+
 
 #This script was created by CEMAC (University of Leeds) as part of the UNRESP
 #Project
