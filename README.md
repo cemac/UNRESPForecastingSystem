@@ -19,7 +19,7 @@ This work is displayed at: [homepages.see.leeds.ac.uk/~earunres](https://homepag
 
 The repository hosts the scripts required to run the CALPUFF dispersion model to predict SO<sub>2</sub> concentrations around the Masaya volcano forecasting for 48 hours using NAM data. The hourly output is plotted in individual png files and collated into a mp4 movie.
 
-## DOCUMENTATION ##
+## [DOCUMENTATION](https://github.com/cemac/UNRESPForecastingSystem/wiki) ##
 
 **Full** Documentation can be found on this Repository's [wiki](https://github.com/cemac/UNRESPForecastingSystem/wiki)
 
@@ -28,10 +28,12 @@ Summary documention
 - [Installation](#Installation)
 - [Usage-Quick-Start](#Usage-Quick-Start)
 - [Visualization](#Visualization)
-- [Usage-Further](#Usage-Further)
 - [Contributions](#Contributions)
 - [Licence](#Licence)
 - [Acknowledgements](#Acknowledgements)
+
+- [Full-User-Guide](https://github.com/cemac/UNRESPForecastingSystem/wiki/User-Guide)
+- [Developer-Guide](https://github.com/cemac/UNRESPForecastingSystem/wiki/Developer-Guide)
 
 ## Requirements ##
 
@@ -115,45 +117,7 @@ And opening http://0.0.0.0:8000/ in any browser
 All the code can be transported to desired location e.g. Apache server and the
 forecasting scripts ran with a `-n` option to move to that location.
 
-## Usage Further
-
-* In Run_ext.sh various parameters can be set:
-  1. `res` to alter the resolution between 100 - 1000 m
-  2. by default the model run and visualisation can be turned on or off to be
-    run together or separately however `Run_ext.sh` can be edited to turn off
-    separate parts
-  3. `runTERREL=true` - The part of the CALPUFF
-  4. `runCTGPROC=true` - The part of the CALPUFF system that grids the land-use data
-  5. `runMAKEGEO=true` - The part of the CALPUFF system that combines the gridded terrain and land-use data into a file appropriate for input to CALMET
-  6. `run3DDAT=true` - Downloads the required met (NAM) data and runs a python script (Create3DDAT.py) to extract the required data into a file appropriate for input to CALMET.
-  7. `runCALMET=true` - The 3-D diagnostic meteorological model part of the CALPUFF system
-  8. `runCALPUFF=true` - The main dispersion model part of the CALPUFF system
-* To forecast for the current day default visualization home to the GitHub repo
-  Viz site code if stored in home dir (override with `-n` flag):
-  ```bash
-  ./Run_ext.sh
-  ```
-* To forecast for a specific day:
-  ```bash
-  ./Run_ext.sh -d YYYYMMDD
-  ```
-  Note, however, that the external met (NAM) data that the script will try to download is only accessible for around 10 days after the original date before it is removed from the ftp site.
-* Chronjobs: 2 chronjobs are required
-  1 . Everyday at 10.30am run the forecast
-    ```bash
-    30 10 * * * cd <path-to-repo> && ./Run.sh
-    ```
-  2. Everyday at 10.30am etches the IMO CALPUFF output and plots it onto a map for viewing on the web [here](http://homepages.see.leeds.ac.uk/~earunres/masayaSO2.html).
-    ```bash
-    30 10 * * * <path-to-repo/extrascripts> makeMasayaFig.gmt
-    ```
-  3. transfers the output data from the forecast runs to the shared UNRESP space on the N-drive at 10:45am
-  ```sh
-  45 10 * * * <path-to-repo> updateNDrive.sh
-  ```
-
 <hr>
-
 
 ## Contributions ##
 
