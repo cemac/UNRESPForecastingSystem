@@ -54,4 +54,6 @@ cd TERREL
 for i in *; do mv $i `echo $i | tr [:upper:] [:lower:]`; done
 cd ..
 cd ..
-echo ' complete - ready to compile executables'
+echo 'complete - ready to compile executables'
+
+./makecodemods.sh
