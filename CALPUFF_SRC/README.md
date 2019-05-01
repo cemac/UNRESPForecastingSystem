@@ -1,6 +1,6 @@
-# The Build Directory for calput model code
+# The Build Directory for CALPUFF model code
 
-The model code can not be hosted on GitHub. This directory will be populated by install.sh
+The model code can not be hosted on GitHub. This directory will be populated by installcalpuff.sh
 
 ## Downloading model code:
 
