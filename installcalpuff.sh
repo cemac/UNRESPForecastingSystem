@@ -14,9 +14,9 @@ echo 'Running installcalpuff.sh'
 cd CALPUFF_SRC
 echo 'Downloading and unzipping CALMET'
 wget www.src.com/calpuff/download/Mod7_Files/CALMET_v6.5.0_L150223.zip
-mv CALMET_v6.5.0_L150223.zip CALME.zip
+mv CALMET_v6.5.0_L150223.zip CALMET.zip
 unzip CALMET.zip
-rm -f CALMET.zip
+rm -f CALMET.zip CALMET_v6.5.0_L150223.zip
 mv CALMET_v6.5.0_L150223 CALMET
 cd CALMET
 for i in *; do mv $i `echo $i | tr [:upper:] [:lower:]`; done
@@ -48,7 +48,7 @@ cd ..
 echo 'Downloading and unzipping TERREL'
 wget http://www.src.com/calpuff/download/Mod7_Files/TERREL_v7.0.0_L141010.zip
 unzip TERREL_v7.0.0_L141010.zip
-mv TERREL_v7.0.0_L141010.zip TERREL
+mv TERREL_v7.0.0_L141010 TERREL
 rm -f TERREL_v7.0.0_L141010.zip
 cd TERREL
 for i in *; do mv $i `echo $i | tr [:upper:] [:lower:]`; done
