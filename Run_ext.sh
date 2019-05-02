@@ -1,11 +1,8 @@
-#!/bin/bash --login
+#!/bin/bash -
 
 # Trouble shooting:
 # Certain systems may require additional setup
 # source activate unresp
-# module switch gnu/native intel
-# module load bit
-# module load licences
 # module load intel
 
 
