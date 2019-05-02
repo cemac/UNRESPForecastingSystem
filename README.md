@@ -6,7 +6,9 @@
 
 # UNRESP Forecasting System
 
-[![GitHub release](https://img.shields.io/github/release/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases) [![GitHub top language](https://img.shields.io/github/languages/top/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem) [![GitHub issues](https://img.shields.io/github/issues/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem/commits/master) [![GitHub All Releases](https://img.shields.io/github/downloads/cemac/UNRESPForecastingSystem/total.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases)
+[![GitHub release](https://img.shields.io/github/release/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases) [![GitHub top language](https://img.shields.io/github/languages/top/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem) [![GitHub issues](https://img.shields.io/github/issues/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem/commits/master) [![GitHub All Releases](https://img.shields.io/github/downloads/cemac/UNRESPForecastingSystem/total.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases) [![DOI](https://zenodo.org/badge/131827149.svg)](https://zenodo.org/badge/latestdoi/131827149)
+
+
 
 <hr>
 
@@ -17,7 +19,7 @@ An automated forecasting system has been created that uses the [CALPUFF](http://
 This work is displayed at: [homepages.see.leeds.ac.uk/~earunres](https://homepages.see.leeds.ac.uk/~earunres)
 
 
-The repository hosts the scripts required to run the CALPUFF dispersion model to predict SO<sub>2</sub> concentrations around the Masaya volcano forecasting for 48 hours using NAM data. The hourly output is plotted in individual png files and collated into a mp4 movie.
+The repository hosts the scripts required to run the CALPUFF dispersion model to predict SO<sub>2</sub> concentrations around the Masaya volcano forecasting for 48 hours using NAM data. The hourly output is plotted in individual png and googlemaps files (visualisation can be turned on or off).
 
 ## [DOCUMENTATION](https://github.com/cemac/UNRESPForecastingSystem/wiki) ##
 
@@ -53,6 +55,7 @@ Anaconda python, unix systems (recommended)
 ```
 git clone https://github.com/cemac/UNRESPForecastingSystem.git
 cd UNRESPForecastingSystem
+./installcalpuff.sh
 conda env create -f environment.yml
 ```
 
