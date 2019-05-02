@@ -65,7 +65,7 @@ print_usage() {
    or `conda activate unresp`
    or `load your system python libraries`
  ^^^ these fixes can be added to .env file for bespoke Setup
- "
+  "
 }
 
 set_viz() {
@@ -77,7 +77,7 @@ set_ffmpeg() {
 }
 
 set_SO4() {
-    setSO4=false
+  setSO4=false
 }
 
 set_model() {
@@ -98,9 +98,9 @@ while getopts 'd:n:pmsfh' flag; do
     m) set_model ;;
     f) set_ffmpeg ;;
     h) print_usage
-       exit 1 ;;
+      exit 1 ;;
     *) print_usage
-       exit 1 ;;
+      exit 1 ;;
   esac
 done
 
@@ -141,18 +141,18 @@ cwd=$(pwd)
 #------------------- DO NOT ALTER BELOW THIS LINE------------------------#
 #------------------------------------------------------------------------#
 if [ "$runmodel" = true ]; then
-echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
+  echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 fi
 ###TERREL###
 if [ "$runTERREL" = true ]; then
   #Compile TERREL if required:
   cd CALPUFF_EXE
   if [ ! -f ./terrel_intel.exe ]; then
-      echo -n "### COMPILING TERREL"
-      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/TERREL/terrel.for -o terrel_intel.exe
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING TERREL"
+    ifort -O0 -fltconsistency -w ../CALPUFF_SRC/TERREL/terrel.for -o terrel_intel.exe
+    echo " ---> FINISHED ###"
   else
-      echo "### TERREL ALREADY COMPILED ###"
+    echo "### TERREL ALREADY COMPILED ###"
   fi
   cd ..
   #Remove any old files before running:
@@ -181,11 +181,11 @@ if [ "$runCTGPROC" = true ]; then
   #Compile CTGPROC if required:
   cd CALPUFF_EXE
   if [ ! -f ./ctgproc_intel.exe ]; then
-      echo -n "### COMPILING CTGPROC"
-      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CTGPROC/ctgproc.for -o ctgproc_intel.exe
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING CTGPROC"
+    ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CTGPROC/ctgproc.for -o ctgproc_intel.exe
+    echo " ---> FINISHED ###"
   else
-      echo "### CTGPROC ALREADY COMPILED ###"
+    echo "### CTGPROC ALREADY COMPILED ###"
   fi
   cd ..
   #Remove any old files before running:
@@ -214,11 +214,11 @@ if [ "$runMAKEGEO" = true ]; then
   #Compile MAKEGEO if required:
   cd CALPUFF_EXE
   if [ ! -f ./makegeo_intel.exe ]; then
-      echo -n "### COMPILING MAKEGEO"
-      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/MAKEGEO/makegeo.for -o makegeo_intel.exe
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING MAKEGEO"
+    ifort -O0 -fltconsistency -w ../CALPUFF_SRC/MAKEGEO/makegeo.for -o makegeo_intel.exe
+    echo " ---> FINISHED ###"
   else
-      echo "### MAKEGEO ALREADY COMPILED ###"
+    echo "### MAKEGEO ALREADY COMPILED ###"
   fi
   cd ..
   #Copy data files from TERREL and CTGPROC across to the data directory
@@ -268,18 +268,18 @@ if [ "$run3DDAT" = true ]; then
     for i in `seq 0 3 48`; do
       hour=`printf "%02d" $i`
       if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
-	echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
-	#Entire GRIB file:
-	#wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2
-	#Subset of GRIB file using GRIB filter (http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl):
-  #WARNING https not http as of Jan 2019
-	curl "https://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl?file=nam.t00z.afwaca"${hour}".tm00.grib2&"\
-"lev_1000_mb=on&lev_100_mb=on&lev_10_mb=on&lev_150_mb=on&lev_200_mb=on&lev_20_mb=on&lev_250_mb=on&"\
-"lev_2_mb=on&lev_300_mb=on&lev_30_mb=on&lev_400_mb=on&lev_500_mb=on&lev_50_mb=on&lev_5_mb=on&"\
-"lev_600_mb=on&lev_700_mb=on&lev_75_mb=on&lev_7_mb=on&lev_800_mb=on&lev_850_mb=on&lev_900_mb=on&"\
-"lev_925_mb=on&lev_950_mb=on&lev_mean_sea_level=on&var_HGT=on&var_PRMSL=on&var_RH=on&var_TMP=on&var_UGRD=on&var_VGRD=on&"\
-"var_DZDT=on&subregion=&leftlon=272&rightlon=278&toplat=16&bottomlat=10&dir=%2Fnam."${rundate} \
--o nam.t00z.afwaca${hour}.tm00.grib2
+        echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
+        #Entire GRIB file:
+        #wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2
+        #Subset of GRIB file using GRIB filter (http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl):
+        #WARNING https not http as of Jan 2019
+        curl "https://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl?file=nam.t00z.afwaca"${hour}".tm00.grib2&"\
+          "lev_1000_mb=on&lev_100_mb=on&lev_10_mb=on&lev_150_mb=on&lev_200_mb=on&lev_20_mb=on&lev_250_mb=on&"\
+          "lev_2_mb=on&lev_300_mb=on&lev_30_mb=on&lev_400_mb=on&lev_500_mb=on&lev_50_mb=on&lev_5_mb=on&"\
+          "lev_600_mb=on&lev_700_mb=on&lev_75_mb=on&lev_7_mb=on&lev_800_mb=on&lev_850_mb=on&lev_900_mb=on&"\
+          "lev_925_mb=on&lev_950_mb=on&lev_mean_sea_level=on&var_HGT=on&var_PRMSL=on&var_RH=on&var_TMP=on&var_UGRD=on&var_VGRD=on&"\
+          "var_DZDT=on&subregion=&leftlon=272&rightlon=278&toplat=16&bottomlat=10&dir=%2Fnam."${rundate} \
+          -o nam.t00z.afwaca${hour}.tm00.grib2
       fi
     done
     cd ../../..
@@ -299,11 +299,11 @@ if [ "$runCALMET" = true ]; then
   #Compile CALMET if required:
   cd CALPUFF_EXE
   if [ ! -f ./calmet_intel.exe ]; then
-      echo -n "### COMPILING CALMET"
-      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALMET/calmet.for -o calmet_intel.exe
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING CALMET"
+    ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALMET/calmet.for -o calmet_intel.exe
+    echo " ---> FINISHED ###"
   else
-      echo "### CTGPROC ALREADY COMPILED ###"
+    echo "### CTGPROC ALREADY COMPILED ###"
   fi
   cd ..
   #Remove any old data files and copy relevant new files into the data directory
@@ -321,8 +321,8 @@ if [ "$runCALMET" = true ]; then
   #Update input file:
   echo -n "### SETTING UP CALMET INPUT FILE"
   sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$endYear/g" \
--e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?3DDAT?/met_${rundate}.dat/g" \
--e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/calmet_template.inp > ./CALPUFF_INP/calmet.inp
+    -e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?3DDAT?/met_${rundate}.dat/g" \
+    -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/calmet_template.inp > ./CALPUFF_INP/calmet.inp
   echo " ---> FINISHED ###"
   #Run CALMET:
   echo "### RUNNING CALMET"
@@ -339,15 +339,15 @@ fi
 if [ "$runCALPUFF" = true ]; then
   #Compile CALPUFF if required:
   if [ ! -f ./CALPUFF_EXE/calpuff_intel.exe ]; then
-      echo -n "### COMPILING CALPUFF"
-      cd CALPUFF_SRC/CALPUFF
-      ifort -c modules.for
-      cd ../../CALPUFF_EXE
-      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALPUFF/calpuff.for ../CALPUFF_SRC/CALPUFF/modules.o -o calpuff_intel.exe
-      cd ..
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING CALPUFF"
+    cd CALPUFF_SRC/CALPUFF
+    ifort -c modules.for
+    cd ../../CALPUFF_EXE
+    ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALPUFF/calpuff.for ../CALPUFF_SRC/CALPUFF/modules.o -o calpuff_intel.exe
+    cd ..
+    echo " ---> FINISHED ###"
   else
-      echo "### CALPUFF ALREADY COMPILED ###"
+    echo "### CALPUFF ALREADY COMPILED ###"
   fi
   #Remove old and copy new CALMET data file across to the data directory
   echo -n "### SETTING UP DATA DIRECTORY"
@@ -370,10 +370,10 @@ if [ "$runCALPUFF" = true ]; then
     echo -n " ---> NO RESTART FILE FOUND"
   fi
   sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$midYear/g" \
--e "s/MMe/$midMonth/g" -e "s/DDe/$midDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
--e "s/?RSTARTB?/restart_$rundate.dat/g" -e "s/?RSTARTE?/restart_$middate.dat/g" \
--e "s/?MRES?/$mres/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" \
-./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
+    -e "s/MMe/$midMonth/g" -e "s/DDe/$midDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
+    -e "s/?RSTARTB?/restart_$rundate.dat/g" -e "s/?RSTARTE?/restart_$middate.dat/g" \
+    -e "s/?MRES?/$mres/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" \
+    ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
   #Run CALPUFF for first 24 hours:
   echo "### RUNNING CALPUFF FOR FIRST 24 HOURS"
@@ -389,10 +389,10 @@ if [ "$runCALPUFF" = true ]; then
   #Set up input file for second 24hrs:
   echo -n "### SETTING UP CALPUFF INPUT FILE FOR SECOND 24 HOURS"
   sed -e "s/YYYYb/$midYear/g" -e "s/MMb/$midMonth/g" -e "s/DDb/$midDay/g" -e "s/YYYYe/$endYear/g" \
--e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
--e "s/?RSTARTB?/restart_$middate.dat/g" -e "s/?RSTARTE?/restart_$enddate.dat/g" \
--e "s/?MRES?/1/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" \
-./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
+    -e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
+    -e "s/?RSTARTB?/restart_$middate.dat/g" -e "s/?RSTARTE?/restart_$enddate.dat/g" \
+    -e "s/?MRES?/1/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" \
+    ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
   #Run CALPUFF for second 24 hours:
   echo "### RUNNING CALPUFF FOR SECOND 24 HOURS"
@@ -419,15 +419,15 @@ if [ "$runVIS" = true ]; then
   mkdir ./vis/${rundate}
   cd Python
   if [ "$setSO4" = true]; then
-      ./genmaps.py ${rundate}
+    ./genmaps.py ${rundate}
   else
-      ./genmaps.py ${rundate} --SO4
+    ./genmaps.py ${rundate} --SO4
   fi
   cd ..
   cd vis/${rundate}
   if [ ${runffmpeg} = true ]; then
-  echo "Running ffmpeg"
-  ffmpeg -f image2 -r 4 -i SO2_static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
+    echo "Running ffmpeg"
+    ffmpeg -f image2 -r 4 -i SO2_static_concrec0100%02d.png -vcodec mpeg4 -y -s 7680x4320 movie_${rundate}.mp4
   fi
   cd ../..
   echo " ---> FINISHED ###"
