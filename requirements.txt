@@ -70,7 +70,7 @@ six=1.12.0=py36_1000
 sqlite=3.27.2=h7b6447c_0
 tk=8.6.8=hbc83047_0
 tornado=6.0.1=py36h14c3975_0
-urllib3=1.24.1=pypi_0
+urllib3=1.24.2=pypi_0
 utm=0.4.2=py36_0
 wheel=0.33.1=py36_0
 xz=5.2.4=h14c3975_4
