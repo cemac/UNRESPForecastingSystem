@@ -438,27 +438,35 @@ if [ "$runVIS" = true ]; then
   echo "Reformatting png to jpg"
   mogrify -format jpg *.png
   rm -f *.png
-  setfacl -m other:r-x *.jpg
-  chmod og+rx *.jpg
+  echo 'making readable by all'
+  setfacl -m other:r *.jpg
+  echo 'find the i2'
+  chmod og+r *.jpg
   if [ ! -e $VIZPATH${rundate} ];
   then
+    echo 'making foler'
     mkdir $VIZPATH${rundate}
   fi
+  echo 'checking for google files'
   # Check for google files
   count=`ls -1 *.html 2>/dev/null | wc -l`
   if [ $count != 0 ];
   then
-    setfacl -m other:r-x *.html
+    echo 'find the i5'
+    setfacl -m other:r *.html
     chmod og+rx *.html
     mv *.html $VIZPATH${rundate}
   fi
+  echo 'moving to public_html'
   mv *.jpg $VIZPATH${rundate}
+  echo 'Linking run to Today'
   cd $VIZPATH
   rm -f Today
   ln -sf $(date +%Y%m%d) Today
   cd $cwd
+  echo 'COMPLETED all visualisation steps'
 fi
-if [ "$runmodel" = true ]; then
+if [ $runmodel = true ]; then
   echo "### SUCCESSFULLY COMPLETED FORECAST ###"
 else
   echo "### SUCCESSFULLY COMPLETED TASK ###"
