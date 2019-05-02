@@ -418,7 +418,7 @@ if [ "$runVIS" = true ]; then
   rm -rf ./vis/${rundate}
   mkdir ./vis/${rundate}
   cd Python
-  if [ "$setSO4" = true]; then
+  if [ "$setSO4" = true ]; then
     ./genmaps.py ${rundate}
   else
     ./genmaps.py ${rundate} --SO4
@@ -440,13 +440,13 @@ if [ "$runVIS" = true ]; then
   rm -f *.png
   setfacl -m other:r-x *.jpg
   chmod og+rx *.jpg
-  if [ ! -e $VIZPATH${rundate} ]
+  if [ ! -e $VIZPATH${rundate} ];
   then
     mkdir $VIZPATH${rundate}
   fi
   # Check for google files
   count=`ls -1 *.html 2>/dev/null | wc -l`
-  if [ $count != 0 ]
+  if [ $count != 0 ];
   then
     setfacl -m other:r-x *.html
     chmod og+rx *.html
