@@ -428,7 +428,7 @@ if [ "$runVIS" = true ]; then
   cd vis/${rundate}
   if [ ${runffmpeg} = true ]; then
     echo "Running ffmpeg"
-    ffmpeg -i SO2_static_concrec0100%02d.jpg -c:v libx264 -crf 23 -profile:v baseline -level 3.0 -pix_fmt yuv420p -c:a aac -ac 2 -b:a 128k -r 4 -movflags faststart movie_${rundate}.mp4
+    ffmpeg -i SO2_static_concrec0100%02d.png -c:v libx264 -crf 23 -profile:v baseline -level 3.0 -pix_fmt yuv420p -c:a aac -ac 2 -b:a 128k -r 4 -movflags faststart movie_${rundate}.mp4
   fi
   cd ../..
   echo " ---> FINISHED ###"
