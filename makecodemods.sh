@@ -45,4 +45,4 @@ cd ../..
 
 echo 'COMPLETED:'
 echo ' Please make future code mods in CALPUFF_MODS to keep track of changes'
-echo ' Rerun makecodemods.sh to include new files'
+echo ' Rerun makecodemods.sh to include new files after making changes'
