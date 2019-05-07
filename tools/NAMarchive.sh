@@ -13,12 +13,12 @@
 echo "Archiving Raw NAM data"
 in=~earmgr/CEMAC/UNRESPForecastingSystem/NAM_data/raw
 out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/UNRESPForecastingSystem/NAM_data/raw"
-./generic_archiving.sh -i $in -o $out -b
+./generic_archiving.sh -i $in -o $out
 echo "Archived Raw NAM data"
 
 # Archive Processed
 echo "Archiving Processed NAM data"
 in=~earmgr/CEMAC/UNRESPForecastingSystem/NAM_data/processed
 out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/UNRESPForecastingSystem/NAM_data/processed"
-./generic_archiving.sh -i $in -o $out -b -n
+./generic_archiving.sh -i $in -o $out -n
 echo "Archived Processed NAM data"

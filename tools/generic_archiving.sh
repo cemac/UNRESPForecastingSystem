@@ -22,7 +22,7 @@ print_usage() {
   -i <starting loaction>
   -o <output location>
   -b sets bulk archiving
-  -n set
+  -n set for nam
  "
 }
 # Set current and archive location defaults
@@ -31,12 +31,12 @@ out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/UNRESPForecasti
 year=$(date +%Y)
 # find previous month
 m=$(date --date="$(date +%Y%m15) -1 month" +%Y%m)
-bulk=true
+bulk=false
 set_bulk() {
   bulk=true
 }
 # A flag for NAM processed
-nam=true
+nam=false
 set_nam() {
   nam=true
 }
@@ -57,7 +57,8 @@ done
 
 if [ "$bulk" = false ]; then
   echo "Archiving month"
-  year=${m:(-5)}
+  year=${m:(0):(-2)}
+  m=${m:(-2)}
   # Check and create the year folder in the archive space
   cd $out
   if [ ! -e  $year ]
@@ -66,11 +67,33 @@ if [ "$bulk" = false ]; then
   fi
   cd $year
   # Check and create the year month folders in the archive space
-  if [ ! -e  m$year$i ]
+  if [ ! -e  m$year$m ]
   then
-    mkdir m$year$mm
+    mkdir m$year$m
   fi
   cd $in/
+  if [ "$nam" = true ]; then
+    for d in *$year$m*; do
+      # extract month
+      folder=$out/$year/m$year$m/
+      if [ ! -e $folder ]
+      then
+        mkdir $folder
+        cp -rp $d* $folder
+      fi
+    done
+  else
+    for d in $year$m*/; do
+      folder=$out/$year/m$year$m/$d
+      if [ ! -e $folder ]
+      then
+        mkdir $folder
+        cp -p $d* $folder
+      fi
+    done
+  fi
+  echo "data copied to " $out
+  echo "run checks and delete duplicates from " $in
 fi
 
 if [ "$bulk" = true ]; then
@@ -99,8 +122,8 @@ if [ "$bulk" = true ]; then
       if [ ! -e $folder ]
       then
         mkdir $folder
+        cp -p $d* $folder
       fi
-      cp -p $d* $folder
     done
   else
     for d in $year*/; do
@@ -110,8 +133,8 @@ if [ "$bulk" = true ]; then
       if [ ! -e $folder ]
       then
         mkdir $folder
+        cp -p $d* $folder
       fi
-      cp -p $d* $folder
     done
   fi
   echo "data copied to " $out
