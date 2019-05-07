@@ -8,3 +8,10 @@
 #notes          :
 #bash_version   :4.2.46(2)-release
 #============================================================================
+
+# Archive RAW
+echo "Archiving Images"
+in=~earunres/public_html/UNRESP_VIZ/
+out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/Image_archive/"
+./generic_archiving.sh -i $in -o $out
+echo "Archived Images"

@@ -13,12 +13,12 @@
 echo "Archiving CALPUFF OUTPUT"
 in=~earmgr/CEMAC/UNRESPForecastingSystem/CALPUFF_OUT/CALPUFF/
 out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/UNRESPForecastingSystem/CALPUFF_OUT/CALPUFF/"
-./generic_archiving.sh -i $in -o $out -b
+./generic_archiving.sh -i $in -o $out
 echo "Archived CALPUFF OUTPUT"
 
 # Archive CALMET
 echo "Archiving CALMET OUTPUT"
 in=~earmgr/CEMAC/UNRESPForecastingSystem/CALPUFF_OUT/CALMET/
 out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/UNRESPForecastingSystem/CALPUFF_OUT/CALMET/"
-./generic_archiving.sh -i $in -o $out -b
+./generic_archiving.sh -i $in -o $out
 echo "Archived CALMET OUTPUT"
