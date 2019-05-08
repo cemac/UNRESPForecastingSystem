@@ -3,30 +3,35 @@
 The unresp Forecasting system can be ran as a standalone system.
 
 * Archiving (under development)
-  * micahel_archive.sh (example of automated archiving - need to add in options and generise)
+  * micahel_archive.sh (example of automated archiving - need to add in options and generalise)
 
 # Tools for managing Forecasting System
 
 The unresp Forecasting system can be ran as a standalone system.
-
->>>>>>> 4e66cc9b41d3914f8ffad9a290a6cc6796a08a29
 How ever this directory contains some tools to facilitate running as a smooth productions.
 
 ## Production system Tools
 
 ### Archiving:
 
-* NAMarchive.sh
-* CALPUFFarchive.sh
-* IMOarchive.sh
 * generic_archiving.sh
+
+Takes output archives to set location in YYYY/mYYYYMM/folders. Takes input and output location. Defaults to current month with overrides to set month/year or bulk year.
+
+Examples on using archiving tools in Leeds system.
+
+* [NAMarchive.sh](example_archiving/NAMarchive.sh)
+* [CALPUFFarchive.sh](example_archiving/CALPUFFarchive.sh)
+* [VIZarchive.sh](example_archiving/VIZarchive.sh)
+
 
 ## Testing tools
 
 ## CEMAC oneoff tools *to be removed in future*
 
-* [grabAQfile.sh](grabAQfile.sh)
-* [SensorSiteUpdate.sh](SensorSiteUpdate.sh) updating typos
+* [grabAQfile.sh](oneoff/grabAQfile.sh)
+* [SensorSiteUpdate.sh](oneoff/SensorSiteUpdate.sh) updating typos
+* [unittest.sh](oneoff/unittest.sh)
 
 ## Added features *coming soon*
 
