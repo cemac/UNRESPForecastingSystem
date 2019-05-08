@@ -2,9 +2,6 @@
 
 The unresp Forecasting system can be ran as a standalone system.
 
-* Archiving (under development)
-  * micahel_archive.sh (example of automated archiving - need to add in options and generalise)
-
 # Tools for managing Forecasting System
 
 The unresp Forecasting system can be ran as a standalone system.
