@@ -440,6 +440,21 @@ if [ ${runVIS} = true ]; then
   ln -sf $(date +%Y%m%d) Today
   cd $cwd
 fi
+# On the first day of each month archive last month.
+day=`date '+%d'`
+if [[ "$day" == 01 ]];
+then
+  echo "### Archiving Previous month ###"
+  if [[ "$USER" == 'earmgr' ]];
+  then
+    ./tools/CALPUFFarchive.sh
+    ./tools/NAMarchive.sh
+    ./tools/VIZarchive.sh
+  else
+    # This is only set up for Mark at leeds. 
+    echo 'set up for Leeds Production only'
+  fi
+fi
 if [ "$runmodel" = true ]; then
   echo "### SUCCESSFULLY COMPLETED FORECAST ###"
 else
