@@ -15,128 +15,133 @@ print_usage() {
 
  A CEMAC script to create folder and move to
  Usage:
-  .\generic_archiving.sh <opts>
+  .\generic_archiving.sh -i <IN> -o <OUT> <opts>
+ Defaults to take current month in IN and archive to OUT
+ Write protected and metadata preserved
+ Optional arguments can adjust dates for archiving
 
  Options:
-  -d <date> YYYYMM
   -i <starting loaction>
   -o <output location>
   -b sets bulk archiving
-  -n set for nam
- "
+  -n set for nam processed (no daily folders) Req. for bulk setup
+  -m override month for month archive e.g 201801
+  -y override year for bulk archive e.g. 2018
+  "
 }
+##
+##  DEFAULTS
+##
 # Set current and archive location defaults
-in=~earmgr/CEMAC/UNRESPForecastingSystem/NAM_data/raw/
-out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/UNRESPForecastingSystem/NAM_data"
 year=$(date +%Y)
-# find previous month
+# find previous month YYYYmm
 m=$(date --date="$(date +%Y%m15) -1 month" +%Y%m)
+# Bulk archiving for year
 bulk=false
 set_bulk() {
   bulk=true
 }
-# A flag for NAM processed
+# A flag for NAM processed (files not folders)
 nam=false
 set_nam() {
   nam=true
 }
-# Set year to out
-while getopts 'd:i:o:bnh' flag; do
+# GET ARGUMENTS
+while getopts 'i:o:y:m:bnh' flag; do
   case "${flag}" in
-    d) date="${OPTARG}" ;;
     i) in="${OPTARG}" ;;
     o) out="${OPTARG}" ;;
+    y) year="${OPTARG}" ;;
+    m) m="${OPTARG}" ;;
     n) set_nam ;;
     b) set_bulk ;;
     h) print_usage
-       exit 1 ;;
+      exit 1 ;;
     *) print_usage
-       exit 1 ;;
+      exit 1 ;;
   esac
 done
-
+#
+# IN and OUT are required
+#
+if [ "x" == "x$in" ]; then
+  echo "-i [input location] is required"
+  exit 1
+fi
+if [ "x" == "x$out" ]; then
+  echo "-o [output location] is required"
+  exit 1
+fi
+#
+# DEFAULT Monthly Archiving
+#
 if [ "$bulk" = false ]; then
-  echo "Archiving month"
+  # Extract year
   year=${m:(0):(-2)}
+  # Extract month
   m=${m:(-2)}
+  echo "Archiving month: " $m " Year: " $year
   # Check and create the year folder in the archive space
   cd $out
   if [ ! -e  $year ]
   then
+    echo $year "does not exist, creating folder"
     mkdir $year
   fi
   cd $year
   # Check and create the year month folders in the archive space
   if [ ! -e  m$year$m ]
   then
+    echo $year$m "does not exist, creating folder"
     mkdir m$year$m
   fi
   cd $in/
-  if [ "$nam" = true ]; then
-    for d in *$year$m*; do
-      # extract month
-      folder=$out/$year/m$year$m/
-      if [ ! -e $folder ]
-      then
-        mkdir $folder
-        cp -rp $d* $folder
-      fi
-    done
-  else
-    for d in $year$m*/; do
-      folder=$out/$year/m$year$m/$d
-      if [ ! -e $folder ]
-      then
-        mkdir $folder
-        cp -p $d* $folder
-      fi
-    done
-  fi
+  for d in *$year$m*; do
+    # output folder full path
+    folder=$out/$year/m$year$m/
+    # Don't overwrite files
+    if [ ! -e $folder/$d ];
+    then
+      # If the days file or folder isn't there already put it there
+      rsync -a $d $folder/$d
+    fi
+  done
   echo "data copied to " $out
+  echo "write protecting chmod -R ogu-w " $folder
+  chmod -R ogu-w $folder
   echo "run checks and delete duplicates from " $in
 fi
 
 if [ "$bulk" = true ]; then
-  echo "Archiving current year"
+  echo "Archiving year:" $year
   # Check and create the year folder in the archive space
   cd $out
-  if [ ! -e  $year ]
+  if [ ! -e $year ]
   then
+    echo $year "does not exist, creating folder"
     mkdir $year
   fi
-  cd $year
-  # Check and create the year month folders in the archive space
-  for i in $(seq -f "%02g" 1 12)
-    do
-      if [ ! -e  m$year$i ]
-      then
-        mkdir m$year$i
-      fi
-    done
   cd $in/
-  if [ "$nam" = true ]; then
-    for d in *$year*; do
-      # extract month
+  for d in *$year*; do
+    md=${d:(-5)}
+    m=${md:(1):(2)}
+    if [ "$nam" = true ]; then
       m=${d:(8):(2)}
-      folder=$out/$year/m$year$m/
-      if [ ! -e $folder ]
-      then
-        mkdir $folder
-        cp -p $d* $folder
-      fi
-    done
-  else
-    for d in $year*/; do
-      md=${d:(-5)}
-      m=${md:(0):(2)}
-      folder=$out/$year/m$year$m/$d
-      if [ ! -e $folder ]
-      then
-        mkdir $folder
-        cp -p $d* $folder
-      fi
-    done
-  fi
+    fi
+    folder=$out/$year/m$year$m
+    # Check and creating monthly folders in year folder
+    if [ ! -e $folder ]
+    then
+      mkdir $folder
+    fi
+    # If the days file or folder isn't there already put it there
+    if [ ! -e $folder/$d ];
+    then
+      rsync -a $d $folder
+    fi
+  done
   echo "data copied to " $out
   echo "run checks and delete duplicates from " $in
+  echo "*Consider* using chmod -R ogu-w " $out/$year/m$year"*"
+  echo "To write protect completed archives"
 fi
