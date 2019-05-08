@@ -420,12 +420,15 @@ if [ ${runVIS} = true ]; then
   echo "Reformatting png to jpg"
   mogrify -format jpg *.png
   rm -f *.png
-  setfacl -m other:r-x *.jpg
+  echo 'making readable by all'
+  setfacl -m other:r *.jpg
   chmod og+rx *.jpg
   if [ ! -e $VIZPATH${rundate} ]
   then
+    echo 'making folder'
     mkdir $VIZPATH${rundate}
   fi
+  echo 'checking for google files'
   # add in a check for goolge files incase missing API key
   count=`ls -1 *.html 2>/dev/null | wc -l`
   if [ $count != 0 ]
@@ -434,11 +437,33 @@ if [ ${runVIS} = true ]; then
     chmod og+rx *.html
     mv *.html $VIZPATH${rundate}
   fi
+  echo 'moving to public_html'
   mv *.jpg $VIZPATH${rundate}
   cd $VIZPATH
+  echo 'Linking run to Today'
   rm -f Today
   ln -sf $(date +%Y%m%d) Today
   cd $cwd
+  echo 'COMPLETED all visualisation steps'
+fi
+#------------------------------------------------------------------------#
+#--------------------- BESPOKE LEEDS ARCHIVNG ---------------------------#
+#------------------------------------------------------------------------#
+
+# On the first day of each month archive last month.
+day=`date '+%d'`
+if [[ "$day" == 01 ]];
+then
+  echo "### Archiving Previous month ###"
+  if [[ "$USER" == 'earmgr' ]];
+  then
+    ./tools/example_archiving/CALPUFFarchive.sh
+    ./tools/example_archiving/NAMarchive.sh
+    ./tools/example_archiving/VIZarchive.sh
+  else
+    # This is only set up for Mark at leeds.
+    echo 'set up for Leeds Production only'
+  fi
 fi
 if [ "$runmodel" = true ]; then
   echo "### SUCCESSFULLY COMPLETED FORECAST ###"

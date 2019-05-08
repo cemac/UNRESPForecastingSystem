@@ -3,7 +3,6 @@
 # Trouble shooting:
 # Certain systems may require additional setup
 # source activate unresp
-# module load bit
 # module load intel
 
 
@@ -441,11 +440,10 @@ if [ "$runVIS" = true ]; then
   rm -f *.png
   echo 'making readable by all'
   setfacl -m other:r *.jpg
-  echo 'find the i2'
   chmod og+r *.jpg
   if [ ! -e $VIZPATH${rundate} ];
   then
-    echo 'making foler'
+    echo 'making folder'
     mkdir $VIZPATH${rundate}
   fi
   echo 'checking for google files'
@@ -453,7 +451,6 @@ if [ "$runVIS" = true ]; then
   count=`ls -1 *.html 2>/dev/null | wc -l`
   if [ $count != 0 ];
   then
-    echo 'find the i5'
     setfacl -m other:r *.html
     chmod og+rx *.html
     mv *.html $VIZPATH${rundate}
