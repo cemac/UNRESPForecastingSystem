@@ -40,7 +40,7 @@ Summary documention
 ## Requirements ##
 
 * UNIX operating system (tested: CentOS Ubuntu)
-* [anaconda python](https://www.anaconda.com/distribution/#download-section)(recommended code works in python 2 and 3)
+* [anaconda python](https://www.anaconda.com/distribution/#download-section)(recommended code works in python 2 and 3) (conda => 4.6.14 recommended)
   * requirements in environment.yml (python 3)
   * non environment set up can be followed using requirements.txt if desired
 * Intel compiler **OR** executables and library (only for similar architecture as built)
@@ -50,7 +50,7 @@ Non anaconda installations require a separate build of ecCodes python API:
 
 ## Installation ##
 
-Anaconda python, unix systems (recommended)
+Anaconda python (conda 4.6.14), unix systems (recommended), intel compilers or compiled executables
 
 ```
 git clone https://github.com/cemac/UNRESPForecastingSystem.git
