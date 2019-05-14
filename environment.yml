@@ -6,7 +6,7 @@ dependencies:
   - basemap=1.2.0=py36h673bf1a_2
   - blas=1.0=mkl
   - bzip2=1.0.6=h14c3975_1002
-  - ca-certificates=2019.1.23=0
+  - ca-certificates=2019.3.9
   - certifi=2019.3.9=py36_0
   - curl=7.62.0=hbc83047_0
   - cycler=0.10.0=py_1
