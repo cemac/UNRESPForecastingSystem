@@ -123,7 +123,7 @@ print("Plot as raster layers", Layers)
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 date = args.date
-mpt = mtk.Masaya_Maps(date)
+mpt = mtk.MasayaMaps(date)
 
 if StaticMaps:
     if SO24:
