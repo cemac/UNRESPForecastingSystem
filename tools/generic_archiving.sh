@@ -103,7 +103,7 @@ if [ "$bulk" = false ]; then
     if [ ! -e $folder/$d ];
     then
       # If the days file or folder isn't there already put it there
-      rsync -a $d $folder/$d
+      rsync -a $d $folder/
     fi
   done
   echo "data copied to " $out
