@@ -457,9 +457,11 @@ then
   echo "### Archiving Previous month ###"
   if [[ "$USER" == 'earmgr' ]];
   then
-    ./tools/example_archiving/CALPUFFarchive.sh
-    ./tools/example_archiving/NAMarchive.sh
-    ./tools/example_archiving/VIZarchive.sh
+    cd tools/example_archiving
+    CALPUFFarchive.sh
+    NAMarchive.sh
+    VIZarchive.sh
+    cd $cwd
   else
     # This is only set up for Mark at leeds.
     echo 'set up for Leeds Production only'
