@@ -351,7 +351,7 @@ class MasayaMaps():
         for i, fname in enumerate(file_paths):
             self.plot_staticmap1(i, im, tc, fname, out, SOX=SOX)
 
-    def plot_staticmap1(self, ita, im, tc, file_paths, out, SOX):
+    def plot_staticmap1(self, ita, im, tc, fname, out, SOX):
         """plot_staticmap1
         description
             plot a single for either topo or satellite and SOX set to SO2
@@ -370,7 +370,7 @@ class MasayaMaps():
         so2title = ('Atmospheric ' + SOXf + ' concentrations at ' +
                     'ground level (hourly means). \n GCRF UNRESP')
         plt.figure(figsize=(16, 12))
-        fle = file_paths[ita]
+        fle = fname
         if SOX == "SO4":
             binLims = self.binLimsSO4
             norm = self.normso4
