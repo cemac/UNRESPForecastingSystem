@@ -13,6 +13,7 @@ if [ $CONDA_DEFAULT_ENV != unresp ]; then
   echo "trying to activate unresp python environment..."
   conda activate
   conda activate unresp
+  source activate unresp
 fi
 set -e #stop at first error
 # Put any bespoke setup steps in .env
