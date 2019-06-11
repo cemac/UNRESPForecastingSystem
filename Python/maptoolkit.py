@@ -438,7 +438,7 @@ class MasayaMaps():
             f.close()
             self.googlekey = lines[0].strip()
             file_paths = concfiles(self.n_conc_files,
-                                   self.conc_dir, SOX=SOX)[0]
+                                   self.conc_dir, SOX=SOX)[1]
             for i, fname in enumerate(file_paths):
                 self.plot_googlemap1(i, fname, SOX)
         except FileNotFoundError:
@@ -459,7 +459,7 @@ class MasayaMaps():
             png of concentration on map
         """
         gKey = self.googlekey
-        fle = file_paths[ita]
+        fle = file_paths
         if SOX == "SO4":
             binLims = self.binLimsSO4
         else:
