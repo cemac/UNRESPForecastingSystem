@@ -414,7 +414,7 @@ class MasayaMaps():
         font0.set_family('monospace')
         plt.plot(self.volcCoords[0], self.volcCoords[1], '^r', markersize=6)
         plt.suptitle(so2title, fontsize=24)
-        plt.title(self.dates[ita].strftime('%c'), fontsize=18)
+        plt.title(self.dates[ita].strftime('%c %Z'), fontsize=18)
         PNGfile = SOX + '_static_' + out + fle[-17:-4] + '.png'
         print("Writing out file " + PNGfile)
         PNGpath = os.path.join(self.outDir, PNGfile)
