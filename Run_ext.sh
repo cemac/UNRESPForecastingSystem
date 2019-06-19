@@ -57,6 +57,7 @@ print_usage() {
   -s turn OFF SO4 plotting
   -m turn OFF Forecasting model (e.g to run viz only)
   -p turn OFF viz steps (no jpgs etc to be produced)
+  -a use archived met data
   -f turn ON ffmpeg mp4 production
  long options are currently not avaible.
  ** TROUBLESHOOTING
@@ -91,13 +92,17 @@ set_model() {
   runCALPUFF=false
   runmodel=false
 }
-while getopts 'd:n:pmsfh' flag; do
+set_nam() {
+  run3DDAT=false
+}
+while getopts 'd:n:pmasfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
     s) set_SO4 ;;
     p) set_viz ;;
     m) set_model ;;
+    a) set_nam ;;
     f) set_ffmpeg ;;
     h) print_usage
       exit 1 ;;
@@ -118,7 +123,7 @@ echo 'vizulisation output to: '$VIZPATH
 
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
-enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
+enddate=$(date -d "$rundate + 1 days" +%Y%m%d)
 startYear=${rundate:0:4}
 startMonth=${rundate:4:2}
 startDay=${rundate:6:2}
