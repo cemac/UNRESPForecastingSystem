@@ -28,7 +28,7 @@ def writeRec1():
     # fout.write('{:16}{:16}{}\n'.format(DATASET,DATAVER,DATAMOD))
     fout.write(
         'M3D file Created from ETA AWIPS 212 Grid for Falconbridge CALMET\n')
-# just replicate Sara's data file for now
+    # just replicate Sara's data file for now
 
 
 def writeRec2():
@@ -120,6 +120,91 @@ def writeRec8():
                 IINDEX, JINDEX, XLATDOT, XLONGDOT, IELEVDOT, ILAND, XLATCRS, XLONGCRS, IELEVCRS))
 
 
+def writeRec10():
+    PRES = 1013.0  # Sea level presure (replicate Sara's file)
+    # total accumulated rainfall from past hour (replicate Sara's file)
+    RAIN = 0.0
+    SC = 0  # snow cover
+    RADSW = 0.0  # SW radiation at surface (replicate Sara's file)
+    RADLW = 0.0  # LW radiation at top (replicate Sara's file)
+    VAPMR = 0.0  # Vagour mixing ratio (replicate Sara's file)
+    for t in range(nfiles):
+        print("Processing file " + filenames[t])
+        dateTime = parse(date) + dt.timedelta(hours=t * 6)
+        MYR = dateTime.year  # Year of data block
+        MMO = dateTime.month  # Month of data block
+        MDAY = dateTime.day  # Day of data block
+        MHR = dateTime.hour  # Hour of data block
+        # GRIB file processing:
+        f = open(filePaths[t], 'r')  # Open GRIB file
+        gribapi.grib_multi_support_on()  # Turn on multi-message support
+        mcount = gribapi.grib_count_in_file(f)  # number of messages in file
+        [gribapi.grib_new_from_file(f) for i in range(
+            mcount)]  # Get handles for all messages
+        f.close()  # Close GRIB file
+        # Initialse 3D arrays for holding required fields:
+        HGTgrd = np.zeros(shape=(Nj, Ni, NZ))
+        TMPgrd = np.zeros(shape=(Nj, Ni, NZ))
+        Ugrd = np.zeros(shape=(Nj, Ni, NZ))
+        Vgrd = np.zeros(shape=(Nj, Ni, NZ))
+        Wgrd = np.zeros(shape=(Nj, Ni, NZ))
+        RHgrd = np.zeros(shape=(Nj, Ni, NZ))
+        # Loop through included levels and store the values in the appropriate k index of the 3D arrays
+        for k in range(NZ):
+            HGTvals = gribapi.grib_get_values(int(gidHGT[k]))
+            HGTgrd[:, :, k] = np.reshape(HGTvals, (Nj, Ni), 'C')
+            TMPvals = gribapi.grib_get_values(int(gidTMP[k]))
+            TMPgrd[:, :, k] = np.reshape(TMPvals, (Nj, Ni), 'C')
+            Uvals = gribapi.grib_get_values(int(gidU[k]))
+            Ugrd[:, :, k] = np.reshape(Uvals, (Nj, Ni), 'C')
+            Vvals = gribapi.grib_get_values(int(gidV[k]))
+            Vgrd[:, :, k] = np.reshape(Vvals, (Nj, Ni), 'C')
+            Wvals = gribapi.grib_get_values(int(gidW[k]))
+            Wgrd[:, :, k] = np.reshape(Wvals, (Nj, Ni), 'C')
+            RHvals = gribapi.grib_get_values(int(gidRH[k]))
+            RHgrd[:, :, k] = np.reshape(RHvals, (Nj, Ni), 'C')
+        WSgrd = np.sqrt(Ugrd**2 + Vgrd**2)  # Calculate wins speed (pythagoras)
+        # Calculate wind direction:
+        # radians, between [-pi,pi], positive anticlockwise from positive x-axis
+        WDgrd = np.arctan2(Vgrd, Ugrd)
+        # degrees, between [-180,180], positive anticlockwise from positive x-axis
+        WDgrd *= 180 / np.pi
+        # degrees, between [0,360], positive anticlockwise from negative x-axis (Since we specify the direction the wind is blowing FROM, not TO)
+        WDgrd += 180
+        # degrees, between [-360,0], positive clockwise from negative x-axis (Since wind direction is positive clockwise)
+        WDgrd = - WDgrd
+        # degrees, between [-270,90], positive clockwise from positive y-axis (Since wind direction is from North)
+        WDgrd += 90
+        # degrees, between [0,360], positive clockwise from positive y-axis (DONE!)
+        WDgrd = np.mod(WDgrd, 360)
+        # Loop over grid cells:
+        for j in range(NY):
+            JX = j + 1  # J-index of grid cell
+            for i in range(NX):
+                IX = i + 1  # i-index of grid cell
+                fout.write(('{:4d}' + '{:02d}' * 3 + '{:3d}' * 2 + '{:7.1f}{:5.2f}{:2d}' + '{:8.1f}'
+                           * 2 + '\n').format(MYR, MMO, MDAY, MHR, IX, JX, PRES, RAIN, SC, RADSW, RADLW))
+                for k in range(NZ):
+                    PRES2 = levsIncl[k]  # Pressure (mb)
+                    # Elevation (m above sea level)
+                    Z = int(HGTgrd[iLatMinGRIB + j, iLonMinGRIB + i, k])
+                    # Temperature (Kelvin)
+                    TEMPK = TMPgrd[iLatMinGRIB + j, iLonMinGRIB + i, k]
+                    # Wind direction (degrees)
+                    WD = int(WDgrd[iLatMinGRIB + j, iLonMinGRIB + i, k])
+                    # Wind speed (m/s)
+                    WS = WSgrd[iLatMinGRIB + j, iLonMinGRIB + i, k]
+                    # Vertical velocity (m/s)
+                    W = Wgrd[iLatMinGRIB + j, iLonMinGRIB + i, k]
+                    # Relative humidity (%)
+                    RH = int(RHgrd[iLatMinGRIB + j, iLonMinGRIB + i, k])
+                    fout.write(('{:4d}{:6d}{:6.1f}{:4d}{:5.1f}{:6.2f}{:3d}{:5.2f}\n').format(
+                        PRES2, Z, TEMPK, WD, WS, W, RH, VAPMR))
+        # Release all messages:
+        for i in range(mcount):
+            gribapi.grib_release(i + 1)
+
+
 def writeRec9():
     PRES = 1013.0  # Sea level presure (replicate Sara's file)
     # total accumulated rainfall from past hour (replicate Sara's file)
@@ -163,6 +248,97 @@ def writeRec9():
             Wgrd[:, :, k] = np.reshape(Wvals, (Nj, Ni), 'C')
             RHvals = gribapi.grib_get_values(int(gidRH[k]))
             RHgrd[:, :, k] = np.reshape(RHvals, (Nj, Ni), 'C')
+        if t > 0:
+            dateTime = parse(date) + dt.timedelta(hours=(t * 6)-3)
+            MYR = dateTime.year  # Year of data block
+            MMO = dateTime.month  # Month of data block
+            MDAY = dateTime.day  # Day of data block
+            MHR = dateTime.hour  # Hour of data block
+            HGTgrd = (HGTgrd + HGTgrd_ini)/2
+            TMPgrd = (TMPgrd + TMPgrd_ini)/2
+            Ugrd = (Ugrd + Ugrd_ini)/2
+            Vgrd = (Vgrd + Vgrd_ini)/2
+            Wgrd = (Wgrd + Wgrd_ini)/2
+            RHgrd = (RHgrd + RHgrd_ini)/2
+            WSgrd = np.sqrt(Ugrd**2 + Vgrd**2)  # Calculate wins speed (pythagoras)
+            # Calculate wind direction:
+            # radians, between [-pi,pi], positive anticlockwise from positive x-axis
+            WDgrd = np.arctan2(Vgrd, Ugrd)
+            # degrees, between [-180,180], positive anticlockwise from positive x-axis
+            WDgrd *= 180 / np.pi
+            # degrees, between [0,360], positive anticlockwise from negative x-axis (Since we specify the direction the wind is blowing FROM, not TO)
+            WDgrd += 180
+            # degrees, between [-360,0], positive clockwise from negative x-axis (Since wind direction is positive clockwise)
+            WDgrd = - WDgrd
+            # degrees, between [-270,90], positive clockwise from positive y-axis (Since wind direction is from North)
+            WDgrd += 90
+            # degrees, between [0,360], positive clockwise from positive y-axis (DONE!)
+            WDgrd = np.mod(WDgrd, 360)
+            # Loop over grid cells:
+            for j in range(NY):
+                JX = j + 1  # J-index of grid cell
+                for i in range(NX):
+                    IX = i + 1  # i-index of grid cell
+                    fout.write(('{:4d}' + '{:02d}' * 3 + '{:3d}' * 2 + '{:7.1f}{:5.2f}{:2d}' + '{:8.1f}'
+                               * 2 + '\n').format(MYR, MMO, MDAY, MHR, IX, JX, PRES, RAIN, SC, RADSW, RADLW))
+                    for k in range(NZ):
+                        PRES2 = levsIncl[k]  # Pressure (mb)
+                        # Elevation (m above sea level)
+                        Z = int(HGTgrd[iLatMinGRIB + j, iLonMinGRIB + i, k])
+                        # Temperature (Kelvin)
+                        TEMPK = TMPgrd[iLatMinGRIB + j, iLonMinGRIB + i, k]
+                        # Wind direction (degrees)
+                        WD = int(WDgrd[iLatMinGRIB + j, iLonMinGRIB + i, k])
+                        # Wind speed (m/s)
+                        WS = WSgrd[iLatMinGRIB + j, iLonMinGRIB + i, k]
+                        # Vertical velocity (m/s)
+                        W = Wgrd[iLatMinGRIB + j, iLonMinGRIB + i, k]
+                        # Relative humidity (%)
+                        RH = int(RHgrd[iLatMinGRIB + j, iLonMinGRIB + i, k])
+                        fout.write(('{:4d}{:6d}{:6.1f}{:4d}{:5.1f}{:6.2f}{:3d}{:5.2f}\n').format(
+                            PRES2, Z, TEMPK, WD, WS, W, RH, VAPMR))
+            # Release all messages:
+            for i in range(mcount):
+                gribapi.grib_release(i + 1)
+        # GRIB file processing:
+        dateTime = parse(date) + dt.timedelta(hours=t * 6)
+        MYR = dateTime.year  # Year of data block
+        MMO = dateTime.month  # Month of data block
+        MDAY = dateTime.day  # Day of data block
+        MHR = dateTime.hour  # Hour of data block
+        f = open(filePaths[t], 'r')  # Open GRIB file
+        gribapi.grib_multi_support_on()  # Turn on multi-message support
+        mcount = gribapi.grib_count_in_file(f)  # number of messages in file
+        [gribapi.grib_new_from_file(f) for i in range(
+            mcount)]  # Get handles for all messages
+        f.close()  # Close GRIB file
+        # Initialse 3D arrays for holding required fields:
+        HGTgrd = np.zeros(shape=(Nj, Ni, NZ))
+        TMPgrd = np.zeros(shape=(Nj, Ni, NZ))
+        Ugrd = np.zeros(shape=(Nj, Ni, NZ))
+        Vgrd = np.zeros(shape=(Nj, Ni, NZ))
+        Wgrd = np.zeros(shape=(Nj, Ni, NZ))
+        RHgrd = np.zeros(shape=(Nj, Ni, NZ))
+        # Loop through included levels and store the values in the appropriate k index of the 3D arrays
+        for k in range(NZ):
+            HGTvals = gribapi.grib_get_values(int(gidHGT[k]))
+            HGTgrd[:, :, k] = np.reshape(HGTvals, (Nj, Ni), 'C')
+            TMPvals = gribapi.grib_get_values(int(gidTMP[k]))
+            TMPgrd[:, :, k] = np.reshape(TMPvals, (Nj, Ni), 'C')
+            Uvals = gribapi.grib_get_values(int(gidU[k]))
+            Ugrd[:, :, k] = np.reshape(Uvals, (Nj, Ni), 'C')
+            Vvals = gribapi.grib_get_values(int(gidV[k]))
+            Vgrd[:, :, k] = np.reshape(Vvals, (Nj, Ni), 'C')
+            Wvals = gribapi.grib_get_values(int(gidW[k]))
+            Wgrd[:, :, k] = np.reshape(Wvals, (Nj, Ni), 'C')
+            RHvals = gribapi.grib_get_values(int(gidRH[k]))
+            RHgrd[:, :, k] = np.reshape(RHvals, (Nj, Ni), 'C')
+        HGTgrd_ini = HGTgrd
+        TMPgrd_ini = TMPgrd
+        Ugrd_ini = Ugrd
+        Vgrd_ini = Vgrd
+        Wgrd_ini = Wgrd
+        RHgrd_ini = RHgrd
         WSgrd = np.sqrt(Ugrd**2 + Vgrd**2)  # Calculate wins speed (pythagoras)
         # Calculate wind direction:
         # radians, between [-pi,pi], positive anticlockwise from positive x-axis
