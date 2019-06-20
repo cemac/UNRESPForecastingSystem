@@ -26,7 +26,7 @@ import maptoolkit as mtk
 
 # Manual Flags (will be overwrittend by commandline flags)
 StaticMaps = True
-GoogleMaps = True
+GoogleMaps = False
 SO24 = True
 SO2 = False
 SO4 = False
@@ -42,8 +42,10 @@ hstring = ("Date string, format YYYYMMDD, of the current CALPUFF run. Used " +
            "to + locate \n  directory containing the SO2 output files (with " +
            "assumed naming convention 'concrec0100**.dat', \n where '**' " +
            " goes from '01' through to '48'")
+hstring = ("number of concrec files e.g. 24 or 48")
 parser = argparse.ArgumentParser(description=dstring)
 parser.add_argument("date", help=hstring, type=str)
+parser.add_argument("--conc", help=hstring, type=str)
 # Switches
 parser.add_argument('--all', help='Plots all types of maps',
                     action='store_true')
@@ -123,7 +125,11 @@ print("Plot as raster layers", Layers)
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 date = args.date
-mpt = mtk.MasayaMaps(date)
+if args.conc:
+    nconc = args.conc
+else:
+    nconc = 48
+mpt = mtk.MasayaMaps(date, n_conc_files=int(nconc))
 
 if StaticMaps:
     if SO24:
