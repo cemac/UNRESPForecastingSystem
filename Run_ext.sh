@@ -123,7 +123,7 @@ echo 'vizulisation output to: '$VIZPATH
 
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
-enddate=$(date -d "$rundate + 1 days" +%Y%m%d)
+enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
 startYear=${rundate:0:4}
 startMonth=${rundate:4:2}
 startDay=${rundate:6:2}
