@@ -11,9 +11,9 @@
 #Setup environment
 if [ $CONDA_DEFAULT_ENV != unresp ]; then
   echo "trying to activate unresp python environment..."
+  eval "$(conda shell.bash hook)"
   conda activate
   conda activate unresp
-  source activate unresp
 fi
 set -e #stop at first error
 # Put any bespoke setup steps in .env
