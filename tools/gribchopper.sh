@@ -12,7 +12,7 @@
 
 # NAM FILES contain 712 Vars accross the whole of central america
 # We want just 139 for a specific region
-yearmnt=201712
+yearmnt=201703
 location="/nfs/earcemac/projects/unresp/nam_data"
 cd $location
 mkdir ${yearmnt}_small
