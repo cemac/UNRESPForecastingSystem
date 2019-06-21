@@ -13,6 +13,7 @@
 *.con
 
 NAM_data/raw/*/
+NAM_data/raw/2017*
 CALPUFF_OUT/CALMET/*/
 CALPUFF_OUT/CALPUFF/*/
 vis/*/**

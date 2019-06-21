@@ -21,6 +21,42 @@ import os
 import sys
 
 
+def take_along_axis(arr, ind, axis):
+    """
+    ... here means a "pack" of dimensions, possibly empty
+
+    arr: array_like of shape (A..., M, B...)
+        source array
+    ind: array_like of shape (A..., K..., B...)
+        indices to take along each 1d slice of `arr`
+    axis: int
+        index of the axis with dimension M
+
+    out: array_like of shape (A..., K..., B...)
+        out[a..., k..., b...] = arr[a..., inds[a..., k..., b...], b...]
+    """
+    if axis < 0:
+       if axis >= -arr.ndim:
+           axis += arr.ndim
+       else:
+           raise IndexError('axis out of range')
+    ind_shape = (1,) * ind.ndim
+    ins_ndim = ind.ndim - (arr.ndim - 1)   #inserted dimensions
+
+    dest_dims = list(range(axis)) + [None] + list(range(axis+ins_ndim, ind.ndim))
+
+    # could also call np.ix_ here with some dummy arguments, then throw those results away
+    inds = []
+    for dim, n in zip(dest_dims, arr.shape):
+        if dim is None:
+            inds.append(ind)
+        else:
+            ind_shape_dim = ind_shape[:dim] + (-1,) + ind_shape[dim+1:]
+            inds.append(np.arange(n).reshape(ind_shape_dim))
+
+    return arr[tuple(inds)]
+
+
 def writeRec1():
     # DATASET='3D.DAT' #Dataset name
     # DATAVER='2.1' #Dataset version
@@ -248,32 +284,41 @@ def writeRec9():
             Wgrd[:, :, k] = np.reshape(Wvals, (Nj, Ni), 'C')
             RHvals = gribapi.grib_get_values(int(gidRH[k]))
             RHgrd[:, :, k] = np.reshape(RHvals, (Nj, Ni), 'C')
+        WSgrd = np.sqrt(Ugrd**2 + Vgrd**2)  # Calculate wins speed (pythagoras)
+        # Calculate wind direction:
+        # radians, between [-pi,pi], positive anticlockwise from positive x-axis
+        WDgrd = np.arctan2(Vgrd, Ugrd)
+        # degrees, between [-180,180], positive anticlockwise from positive x-axis
+        WDgrd *= 180 / np.pi
+        # degrees, between [0,360], positive anticlockwise from negative x-axis (Since we specify the direction the wind is blowing FROM, not TO)
+        WDgrd += 180
+        # degrees, between [-360,0], positive clockwise from negative x-axis (Since wind direction is positive clockwise)
+        WDgrd = - WDgrd
+        # degrees, between [-270,90], positive clockwise from positive y-axis (Since wind direction is from North)
+        WDgrd += 90
+        # degrees, between [0,360], positive clockwise from positive y-axis (DONE!)
+        WDgrd = np.mod(WDgrd, 360)
         if t > 0:
             dateTime = parse(date) + dt.timedelta(hours=(t * 6)-3)
+            print('interpolating')
+            print(dateTime)
             MYR = dateTime.year  # Year of data block
             MMO = dateTime.month  # Month of data block
             MDAY = dateTime.day  # Day of data block
             MHR = dateTime.hour  # Hour of data block
-            HGTgrd = (HGTgrd + HGTgrd_ini)/2
-            TMPgrd = (TMPgrd + TMPgrd_ini)/2
-            Ugrd = (Ugrd + Ugrd_ini)/2
-            Vgrd = (Vgrd + Vgrd_ini)/2
-            Wgrd = (Wgrd + Wgrd_ini)/2
-            RHgrd = (RHgrd + RHgrd_ini)/2
-            WSgrd = np.sqrt(Ugrd**2 + Vgrd**2)  # Calculate wins speed (pythagoras)
-            # Calculate wind direction:
-            # radians, between [-pi,pi], positive anticlockwise from positive x-axis
-            WDgrd = np.arctan2(Vgrd, Ugrd)
-            # degrees, between [-180,180], positive anticlockwise from positive x-axis
-            WDgrd *= 180 / np.pi
-            # degrees, between [0,360], positive anticlockwise from negative x-axis (Since we specify the direction the wind is blowing FROM, not TO)
-            WDgrd += 180
-            # degrees, between [-360,0], positive clockwise from negative x-axis (Since wind direction is positive clockwise)
-            WDgrd = - WDgrd
-            # degrees, between [-270,90], positive clockwise from positive y-axis (Since wind direction is from North)
-            WDgrd += 90
-            # degrees, between [0,360], positive clockwise from positive y-axis (DONE!)
-            WDgrd = np.mod(WDgrd, 360)
+            HGTgrd = np.mean(np.array([HGTgrd + HGTgrd_ini]), axis=0)
+            TMPgrd = np.mean(np.array([TMPgrd + TMPgrd_ini]), axis=0)
+            Wgrd = np.mean(np.array([Wgrd + Wgrd_ini]), axis=0)
+            RHgrd = np.mean(np.array([RHgrd + RHgrd_ini]), axis=0)
+            WDgrd = np.mean(np.array([WDgrd + WDgrd_ini]), axis=0)
+            WSgrd = np.mean(np.array([WSgrd + WSgrd_ini]), axis=0)
+            inds = HGTgrd.argsort(axis=2)
+            HGTgrd = take_along_axis(HGTgrd, inds, axis=2)
+            TMPgrd = take_along_axis(TMPgrd, inds, axis=2)
+            Wgrd = take_along_axis(Wgrd, inds, axis=2)
+            RHgrd = take_along_axis(RHgrd, inds, axis=2)
+            WSgrd = take_along_axis(WSgrd, inds, axis=2)
+            WDgrd = take_along_axis(WDgrd, inds, axis=2)
             # Loop over grid cells:
             for j in range(NY):
                 JX = j + 1  # J-index of grid cell
@@ -302,6 +347,8 @@ def writeRec9():
                 gribapi.grib_release(i + 1)
         # GRIB file processing:
         dateTime = parse(date) + dt.timedelta(hours=t * 6)
+        print('processing')
+        print(dateTime)
         MYR = dateTime.year  # Year of data block
         MMO = dateTime.month  # Month of data block
         MDAY = dateTime.day  # Day of data block
@@ -335,8 +382,6 @@ def writeRec9():
             RHgrd[:, :, k] = np.reshape(RHvals, (Nj, Ni), 'C')
         HGTgrd_ini = HGTgrd
         TMPgrd_ini = TMPgrd
-        Ugrd_ini = Ugrd
-        Vgrd_ini = Vgrd
         Wgrd_ini = Wgrd
         RHgrd_ini = RHgrd
         WSgrd = np.sqrt(Ugrd**2 + Vgrd**2)  # Calculate wins speed (pythagoras)
@@ -353,6 +398,15 @@ def writeRec9():
         WDgrd += 90
         # degrees, between [0,360], positive clockwise from positive y-axis (DONE!)
         WDgrd = np.mod(WDgrd, 360)
+        WDgrd_ini = WDgrd
+        WSgrd_ini = WSgrd
+        inds = HGTgrd.argsort(axis=2)
+        HGTgrd = take_along_axis(HGTgrd, inds, axis=2)
+        TMPgrd = take_along_axis(TMPgrd, inds, axis=2)
+        Wgrd = take_along_axis(Wgrd, inds, axis=2)
+        RHgrd = take_along_axis(RHgrd, inds, axis=2)
+        WSgrd = take_along_axis(WSgrd, inds, axis=2)
+        WDgrd = take_along_axis(WDgrd, inds, axis=2)
         # Loop over grid cells:
         for j in range(NY):
             JX = j + 1  # J-index of grid cell
@@ -393,18 +447,19 @@ latMinCP = 11.7  # Min lat of CALPUFF grid
 latMaxCP = 12.2  # Max lat of CALPUFF grid
 lonMinCP = 273.2  # Min lon of CALPUFF grid
 lonMaxCP = 274.1  # Max lon of CALPUFF grid
-inDir = '../NAM_data/raw/' + date  # Directory containing GRIB files
+inDir = '/nfs/earcemac/projects/unresp/ForecastVisualized/UNRESPForecastingSystem/NAM_data/raw/' + date  # Directory containing GRIB files
 # Number of GRIB files (files are 6 hourly,
 # so 24 hours is 5 files including hours 00 24)
 nfiles = 5
-outFile = '../NAM_data/processed/met_' + date + '.dat'  # Output file path
+outFile = '/nfs/earcemac/projects/unresp/ForecastVisualized/UNRESPForecastingSystem/NAM_data/processed/met_' + date + '.dat'  # Output file path
 # pressure levels to include in output
 levsIncl = [1000, 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 250, 200,
             150, 100, 75, 50, 30, 20, 10, 7, 5, 2]
 
 # SET FILENAMES
 filePrefix = 'nam.t'
-fileSuffix = 'z.afwaca00.grb2.tm00'
+fileSuffix = 'z.afwaca00.tm00.grib2'
+# fileSuffix = 'z.afwaca00.grb2.tm00'
 filenames = []
 filePaths = []
 for i in range(nfiles):
