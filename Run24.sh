@@ -387,7 +387,7 @@ if [ "$runCALPUFF" = true ]; then
   ./CALPUFF_EXE/calpuff_intel.exe ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
   #Move output files from first 24 hours:
-  echo -n "### MOVING CALPUFF OUTPUT FILES FROM FIRST 24 HOURS"
+  echo -n "### MOVING CALPUFF OUTPUT FILES "
   mkdir ./CALPUFF_OUT/CALPUFF/${rundate}
   mv concrec*.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
   rm -rf *.con *.lst *.dat *.clr *.bna *.grd
