@@ -33,6 +33,8 @@ VIZ_SITE_CODE/public_html/UNRESP_VIZ/AQSensor/*/*.png
 VIZ_SITE_CODE/public_html/UNRESP_VIZ/*/*.jpg
 VIZ_SITE_CODE/public_html/UNRESP_VIZ/*/*google_conc*.html
 VIZ_SITE_CODE/public_html/UNRESP_VIZ/2018/
+VIZ_SITE_CODE/public_html/UNRESP_VIZ/*/*.gif
+
 grabAQfiles.sh
 
 Python/__pycache__/
