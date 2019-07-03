@@ -32,6 +32,8 @@ import pytz
 import utm
 import gmplot
 from dateutil.parser import parse
+import warnings
+warnings.filterwarnings("ignore")
 # University System python may be broken
 # If some one insists on using it...
 BACKEND = mpl.get_backend()
