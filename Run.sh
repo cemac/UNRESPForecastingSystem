@@ -401,9 +401,9 @@ if [ ${runVIS} = true ]; then
   mkdir ./vis/${rundate}
   cd Python
   if [ ${runSO4} = true ]; then
-    ./genmaps.py ${rundate}
+    ./genmaps.py ${rundate} --google
   else
-    ./genmaps.py ${rundate} --SO4
+    ./genmaps.py ${rundate} --SO4 --google
   fi
   cd ..
   cd vis/${rundate}
