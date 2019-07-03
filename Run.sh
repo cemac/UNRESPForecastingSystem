@@ -454,18 +454,7 @@ fi
 day=`date '+%d'`
 if [[ "$day" == 01 ]];
 then
-  echo "### Archiving Previous month ###"
-  if [[ "$USER" == 'earmgr' ]];
-  then
-    cd tools/example_archiving
-    CALPUFFarchive.sh
-    NAMarchive.sh
-    VIZarchive.sh
-    cd $cwd
-  else
-    # This is only set up for Mark at leeds.
-    echo 'set up for Leeds Production only'
-  fi
+  echo "### WARNING: Time to Archive Previous month ###"
 fi
 if [ "$runmodel" = true ]; then
   echo "### SUCCESSFULLY COMPLETED FORECAST ###"
