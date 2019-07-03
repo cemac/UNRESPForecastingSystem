@@ -13,6 +13,5 @@
 echo "Archiving Images"
 in=~earunres/public_html/UNRESP_VIZ/
 out="/ds/shared/Earth&Environment/Research/SEE/Research-1/UNRESP/UNRESPForecastingSystem/VIZ_SITE_CODE/public_html/UNRESP_VIZ/"
-folder=$(cd `dirname $0` && pwd -P)
-. ${folder}/generic_archiving.sh -i $in -o $out
+./generic_archiving.sh -i $in -o $out
 echo "Archived Images"
