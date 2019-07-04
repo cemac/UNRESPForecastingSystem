@@ -10,7 +10,7 @@
 #============================================================================
 
 
-cd ${HOME}/earmgr/CEMAC/UNRESPForecastingSystem/tools/example_archiving/
+cd ${HOME}/CEMAC/UNRESPForecastingSystem/tools/example_archiving/
 ./CALPUFFarchive.sh
 ./NAMarchive.sh
 ./VIZarchive.sh
