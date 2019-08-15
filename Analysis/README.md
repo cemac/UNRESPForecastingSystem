@@ -1,5 +1,7 @@
 # Analysis Tools
 
+These tools can be used to aid in writing further analysis tools and transparency in model configuration. They will not be available in release archives
+
 ## Overview
 
 As part of developing this tool, the CALPUFF model was forced with NAM and ECMWF data, the results showed large discrepancies. An experiment was set up (IMO) to compare identical CALPUFF runs over a 1 month period with known observations, and evaluate if the one meteological dataset is inferior. An overview of the results will be hosted in the wiki.

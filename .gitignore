@@ -11,6 +11,7 @@
 *.mod
 *.o
 *.con
+*.pyc
 
 NAM_data/raw/*/
 NAM_data/raw/2017*
