@@ -44,14 +44,14 @@ Em = "SO2"
 XYFILE = "../data/xy_masaya.dat"
 # observations
 obs = '/scratch/Projects/UNRESP_Data/OBS'
-# stations
-station1 = 'ElPanama'
-station2 = 'Pacaya'
+# stations and coordinates
+station1 = ['ElPanama', (-86.2058, 11.972)]
+station2 = ['Pacaya', (-86.3013, 11.9553)]
 # Models
 ECMWF = '/scratch/Projects/UNRESP_Data/ECMWF'
 NAM = '/scratch/Projects/UNRESP_Data/NAM'
 # Unit Testing
-Stage1 = True
+Stage1 = False
 Stage2 = False
 Stage3 = False
 Stage4 = False
@@ -125,8 +125,8 @@ def plot_obs(TS_KNN, unit, station):
 
 
 if Stage1 is True:
-    TS_raw, unit, TS_KNN = ExtractTimeSeries(obs, station1, Em)
-    plot_obs(TS_KNN, unit, station1)
+    TS_raw, unit, TS_KNN = ExtractTimeSeries(obs, station1[0], Em)
+    plot_obs(TS_KNN, unit, station1[0])
     print('Extracted Observational Data')
     print('Please Note KNN filled data, is questionable in large data gaps')
 
