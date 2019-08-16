@@ -40,6 +40,7 @@ if BACKEND == 'Qt4Agg' and sys.version_info[0] == 2:
 #            Data information: Emission Type, Stations, Model runs            #
 #                                                                             #
 # --------------------------------------------------------------------------- #
+
 # Emission
 Em = "SO2"
 # Default location of xy ascii file
@@ -59,6 +60,7 @@ Stage3 = True
 Stage4 = False
 Stage5 = False
 Stage6 = False
+
 # --------------------------------------------------------------------------- #
 #                   Stage 1: Extract Observational data                       #
 #                                                                             #
@@ -299,5 +301,22 @@ if Stage5 is True:
 #                        Stage 6: Plotting                                    #
 #                                                                             #
 # --------------------------------------------------------------------------- #
+
+
 if Stage6 is True:
+    ecmwf_df['TS_station_point'].plot(style='x')
+    nam_df['TS_station_point'].plot(style='.')
+    TS_KNN['KNN'].plot(style='+')
+    plt.title('El Panama SO2 Concs (KNN interpolated observations, raw model data)')
+    plt.ylabel('SO2 conc ug/m3')
+    plt.legend(['ECMWF', 'NAM', 'Obs'])
+    plt.xlabel('Date (hourly data)')
+    plt.show()
+    ecmwf_df['9ptmean'].plot(style='x')
+    nam_df['9ptmean'].plot(style='.')
+    TS_KNN['KNN'].plot(style='+')
+    plt.title('El Panama SO2 Concs (KNN interpolated observations, approx area model values')
+    plt.ylabel('SO2 conc ug/m3')
+    plt.legend(['ECMWF', 'NAM', 'Obs'])
+    plt.xlabel('Date (hourly data)')
     print('Stage6')
