@@ -50,16 +50,16 @@ obs = '/scratch/Projects/UNRESP_Data/OBS'
 # stations and coordinates
 station1 = ['ElPanama', (-86.2058, 11.972)]
 station2 = ['Pacaya', (-86.3013, 11.9553)]
+station = station1
 # Models
 ECMWF = '/scratch/Projects/UNRESP_Data/ECMWF'
 NAM = '/scratch/Projects/UNRESP_Data/NAM'
 # Unit Testing
 Stage1 = False
 Stage2 = False
-Stage3 = True
+Stage3 = False
 Stage4 = False
-Stage5 = False
-Stage6 = False
+
 
 # --------------------------------------------------------------------------- #
 #                   Stage 1: Extract Observational data                       #
@@ -80,16 +80,21 @@ def ExtractTimeSeries(obs, station, Em):
         TS_KNN(DataFrame): Missing values predicted by KNN
     """
     # Reading and use datetime index
+    # Tell it the weird format...
+    dateparse = lambda x: pd.datetime.strptime(x, '%d/%m/%Y %H:%M')
     df = pd.read_csv(glob.glob(obs + '/' + station + '*.csv')[0], index_col=0,
-                     parse_dates=True)
+                     parse_dates=True, date_parser=dateparse)
     if Em == "SO2" and station == 'ElPanama':
         data = df[[df.columns[2]]]
+        # Fill missing hours
+        data = data.asfreq('H')
         # extract units
         unit = df[[df.columns[1]]]
         unit = unit.dropna().iloc[0][0]
     elif Em == "SO2" and station == 'Pacaya':
         # Pacaya file formatted completely different
         data = df[[df.columns[0]]]
+        data = data.asfreq('H')
         unit = 'ug/m3'
     else:
         print('Current set up for SO2 only')
@@ -118,7 +123,7 @@ def ExtractTimeSeries(obs, station, Em):
     return TS_raw, unit, TS_KNN
 
 
-def plot_obs(TS_KNN, unit, station):
+def plot_obs(observations, unit, station):
     """
     Description
     Args:
@@ -129,8 +134,8 @@ def plot_obs(TS_KNN, unit, station):
     Returns:
         Scatter plot of Timeseries with KNN filled missing values.
     """
-    TS_KNN['KNN'].plot(style='.')
-    TS_KNN[TS_KNN.columns[0]].plot(style='.')
+    observations[station[0]+'_KNN'].plot(style='.')
+    observations[station[0]+'_raw'].plot(style='.')
     plt.legend()
     plt.title('SO2 data for March (' + station + ')')
     plt.ylabel(unit)
@@ -139,19 +144,16 @@ def plot_obs(TS_KNN, unit, station):
 
 
 if Stage1 is True:
-    TS_raw, unit, TS_KNN = ExtractTimeSeries(obs, station1[0], Em)
+    TS_raw, unit, TS_KNN = ExtractTimeSeries(obs, station[0], Em)
+    observations = TS_KNN.rename(columns={TS_KNN.columns[0]: station[0]+'_raw',
+                                          'KNN': station[0]+'_KNN'})
+    observations.to_csv(station[0] + '_cleaned.csv')
     # plot_obs(TS_KNN, unit, station1[0])
     print('Extracted Observational Data')
     print('Please Note KNN filled data, is questionable in large data gaps')
 
 # --------------------------------------------------------------------------- #
-#                   Stage 2: Clean Observational data                         #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-if Stage2 is True:
-    print('Stage2')
-# --------------------------------------------------------------------------- #
-#                   Stage 3: Extract Model data                               #
+#                   Stage 2: Extract Model data                               #
 #                                                                             #
 # --------------------------------------------------------------------------- #
 
@@ -281,33 +283,69 @@ def ExtractModelData(loc, model, XYFILE, Em):
     return df, TS_array, glat, glon
 
 
+if Stage2 is True:
+    ecmwf_df, E_TS_array, glat, glon = ExtractModelData(station[1], ECMWF,
+                                                        XYFILE, Em)
+    nam_df, n_TS_array, glat, glon = ExtractModelData(station[1], NAM,
+                                                      XYFILE, Em)
+    nam_df.to_csv('NAM_'+station[0]+'.csv')
+    ecmwf_df.to_csv('ECMWF_'+station[0]+'.csv')
+    print('Extracted Model Data')
+
+# --------------------------------------------------------------------------- #
+#                         Stage 3: Statistics                                 #
+#                                                                             #
+# --------------------------------------------------------------------------- #
+
+
+def gencsvfile():
+    """gencsvfile
+    Combine all data extractions into 1 DataFrame
+    """
+    All = observations
+    All['ECMWF_raw'] = ecmwf_df.TS_station_point
+    All['ECMWF_min'] = ecmwf_df['9pntmin']
+    All['ECMWF_max'] = ecmwf_df['9pntmax']
+    All['ECMWF_area'] = ecmwf_df['9ptmean']
+    All['NAM_raw'] = man_df.TS_station_point
+    All['NAM_min'] = nam_df['9pntmin']
+    All['NAM_max'] = nam_df['9pntmax']
+    All['NAM_area'] = nam_df['9ptmean']
+    All.to_csv('Timeseries_obs_model_raw_processed.csv')
+
+
+def RMSE(df, p, x):
+    RMSE = ((df.p - df.x) ** 2).mean() ** .5
+    return RMSE
+
+
+# Genetate a HTML page of Full statistical report
+def gen_stats(csvfile, station):
+    """gen stats
+    """
+    All = pd.read_csv(station + '_Timeseries_obs_model_raw_processed.csv',
+                      index_col=0, parse_dates=True)
+    profile = All.profile_report(title='Profile of Timeseries data for ' +
+                                 'observations, NAM and ECMWF runs for ' +
+                                 station)
+    profile.to_file(output_file=station + "Stats.html")
+
+
 if Stage3 is True:
-    ecmwf_df, E_TS_array, glat, glon = ExtractModelData(station1[1], ECMWF, XYFILE, Em)
-    nam_df, n_TS_array, glat, glon = ExtractModelData(station1[1], NAM, XYFILE, Em)
     print('Stage3')
+
 # --------------------------------------------------------------------------- #
-#                         Stage 4: Statistics                                 #
+#                        Stage 4: Plotting                                    #
 #                                                                             #
 # --------------------------------------------------------------------------- #
+
+
 if Stage4 is True:
-    print('Stage4')
-# --------------------------------------------------------------------------- #
-#                        Stage 5: Comparitons                                 #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-if Stage5 is True:
-    print('Stage5')
-# --------------------------------------------------------------------------- #
-#                        Stage 6: Plotting                                    #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-
-
-if Stage6 is True:
     ecmwf_df['TS_station_point'].plot(style='x')
     nam_df['TS_station_point'].plot(style='.')
     TS_KNN['KNN'].plot(style='+')
-    plt.title('El Panama SO2 Concs (KNN interpolated observations, raw model data)')
+    plt.title('El Panama SO2 Concs (KNN interpolated observations,' +
+              ' raw model data)')
     plt.ylabel('SO2 conc ug/m3')
     plt.legend(['ECMWF', 'NAM', 'Obs'])
     plt.xlabel('Date (hourly data)')
@@ -315,8 +353,9 @@ if Stage6 is True:
     ecmwf_df['9ptmean'].plot(style='x')
     nam_df['9ptmean'].plot(style='.')
     TS_KNN['KNN'].plot(style='+')
-    plt.title('El Panama SO2 Concs (KNN interpolated observations, approx area model values')
+    plt.title('El Panama SO2 Concs (KNN interpolated observations,\n approx' +
+              ' area model values')
     plt.ylabel('SO2 conc ug/m3')
     plt.legend(['ECMWF', 'NAM', 'Obs'])
     plt.xlabel('Date (hourly data)')
-    print('Stage6')
+    print('Stage4')
