@@ -26,6 +26,7 @@ import matplotlib.pyplot as plt
 from sklearn import neighbors
 from statistics import mode
 from datetime import datetime
+import pandas_profiling
 import maptoolkit as mtk
 warnings.filterwarnings("ignore")
 # University System python may be broken
@@ -50,12 +51,12 @@ obs = '/scratch/Projects/UNRESP_Data/OBS'
 # stations and coordinates
 station1 = ['ElPanama', (-86.2058, 11.972)]
 station2 = ['Pacaya', (-86.3013, 11.9553)]
-station = station1
+station = station2
 # Models
 ECMWF = '/scratch/Projects/UNRESP_Data/ECMWF'
 NAM = '/scratch/Projects/UNRESP_Data/NAM'
 # Unit Testing
-Stage1 = False
+Stage1 = True
 Stage2 = False
 Stage3 = False
 Stage4 = False
@@ -140,7 +141,6 @@ def plot_obs(observations, unit, station):
     plt.title('SO2 data for March (' + station + ')')
     plt.ylabel(unit)
     plt.tight_layout()
-    plt.savefig(station + '_March2017_Obs.png')
 
 
 if Stage1 is True:
@@ -148,7 +148,7 @@ if Stage1 is True:
     observations = TS_KNN.rename(columns={TS_KNN.columns[0]: station[0]+'_raw',
                                           'KNN': station[0]+'_KNN'})
     observations.to_csv(station[0] + '_cleaned.csv')
-    # plot_obs(TS_KNN, unit, station1[0])
+    # plot_obs(TS_KNN, unit, station)
     print('Extracted Observational Data')
     print('Please Note KNN filled data, is questionable in large data gaps')
 
@@ -298,7 +298,7 @@ if Stage2 is True:
 # --------------------------------------------------------------------------- #
 
 
-def gencsvfile():
+def gencsvfile(station, ecmwf_df, nam_df, observations):
     """gencsvfile
     Combine all data extractions into 1 DataFrame
     """
@@ -307,7 +307,7 @@ def gencsvfile():
     All['ECMWF_min'] = ecmwf_df['9pntmin']
     All['ECMWF_max'] = ecmwf_df['9pntmax']
     All['ECMWF_area'] = ecmwf_df['9ptmean']
-    All['NAM_raw'] = man_df.TS_station_point
+    All['NAM_raw'] = nam_df.TS_station_point
     All['NAM_min'] = nam_df['9pntmin']
     All['NAM_max'] = nam_df['9pntmax']
     All['NAM_area'] = nam_df['9ptmean']
@@ -327,8 +327,8 @@ def gen_stats(csvfile, station):
                       index_col=0, parse_dates=True)
     profile = All.profile_report(title='Profile of Timeseries data for ' +
                                  'observations, NAM and ECMWF runs for ' +
-                                 station)
-    profile.to_file(output_file=station + "Stats.html")
+                                 station[0])
+    profile.to_file(output_file=station[0] + "Stats.html")
 
 
 if Stage3 is True:
@@ -341,21 +341,21 @@ if Stage3 is True:
 
 
 if Stage4 is True:
-    ecmwf_df['TS_station_point'].plot(style='x')
-    nam_df['TS_station_point'].plot(style='.')
-    TS_KNN['KNN'].plot(style='+')
-    plt.title('El Panama SO2 Concs (KNN interpolated observations,' +
-              ' raw model data)')
-    plt.ylabel('SO2 conc ug/m3')
-    plt.legend(['ECMWF', 'NAM', 'Obs'])
-    plt.xlabel('Date (hourly data)')
-    plt.show()
-    ecmwf_df['9ptmean'].plot(style='x')
-    nam_df['9ptmean'].plot(style='.')
-    TS_KNN['KNN'].plot(style='+')
-    plt.title('El Panama SO2 Concs (KNN interpolated observations,\n approx' +
-              ' area model values')
-    plt.ylabel('SO2 conc ug/m3')
-    plt.legend(['ECMWF', 'NAM', 'Obs'])
-    plt.xlabel('Date (hourly data)')
+ecmwf_df['TS_station_point'].plot(style='X')
+nam_df['TS_station_point'].plot(style='.')
+TS_KNN['KNN'].plot(style='v')
+plt.title(station[0] + ' SO2 Concs (KNN interpolated observations,' +
+          ' raw model data)')
+plt.ylabel('SO2 conc ug/m3')
+plt.legend(['ECMWF', 'NAM', 'Obs'])
+plt.xlabel('Date (hourly data)')
+plt.show()
+ecmwf_df['9ptmean'].plot(style='X')
+nam_df['9ptmean'].plot(style='.')
+TS_KNN['KNN'].plot(style='v')
+plt.title(station[0] + ' SO2 Concs (KNN interpolated observations,\n approx' +
+          ' area model values')
+plt.ylabel('SO2 conc ug/m3')
+plt.legend(['ECMWF', 'NAM', 'Obs'])
+plt.xlabel('Date (hourly data)')
     print('Stage4')
