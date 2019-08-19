@@ -1,5 +1,7 @@
 # Analysis Tools
 
+:warning: This README is incomplete :warning:
+
 These tools can be used to aid in writing further analysis tools and transparency in model configuration. They will not be available in release archives
 
 ## Overview
@@ -11,29 +13,31 @@ Summary of meteological data:
 ### NAM
 
 * Resolution:
- *
- *
+ * Spatial -
+ * Temporal -
 * available to non academic: yes
 
 
 ### ECMWF
 
-* Resolution
-  * Spatial
-  * Temporal
+* Resolution:
+  * Spatial -
+  * Temporal -
 * available to non-academic: **no**
 
 ## Description of Analysis
 
-1. extract the model results for the location closest to the stations (or the four closest points and then the average)
-2. converting the unit to make the comparison reliable (the unit from the model al g/m3 whereas the obs are in micrograms/m3)
-3. clean for the data gaps in the obs
-4. plot all together
+1. Extract Observational data
+2. Fill in missing values with ML alogrithm , but keep raw incomplete data set
+3. Extract model data, nearest point and surrounding points (mean, min max) accept that the model accuracy is not such that the exact station point will be well defined.
+4. Coallate data sets and perform statistical analysis
+5. Plot obervations vs model data
 
-Other possible steps:
+### Other possible steps:
 
 * calculate: daily/hourly/month max, min, mean (for area around station), see if it's comparable to data
 * calculate other useful statistics e.g. RMS and std to see variability and error
+* Normalise the data sets to see if there's any peak correleation.
 
 ## Acknowledgements
 
