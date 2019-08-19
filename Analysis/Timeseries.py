@@ -51,12 +51,12 @@ obs = '/scratch/Projects/UNRESP_Data/OBS'
 # stations and coordinates
 station1 = ['ElPanama', (-86.2058, 11.972)]
 station2 = ['Pacaya', (-86.3013, 11.9553)]
-station = station2
+station = station1
 # Models
 ECMWF = '/scratch/Projects/UNRESP_Data/ECMWF'
 NAM = '/scratch/Projects/UNRESP_Data/NAM'
 # Unit Testing
-Stage1 = True
+Stage1 = False
 Stage2 = False
 Stage3 = False
 Stage4 = False
@@ -82,7 +82,7 @@ def ExtractTimeSeries(obs, station, Em):
     """
     # Reading and use datetime index
     # Tell it the weird format...
-    dateparse = lambda x: pd.datetime.strptime(x, '%d/%m/%Y %H:%M')
+    def dateparse(x): return pd.datetime.strptime(x, '%d/%m/%Y %H:%M')
     df = pd.read_csv(glob.glob(obs + '/' + station + '*.csv')[0], index_col=0,
                      parse_dates=True, date_parser=dateparse)
     if Em == "SO2" and station == 'ElPanama':
@@ -135,8 +135,8 @@ def plot_obs(observations, unit, station):
     Returns:
         Scatter plot of Timeseries with KNN filled missing values.
     """
-    observations[station[0]+'_KNN'].plot(style='.')
-    observations[station[0]+'_raw'].plot(style='.')
+    observations[station[0] + '_KNN'].plot(style='.')
+    observations[station[0] + '_raw'].plot(style='.')
     plt.legend()
     plt.title('SO2 data for March (' + station + ')')
     plt.ylabel(unit)
@@ -145,8 +145,8 @@ def plot_obs(observations, unit, station):
 
 if Stage1 is True:
     TS_raw, unit, TS_KNN = ExtractTimeSeries(obs, station[0], Em)
-    observations = TS_KNN.rename(columns={TS_KNN.columns[0]: station[0]+'_raw',
-                                          'KNN': station[0]+'_KNN'})
+    observations = TS_KNN.rename(columns={TS_KNN.columns[0]: station[0] + '_raw',
+                                          'KNN': station[0] + '_KNN'})
     observations.to_csv(station[0] + '_cleaned.csv')
     # plot_obs(TS_KNN, unit, station)
     print('Extracted Observational Data')
@@ -266,7 +266,7 @@ def ExtractModelData(loc, model, XYFILE, Em):
     ilat, ilon = FindNearestLatLon(loc[1], loc[0], glat, glon)
     TS_station_point = concall[:, ilon, ilat]
     # Build array of points surrounding that point (9 points)
-    TS_array = concall[:, ilon-1:ilon+2, ilat-1:ilat+2]
+    TS_array = concall[:, ilon - 1:ilon + 2, ilat - 1:ilat + 2]
     TS_flat = TS_array.reshape(744, 9)
     # Average Array
     df = pd.DataFrame()
@@ -288,8 +288,8 @@ if Stage2 is True:
                                                         XYFILE, Em)
     nam_df, n_TS_array, glat, glon = ExtractModelData(station[1], NAM,
                                                       XYFILE, Em)
-    nam_df.to_csv('NAM_'+station[0]+'.csv')
-    ecmwf_df.to_csv('ECMWF_'+station[0]+'.csv')
+    nam_df.to_csv('NAM_' + station[0] + '.csv')
+    ecmwf_df.to_csv('ECMWF_' + station[0] + '.csv')
     print('Extracted Model Data')
 
 # --------------------------------------------------------------------------- #
@@ -311,7 +311,7 @@ def gencsvfile(station, ecmwf_df, nam_df, observations):
     All['NAM_min'] = nam_df['9pntmin']
     All['NAM_max'] = nam_df['9pntmax']
     All['NAM_area'] = nam_df['9ptmean']
-    All.to_csv('Timeseries_obs_model_raw_processed.csv')
+    All.to_csv(station + 'Timeseries_obs_model_raw_processed.csv')
 
 
 def RMSE(df, p, x):
@@ -320,7 +320,7 @@ def RMSE(df, p, x):
 
 
 # Genetate a HTML page of Full statistical report
-def gen_stats(csvfile, station):
+def gen_stats(station):
     """gen stats
     """
     All = pd.read_csv(station + '_Timeseries_obs_model_raw_processed.csv',
@@ -332,7 +332,8 @@ def gen_stats(csvfile, station):
 
 
 if Stage3 is True:
-    print('Stage3')
+    gen_stats(station[0])
+    print('HTMLfile generated')
 
 # --------------------------------------------------------------------------- #
 #                        Stage 4: Plotting                                    #
@@ -341,21 +342,21 @@ if Stage3 is True:
 
 
 if Stage4 is True:
-ecmwf_df['TS_station_point'].plot(style='X')
-nam_df['TS_station_point'].plot(style='.')
-TS_KNN['KNN'].plot(style='v')
-plt.title(station[0] + ' SO2 Concs (KNN interpolated observations,' +
-          ' raw model data)')
-plt.ylabel('SO2 conc ug/m3')
-plt.legend(['ECMWF', 'NAM', 'Obs'])
-plt.xlabel('Date (hourly data)')
-plt.show()
-ecmwf_df['9ptmean'].plot(style='X')
-nam_df['9ptmean'].plot(style='.')
-TS_KNN['KNN'].plot(style='v')
-plt.title(station[0] + ' SO2 Concs (KNN interpolated observations,\n approx' +
-          ' area model values')
-plt.ylabel('SO2 conc ug/m3')
-plt.legend(['ECMWF', 'NAM', 'Obs'])
-plt.xlabel('Date (hourly data)')
+    ecmwf_df['TS_station_point'].plot(style='X')
+    nam_df['TS_station_point'].plot(style='.')
+    TS_KNN['KNN'].plot(style='v')
+    plt.title(station[0] + ' SO2 Concs (KNN interpolated observations,' +
+              ' raw model data)')
+    plt.ylabel('SO2 conc ug/m3')
+    plt.legend(['ECMWF', 'NAM', 'Obs'])
+    plt.xlabel('Date (hourly data)')
+    plt.show()
+    ecmwf_df['9ptmean'].plot(style='X')
+    nam_df['9ptmean'].plot(style='.')
+    TS_KNN['KNN'].plot(style='v')
+    plt.title(station[0] + ' SO2 Concs (KNN interpolated observations,\n approx' +
+              ' area model values')
+    plt.ylabel('SO2 conc ug/m3')
+    plt.legend(['ECMWF', 'NAM', 'Obs'])
+    plt.xlabel('Date (hourly data)')
     print('Stage4')
