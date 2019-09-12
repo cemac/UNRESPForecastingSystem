@@ -7,7 +7,7 @@
 # UNRESP Forecasting System
 
 [![GitHub release](https://img.shields.io/github/release/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases) [![GitHub top language](https://img.shields.io/github/languages/top/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem) [![GitHub issues](https://img.shields.io/github/issues/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/cemac/UNRESPForecastingSystem.svg)](https://github.com/cemac/UNRESPForecastingSystem/commits/master) [![GitHub All Releases](https://img.shields.io/github/downloads/cemac/UNRESPForecastingSystem/total.svg)](https://github.com/cemac/UNRESPForecastingSystem/releases) ![GitHub](https://img.shields.io/github/license/cemac/UNRESPForecastingSystem.svg) [![DOI](https://zenodo.org/badge/131827149.svg)](https://zenodo.org/badge/latestdoi/131827149)
-
+[![HitCount](http://hits.dwyl.io/{cemac}/{UNRESPForecastingSystem}.svg)](http://hits.dwyl.io/{cemac}/{UNRESPForecastingSystem})
 
 
 <hr>
