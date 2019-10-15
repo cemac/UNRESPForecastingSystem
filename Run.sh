@@ -10,8 +10,11 @@ export PYTHONPATH="/nfs/see-fs-02_users/earmgr/SW/eccodes-2.6.0/lib/python2.7/si
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
 vizhome=~earunres
-runVIS=true
-runSO4=true
+runVIS=false
+rungoogle=false
+runsatellite=false
+runSO4=false
+runSO24=false
 runffmpeg=false
 # Defaults that can be overwritten by editing HERE:
 # Command line option m switches all to false
@@ -42,21 +45,40 @@ print_usage() {
  **
  The following switches can be used to overwrite
  Default behaviour.
+
+ DEFAULT: output todays concrec files only
  **
-  -m turn OFF Forecasting model (e.g to run viz only)
-  -p turn OFF viz steps (no jpgs etc to be produced)
+  -m turn OFF Forecasting model
+  -p turn ON viz steps: SO2 on topography only
   -f turn ON ffmpeg mp4 production
+  -s SO4 plots ONLY
+  -b plot BOTH SO2 and SO4
+  -g output google
+  -r plot on high Resolution satellite background
+  -t plot satellite and topo backgrounds
  long options are currently not avaible.
  "
 }
 
 set_viz() {
-  runVIS=false
+  runVIS=true
 }
 
 set_SO4() {
-  runSO4=false
+  runSO4=true
 }
+
+set_SO24() {
+  runSO24=true
+}
+
+set_google() {
+  rungoogle=ture
+}
+set_satellite() {
+  runsatellite=true
+}
+
 set_ffmpeg() {
   runffmpeg=true
 }
@@ -70,13 +92,16 @@ set_model() {
   runCALPUFF=false
   runmodel=false
 }
-while getopts 'd:n:pmsfh' flag; do
+while getopts 'd:n:pmsbgrfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
     p) set_viz ;;
     m) set_model ;;
     s) set_SO4 ;;
+    b) set_SO24 ;;
+    g) set_google ;;
+    r) set_satellite ;;
     f) set_ffmpeg ;;
     h) print_usage
        exit 1 ;;
@@ -89,12 +114,26 @@ echo 'Running with the following options set:'
 echo 'date: '$rundate
 echo 'run model: '$runmodel
 echo 'vizulisation: '$runVIS
-echo 'SO4 output: '$runSO4
-echo 'make mp4: ' $runffmpeg
-# VISUALISATION  PATH --> public_html/UNRESP_VIZ/ folders must exist in
-# viz destination.
-VIZPATH=$vizhome/public_html/UNRESP_VIZ/
-echo 'vizulisation output to: '$VIZPATH
+if [ ${runVIS} = true ]; then
+  echo 'vizulisation options:'
+  echo 'plot SO2: '$runVIS
+  echo 'plot SO4: '$runSO4
+  echo 'plot high res set_satellite: '$runsatellite
+  echo 'output goolge htmls: '$rungoogle
+  echo 'make mp4: ' $runffmpeg
+  # VISUALISATION  PATH --> public_html/UNRESP_VIZ/ folders must exist in
+  # viz destination.
+  VIZPATH=$vizhome/public_html/UNRESP_VIZ/
+  echo 'vizulisation output to: '$VIZPATH
+fi
+
+fi [ ${runVIS} = false ] & [ ${runmodel} = false ]; then
+  echo 'running model and vizulisation turned off'
+  echo 'terminating programme'
+  echo 'plrease review options'
+  print_usage
+  exit 1
+fi
 
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
@@ -116,6 +155,7 @@ let NY=54000/$res+1
 DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
 
+echo 'CALPUFF grid resolution: ' $res
 cwd=$(pwd)
 
 
