@@ -160,8 +160,9 @@ CALPUFF for Masaya Region, forecast pipeline tools (preprocessing, postprocessin
 This repository has been developed in Collaboration with Sara Barsotti (Icelandic meteorological office),
  Evgenia Ilyinskaya (University of Leeds) as well as the code authors in the commit history. The Air quality sensor data stored in the visualization folders was produced in Collaboration with INITER.
 
-Resources:
+Resources & References:
 
 * Calpuff model code provided by Exponent
+* CALPUFF use following: *JJoseph S. Scire, David G. Strimaitis, Robert J. Yamartino. January 2000. User's Guide for the CALPUFF Dispersion Model v5, Earth Tech Inc*
 
 <hr>
