@@ -89,7 +89,7 @@ print_usage() {
  be induvidually turned on or off for development purposes
  via editing the upper part of this script.
 
-  runTERREL=true 
+  runTERREL=true
   runCTGPROC=true
   runMAKEGEO=true
   run3DDAT=true
