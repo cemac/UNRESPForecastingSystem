@@ -163,6 +163,8 @@ This repository has been developed in Collaboration with Sara Barsotti (Icelandi
 Resources & References:
 
 * Calpuff model code provided by Exponent
-* CALPUFF use following: *JJoseph S. Scire, David G. Strimaitis, Robert J. Yamartino. January 2000. User's Guide for the CALPUFF Dispersion Model v5, Earth Tech Inc*
-
+* *Scire, J.S., F.R. Robe, M.E. Fernau, and R.J. Yamartino. 2000a. A User’s Guide for the CALMET Meteorological Model(Version5). Tech. Rep.,EarthTech,Inc., Concord, MA 332pp.(
+  [CALMET_UsersGuide.pdf](http://www.src.com/calpuff/download/CALMET_UsersGuide.pdf)).*
+* *Scire, J.S., D.G. Strimaitis, and R.J.Yamartino. 2000b. A User’s Guide for the CALPUFF Dispersion Model(Version5),Tech.Rep.,EarthTech,Inc.,Concord,MA,521pp.(
+  [CALPUFF_UsersGuide.pdf](http://www.src.com/calpuff/download/CALPUFF_UsersGuide.pdf)).*
 <hr>
