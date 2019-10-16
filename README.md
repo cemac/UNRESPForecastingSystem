@@ -120,6 +120,27 @@ And opening http://0.0.0.0:8000/ in any browser
 All the code can be transported to desired location e.g. Apache server and the
 forecasting scripts ran with a `-n` option to move to that location.
 
+Currently 2 versions of the web vizulisation tool exist:
+
+1. Full: all output generated, SO2, SO4, googlemaps, satellite and topography plots
+2. Light: SO2 and SO4, only on topography plots (if running daily and want reduced output)
+
+to use full:
+
+```bash
+cd $HOME/UNRESPForecastingSystem/VIZ_SITE_CODE/public_html/_includes/
+ln -sf navbar_full.html navbar.html
+ln -sf navbar_sensors_full.html navbar_sensors.html
+```
+
+to use light:
+
+```bash
+cd $HOME/UNRESPForecastingSystem/VIZ_SITE_CODE/public_html/_includes/
+ln -sf navbar_light.html navbar.html
+ln -sf navbar_sensors_light.html navbar_sensors.html
+```
+
 <hr>
 
 ## Contributions ##
