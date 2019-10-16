@@ -27,7 +27,6 @@ let NX=90000/$res+1
 let NY=54000/$res+1
 DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
-echo 'CALPUFF grid resolution: ' $res
 cwd=$(pwd)
 
 
@@ -42,6 +41,7 @@ runVIS=false
 rungoogle=false
 runsatellite=false
 runtopo=true
+runsatopo=true
 runSO4=false
 runSO2=true
 runSO24=false
@@ -73,12 +73,15 @@ print_usage() {
  **
   -m turn OFF Forecasting model
   -p turn ON viz steps: SO2 on topography only
-  -f turn ON ffmpeg mp4 production
-  -s SWITCH to SO4
   -b plot BOTH SO2 and SO4
+  -t output BOTH satellite and topo backgrounds
   -g turn ON GOOGLE PLOTS
   -r SWITCH to satellite background
-  -t output BOTH satellite and topo backgrounds
+  -s SWITCH to SO4
+  -y plot ONLY GOOGLE PLOTS
+  -f turn ON ffmpeg mp4 production
+  -h HELP: prints this message!
+
  long options are currently not avaible.
 
  ------------------------------------------------
@@ -112,13 +115,30 @@ set_SO4() {
 
 set_SO24() {
   runSO24=true
+  runSO2=false
+  runSO4=false
 }
 
-set_google() {
+add_google() {
   rungoogle=ture
 }
+
+
+only_google() {
+  rungoogle=ture
+  runsatellite=false
+  runtopo=false
+  runsatopo=false
+}
+
 set_satellite() {
   runsatellite=true
+  runtopo=false
+}
+
+set_sattopo() {
+  runsatopo=true
+  runsatellite=false
   runtopo=false
 }
 
@@ -135,7 +155,7 @@ set_model() {
   runCALPUFF=false
   runmodel=false
 }
-while getopts 'd:n:x:pmsbgrfh' flag; do
+while getopts 'd:n:x:pmsbgrtyfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
@@ -144,7 +164,8 @@ while getopts 'd:n:x:pmsbgrfh' flag; do
     m) set_model ;;
     s) set_SO4 ;;
     b) set_SO24 ;;
-    g) set_google ;;
+    g) add_google ;;
+    y) only_google ;;
     r) set_satellite ;;
     t) set_sattopo ;;
     f) set_ffmpeg ;;
@@ -155,16 +176,95 @@ while getopts 'd:n:x:pmsbgrfh' flag; do
   esac
 done
 
+## Checking for inconsistent flags
+
+has_param() {
+    local term="$1"
+    shift
+    for arg; do
+        if [[ $arg == "$term" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# SO24
+if  has_param '-b' "$@" ; then
+if has_param '-s' "$@" ; then
+  echo "WARNING: inconsistent settings"
+  echo "-b sets both SO2 and SO4"
+  echo "-s sets ONLY SO4"
+  exit 0
+fi
+fi
+
+# plot both
+if  has_param '-t' "$@" ; then
+if has_param '-r' "$@" ; then
+  echo "WARNING: inconsistent settings"
+  echo "-t sets both satellite and topography"
+  echo "-r sets ONLY statellite"
+  exit 0
+fi
+if has_param '-y' "$@" ; then
+  echo "WARNING: inconsistent settings"
+  echo "-t sets both satellite and topography"
+  echo "-y sets ONLY googleplots"
+  exit 0
+fi
+fi
+
+if ! has_param '-p' "$@" ; then
+  if has_param '-b' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-s' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-g' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-y' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-r' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-t' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-f' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+fi
+
 echo 'Running with the following options set:'
+echo 'CALPUFF grid resolution: ' $res
 echo 'date: '$rundate
 echo 'run model: '$runmodel
+echo 'resoltuion: '$res
 echo 'vizulisation: '$runVIS
 if [ ${runVIS} = true ]; then
   echo 'vizulisation options:'
-  echo 'plot SO2: '$runVIS
-  echo 'plot SO4: '$runSO4
-  echo 'plot high res set_satellite: '$runsatellite
-  echo 'output goolge htmls: '$rungoogle
+  echo '..defaults..'
+  echo 'basic plots on: '$runtopo
+  echo 'plot SO2: '$runSO2
+  echo '..extra..'
+  echo 'plot BOTH SO2 and SO4: '$runSO24
+  echo 'plot ONLY SO4: '$runSO4
+  echo 'plot BOTH satellite and topo plots: '$runsatopo
+  echo 'include goolge htmls: '$rungoogle
+  echo 'plot ONLY SO4: '$runSO4
+  echo 'plot ONLY high res set_satellite: '$runsatellite
+  echo 'plot ONLY only to google: '$rungoogle
   echo 'make mp4: ' $runffmpeg
   # VISUALISATION  PATH --> public_html/UNRESP_VIZ/ folders must exist in
   # viz destination.
@@ -245,12 +345,6 @@ if [ "$run3DDAT" = true ]; then
     if [ ! -d ./NAM_data/raw/${rundate}  ]; then
       echo "making NAM folder"
     fi
-    for i in `seq 0 3 48`; do
-      hour=`printf "%02d" $i`
-      if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
-        echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
-      fi
-    done
   fi
   # Extract NAM data into CALMET input file format:
   eval checkgrib=$(file -b --mime-type * | sed 's|/.*||' | grep text | wc -l)
