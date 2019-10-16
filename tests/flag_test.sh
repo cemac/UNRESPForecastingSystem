@@ -98,7 +98,7 @@ print_usage() {
   runmodel=true
 
 
- "
+  "
 }
 
 set_viz() {
@@ -149,9 +149,9 @@ while getopts 'd:n:x:pmsbgrfh' flag; do
     t) set_sattopo ;;
     f) set_ffmpeg ;;
     h) print_usage
-       exit 1 ;;
+      exit 1 ;;
     *) print_usage
-       exit 1 ;;
+      exit 1 ;;
   esac
 done
 
@@ -194,43 +194,43 @@ endMonth=${enddate:4:2}
 endDay=${enddate:6:2}
 
 if [ "$runmodel" = true ]; then
-echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
+  echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 fi
-###TERREL###
+### TERREL ###
 if [ "$runTERREL" = true ]; then
   echo "runTERREL"
-  #Compile TERREL if required:
+  # Compile TERREL if required:
   if [ ! -f ./terrel_intel.exe ]; then
-      echo -n "### COMPILING TERREL"
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING TERREL"
+    echo " ---> FINISHED ###"
   else
-      echo "### TERREL ALREADY COMPILED ###"
+    echo "### TERREL ALREADY COMPILED ###"
   fi
 fi
 
-###CTGPROC###
+### CTGPROC ###
 if [ "$runCTGPROC" = true ]; then
   echo "runCTGPROC"
   if [ ! -f ./ctgproc_intel.exe ]; then
-      echo -n "### COMPILING CTGPROC"
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING CTGPROC"
+    echo " ---> FINISHED ###"
   else
-      echo "### CTGPROC ALREADY COMPILED ###"
+    echo "### CTGPROC ALREADY COMPILED ###"
   fi
 fi
 
-###MAKEGEO###
+### MAKEGEO ###
 if [ "$runMAKEGEO" = true ]; then
   echo "runMAKEGEO"
   if [ ! -f ./makegeo_intel.exe ]; then
-      echo -n "### COMPILING MAKEGEO"
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING MAKEGEO"
+    echo " ---> FINISHED ###"
   else
-      echo "### MAKEGEO ALREADY COMPILED ###"
+    echo "### MAKEGEO ALREADY COMPILED ###"
   fi
 fi
 
-###NAM data###
+### NAM data ###
 if [ "$run3DDAT" = true ]; then
   echo "run3DDAT"
   if [ -d ./NAM_data/raw/${rundate} ]; then
@@ -238,21 +238,21 @@ if [ "$run3DDAT" = true ]; then
   else
     numfiles=0
   fi
-  #if not 17 files, need to download more:
+  # if not 17 files, need to download more:
   if [ ${numfiles} != 17 ]; then
     echo "### ATTEMPTING TO DOWNLOAD NAM DATA"
-    #Make data directory if required:
+    # Make data directory if required:
     if [ ! -d ./NAM_data/raw/${rundate}  ]; then
       echo "making NAM folder"
     fi
     for i in `seq 0 3 48`; do
       hour=`printf "%02d" $i`
-        if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
-	       echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
-       fi
+      if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
+        echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
+      fi
     done
   fi
-  #Extract NAM data into CALMET input file format:
+  # Extract NAM data into CALMET input file format:
   eval checkgrib=$(file -b --mime-type * | sed 's|/.*||' | grep text | wc -l)
   if [ ${checkgrib} != 0 ]; then
     echo "Grib check failed, check internet connect or NAM data availability"
@@ -261,34 +261,34 @@ if [ "$run3DDAT" = true ]; then
   echo " ---> FINISHED ###"
 fi
 
-###CALMET###
+### CALMET ###
 if [ "$runCALMET" = true ]; then
   echo "CALMET"
   if [ ! -f ./calmet_intel.exe ]; then
-      echo -n "### COMPILING CALMET"
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING CALMET"
+    echo " ---> FINISHED ###"
   else
-      echo "### CTGPROC ALREADY COMPILED ###"
+    echo "### CTGPROC ALREADY COMPILED ###"
   fi
 fi
 
-###CALPUFF###
+### CALPUFF ###
 if [ "$runCALPUFF" = true ]; then
   echo "CALPUFF"
   if [ ! -f ./CALPUFF_EXE/calpuff_intel.exe ]; then
-      echo -n "### COMPILING CALPUFF"
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING CALPUFF"
+    echo " ---> FINISHED ###"
   else
-      echo "### CALPUFF ALREADY COMPILED ###"
+    echo "### CALPUFF ALREADY COMPILED ###"
   fi
   echo " ---> FINISHED ###"
 fi
 
-###VISUALISATION###
+### VISUALISATION ###
 if [ ${runVIS} = true ]; then
   echo "VIZ"
   if [ ${runffmpeg} = true ]; then
-  echo "Running ffmpeg"
+    echo "Running ffmpeg"
   fi
   echo " ---> FINISHED ###"
 
