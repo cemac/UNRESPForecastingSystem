@@ -172,7 +172,7 @@ if [ ${runVIS} = true ]; then
   echo 'vizulisation output to: '$VIZPATH
 fi
 
-fi [ ${runVIS} = false ] & [ ${runmodel} = false ]; then
+if [ ${runVIS} = false ] & [ ${runmodel} = false ]; then
   echo 'running model and vizulisation turned off'
   echo 'terminating programme'
   echo 'plrease review options'
@@ -200,10 +200,8 @@ fi
 if [ "$runTERREL" = true ]; then
   echo "runTERREL"
   #Compile TERREL if required:
-  cd CALPUFF_EXE
   if [ ! -f ./terrel_intel.exe ]; then
       echo -n "### COMPILING TERREL"
-      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/TERREL/terrel.for -o terrel_intel.exe
       echo " ---> FINISHED ###"
   else
       echo "### TERREL ALREADY COMPILED ###"
@@ -215,7 +213,6 @@ if [ "$runCTGPROC" = true ]; then
   echo "runCTGPROC"
   if [ ! -f ./ctgproc_intel.exe ]; then
       echo -n "### COMPILING CTGPROC"
-      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CTGPROC/ctgproc.for -o ctgproc_intel.exe
       echo " ---> FINISHED ###"
   else
       echo "### CTGPROC ALREADY COMPILED ###"
@@ -227,7 +224,6 @@ if [ "$runMAKEGEO" = true ]; then
   echo "runMAKEGEO"
   if [ ! -f ./makegeo_intel.exe ]; then
       echo -n "### COMPILING MAKEGEO"
-      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/MAKEGEO/makegeo.for -o makegeo_intel.exe
       echo " ---> FINISHED ###"
   else
       echo "### MAKEGEO ALREADY COMPILED ###"
@@ -251,15 +247,16 @@ if [ "$run3DDAT" = true ]; then
     fi
     for i in `seq 0 3 48`; do
       hour=`printf "%02d" $i`
-      if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
+        if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
 	       echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
+       fi
     done
   fi
   #Extract NAM data into CALMET input file format:
   eval checkgrib=$(file -b --mime-type * | sed 's|/.*||' | grep text | wc -l)
   if [ ${checkgrib} != 0 ]; then
     echo "Grib check failed, check internet connect or NAM data availability"
-    exit 0
+    #exit 0
   fi
   echo " ---> FINISHED ###"
 fi
@@ -267,10 +264,8 @@ fi
 ###CALMET###
 if [ "$runCALMET" = true ]; then
   echo "CALMET"
-  cd CALPUFF_EXE
   if [ ! -f ./calmet_intel.exe ]; then
       echo -n "### COMPILING CALMET"
-      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALMET/calmet.for -o calmet_intel.exe
       echo " ---> FINISHED ###"
   else
       echo "### CTGPROC ALREADY COMPILED ###"
@@ -282,11 +277,6 @@ if [ "$runCALPUFF" = true ]; then
   echo "CALPUFF"
   if [ ! -f ./CALPUFF_EXE/calpuff_intel.exe ]; then
       echo -n "### COMPILING CALPUFF"
-      cd CALPUFF_SRC/CALPUFF
-      ifort -c modules.for
-      cd ../../CALPUFF_EXE
-      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALPUFF/calpuff.for ../CALPUFF_SRC/CALPUFF/modules.o -o calpuff_intel.exe
-      cd ..
       echo " ---> FINISHED ###"
   else
       echo "### CALPUFF ALREADY COMPILED ###"
@@ -300,7 +290,6 @@ if [ ${runVIS} = true ]; then
   if [ ${runffmpeg} = true ]; then
   echo "Running ffmpeg"
   fi
-  cd ../..
   echo " ---> FINISHED ###"
 
   echo 'checking for google files'
