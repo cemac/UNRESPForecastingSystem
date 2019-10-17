@@ -196,7 +196,7 @@ def conc_array(ny, nx, file_path, binLims):
     return concA, conc
 
 
-def gen_im(lonMin, latMin, lonMax, latMax, imtype="World_Imagery",):
+def gen_im(lonMin, latMin, lonMax, latMax, imtype="World_Street_Map",):
     """gen_im
     description
     args:
