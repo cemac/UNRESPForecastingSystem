@@ -23,17 +23,16 @@ from __future__ import print_function
 import argparse
 from dateutil.parser import parse
 import maptoolkit as mtk
+import sys
 
-# Manual Flags (will be overwrittend by commandline flags)
-StaticMaps = True
+# Set everything to off
+TopoMaps = False
+SatelliteMaps = False
 GoogleMaps = False
-SO24 = True
 SO2 = False
 SO4 = False
-# Not yet Functioning
-diffMaps = False
-windfield = False
-Layers = False
+
+
 # READ IN COMMAND LINE ARGUMENTS
 dstring = ("Used to generate a series (48hrs) of static and interactive" +
            "(google) maps \n showing SO2 concentrations around the Masaya " +
@@ -49,78 +48,48 @@ parser.add_argument("--conc", help=hstring, type=str)
 # Switches
 parser.add_argument('--all', help='Plots all types of maps',
                     action='store_true')
-parser.add_argument('--layers', help='Plots as raster layers',
-                    action='store_true')
-parser.add_argument('--custom', help='Allows single switches',
-                    action='store_true')
-parser.add_argument('--SO24', help=r'Plot both SO$_2$ and SO$_4$',
-                    action='store_true')
 parser.add_argument('--SO2', help=r'Plot SO$_2$ only',
                     action='store_true')
 parser.add_argument('--SO4', help=r'Plot SO$_4$ only',
                     action='store_true')
-parser.add_argument('--static', help='Turn on static',
+parser.add_argument('--topo', help='Turn on basic maps',
+                    action='store_true')
+parser.add_argument('--satellite', help='Turn on satellite maps',
                     action='store_true')
 parser.add_argument('--google', help='Turn on googlemaps',
-                    action='store_true')
-parser.add_argument('--diff', help='Turn on IMO vs UoL',
-                    action='store_true')
-parser.add_argument('--wind', help='Turn on wind quiverplots (NAM)',
                     action='store_true')
 args = parser.parse_args()
 
 if args.SO2:
-    SO24 = False
     SO2 = True
 
-if args.all:
-    SO24 = True
-    StaticMaps = True
-    GoogleMaps = True
-    diffMaps = True
-    windfield = True
-    Layers = False
-    print('some options selected are not yet available')
-    diffMaps = False
-    windfield = False
+if args.SO4:
+    SO4 = True
 
-if args.all and args.custom:
-    print('--all and --custom can not be used together, setting to custom')
+if args.satellite:
+    SatelliteMaps = True
 
-if args.layers:
-    Layers = True
-    print('some options selected are not yet available')
-    Layers = False
+if args.topo:
+    TopoMaps = True
 
-# Bespoke options
-if args.custom:
-    SO24 = False
-    StaticMaps = False
-    GoogleMaps = False
-    diffMaps = False
-    windfield = False
-    Layers = False
-
-if args.static:
-    StaticMaps = True
 if args.google:
     GoogleMaps = True
-if args.diff:
-    diffMaps = True
-    print('some options selected are not yet available')
-    diffMaps = False
-if args.wind:
-    windfield = True
-    print('some options selected are not yet available')
-    windfield = False
+
+if args.all:
+    SO2 = True
+    SO4 = True
+    GoogleMaps = True
+    TopoMaps = True
+    SatelliteMaps = True
+
+
 # echo what is being done
 print('Generating Maps with following settings:')
-print("StaticMaps = ", StaticMaps)
-print("GooogleMaps =", GoogleMaps)
-print(r"Both SO$_2$ and SO$_4$ = ", SO24)
-print("IMO vs UoL =", diffMaps)
-print("NAM quiver plots", windfield)
-print("Plot as raster layers", Layers)
+print(r"SO$_2$ = ", SO2)
+print(r"SO$_4$ = ", SO4)
+print("Basic Maps =", TopoMaps)
+print("Satallite Maps =", SatelliteMaps)
+print("Gooogle Maps =", GoogleMaps)
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -129,33 +98,53 @@ if args.conc:
     nconc = args.conc
 else:
     nconc = 48
-mpt = mtk.MasayaMaps(date, n_conc_files=int(nconc))
 
-if StaticMaps:
-    if SO24:
-        mpt.plot_staticmaps('topo', SOX='SO2')
-        mpt.plot_staticmaps('topo', SOX='SO4')
-        mpt.plot_staticmaps('satellite', SOX='SO2')
-        mpt.plot_staticmaps('satellite', SOX='SO4')
-    elif SO2:
-        mpt.plot_staticmaps('topo', SOX='SO2')
-        mpt.plot_staticmaps('satellite', SOX='SO2')
+try:
+    mpt = mtk.MasayaMaps(date, n_conc_files=int(nconc))
+except AssertionError:
+    print('CALPUFF output directory does not exist for' + date)
+    print('Stopping, please check output exists for ' + date)
+
+if TopoMaps:
+    if SO2 and SO4:
+        print('topo SO2 and SO4')
+        # mpt.plot_staticmaps('topo', SOX='SO2')
+        # mpt.plot_staticmaps('topo', SOX='SO4')
     elif SO4:
-        mpt.plot_staticmaps('topo', SOX='SO4')
-        mpt.plot_staticmaps('satellite', SOX='SO4')
+        print('SO4')
+        # mpt.plot_staticmaps('topo', SOX='SO4')
+    elif SO2:
+        print('SO2')
+        # mpt.plot_staticmaps('topo', SOX='SO2')
+    else:
+        print(r'Conc must be set to SO$_2$ or SO$_4$ or both (default)')
+        print(r'most likely the --custom flag has been used with out:')
+        print(' --SO2', 'or  --SO4',)
+
+if SatelliteMaps:
+    if SO2 and SO4:
+        print('satellite SO2 and SO4')
+    elif SO2:
+        print('sat SO2')
+        # mpt.plot_staticmaps('satellite', SOX='SO2')
+    elif SO4:
+        print('sat SO4')
+        # mpt.plot_staticmaps('satellite', SOX='SO4')
     else:
         print(r'Conc must be set to SO$_2$ or SO$_4$ or both (default)')
         print(r'most likely the --custom flag has been used with out:')
         print(' --SO24', ' --SO2', 'or  --SO4',)
+
 if GoogleMaps:
-    if SO24:
-        mpt.plot_google(SOX='SO2')
-        mpt.plot_google(SOX='SO4')
+    if SO2 and SO4:
+        print('google SO2 and SO4')
     elif SO2:
-        mpt.plot_google(SOX='SO2')
+        print('sat SO2')
+        # mpt.plot_google(SOX='SO2')
     elif SO4:
-        mpt.plot_google(SOX='SO4')
+        print('sat SO4')
+        # mpt.plot_google(SOX='SO4')
     else:
-        print(r'Conc must be set to SO$_2$ or SO$_4$ or both (default)')
+        print(r'Conc must be set to SO$_2$ and/or SO$_4$ ')
         print(r'most likely the --custom flag has been used with out:')
-        print(' --SO24', ' --SO2', 'or  --SO4',)
+        print('--SO2', 'or  --SO4',)
