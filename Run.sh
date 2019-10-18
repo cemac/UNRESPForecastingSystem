@@ -1,17 +1,29 @@
-#!/usr/bin/bash --login
+#!/usr/bin/bash -
 
 # This script was created by CEMAC (University of Leeds) as
 # part of the UNRESP Project
 # Setup environment (should not need to be edited)
 set -e # stop at first error
 # load modules (Leeds)
-module load intel/17.0.0
-module load python2 python-libs
-# For Mark only:
-export PYTHONPATH="/nfs/see-fs-02_users/earmgr/SW/eccodes-2.6.0/lib/python2.7/site-packages:${PYTHONPATH}"
-
+if [ $USER == earmgr ]; then
+  module load intel/17.0.0
+  module load python2 python-libs
+  # For Mark only:
+  export PYTHONPATH="/nfs/see-fs-02_users/earmgr/SW/eccodes-2.6.0/lib/python2.7/site-packages:${PYTHONPATH}"
+  vizhome=~earunres
+else
+  if [ $CONDA_DEFAULT_ENV != unresp ]; then
+    echo "trying to activate unresp python environment..."
+    eval "$(conda shell.bash hook)"
+    conda activate
+    conda activate unresp
+  fi
+  # Put any bespoke setup steps in .env
+  source .env
+  vizhome=$HOME/UNRESPForecastingSystem/VIZ_SITE_CODE
+fi
 # Resolution (m) of intended CALPUFF grid.  100 < (integer) < 1000
-res=1000
+res=500
 # Defaults that can be overwritten by editing HERE:
 # Command line option m switches all to false
 runTERREL=true
@@ -22,6 +34,7 @@ runCALMET=true
 runCALPUFF=true
 runmodel=true
 
+set -e # stop at first error
 # Set other parameters (unlikely to need editing)
 let NX=90000/$res+1
 let NY=54000/$res+1
@@ -40,7 +53,7 @@ NAMno=17
 
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
-vizhome=~earunres
+numhours=48
 runVIS=false
 runallVIS=false
 rungoogle=false
@@ -62,11 +75,12 @@ print_usage() {
   .\Run.sh <opts>
 
  No options runs a default production configuration:
- Today, Viz on, plots production area (~earunres).
+ Today, Viz on, plots production area.
 
  Options:
   -d <date> YYYYMMDD DEFAULT: <today's date>
-  -n <home> name of viz defaults to ~earunres
+  -v <home> name of viz defaults to UNRESPForecastingSystem/VIZ_SITE_CODE
+  -n <numhours> forescast hours defaults to 48
   -x <res> resolution in m (100 < x < 1000)
  **
  The following switches can be used to overwrite
@@ -190,10 +204,11 @@ set_model() {
   runCALPUFF=false
   runmodel=false
 }
-while getopts 'd:n:x:pamsbgrtyfh' flag; do
+while getopts 'd:n:v:x:pamsbgrtyfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
-    n) vizhome="${OPTARG}" ;;
+    n) numhours="${OPTARG}" ;;
+    v) vizhome="${OPTARG}" ;;
     x) res="${OPTARG}" ;;
     p) set_viz ;;
     a) set_allviz ;;
@@ -323,10 +338,18 @@ fi
 
 #                               RUN DATE                                 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-
-prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
-middate=$(date -d "$rundate + 1 day" +%Y%m%d)
-enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
+case $numhours in
+  48)
+    prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
+    middate=$(date -d "$rundate + 1 day" +%Y%m%d)
+    enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
+  ;;
+  24)
+    prevdate=$(date -d "$rundate + 0 day" +%Y%m%d)
+    middate=$(date -d "$rundate + 1 day" +%Y%m%d)
+    enddate=$(date -d "$rundate + 1 days" +%Y%m%d)
+  ;;
+esac
 startYear=${rundate:0:4}
 startMonth=${rundate:4:2}
 startDay=${rundate:6:2}
@@ -592,6 +615,7 @@ if [ "$runCALPUFF" = true ]; then
   mkdir ./CALPUFF_OUT/CALPUFF/${rundate}
   mv concrec*.dat restart_${middate}.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
   rm -rf *.con *.lst *.dat *.clr *.bna *.grd
+  if [ $numhours == 48 ] ; then
   cp CALPUFF_OUT/CALPUFF/${rundate}/restart_${middate}.dat .
   echo " ---> FINISHED ###"
   # Set up input file for second 24hrs:
@@ -619,6 +643,7 @@ if [ "$runCALPUFF" = true ]; then
   rm -f *.con *.lst *.dat *.clr *.bna *.grd
   echo " ---> FINISHED ###"
 fi
+fi
 
 #                              RUN VISUALIZATION                         #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
@@ -627,7 +652,12 @@ if [ ${runVIS} = true ]; then
   rm -rf ./vis/${rundate}
   mkdir ./vis/${rundate}
   cd Python
-  python genmaps_test.py $rundate $vizopt $SOopt $googleopt
+  case $numhours in
+    48)
+      python genmaps.py $rundate $vizopt $SOopt $googleopt
+    24)
+      python genmaps.py $rundate --conc 24 $vizopt $SOopt $googleopt
+  esac
   cd ..
   cd vis/${rundate}
   if [ ${runffmpeg} = true ]; then
@@ -673,7 +703,7 @@ fi
 #------------------------------------------------------------------------#
 #------------------- BESPOKE LEEDS ARCHIVNG FLAGS------------------------#
 #------------------------------------------------------------------------#
-
+if [ $USER == earmgr ];  then
 # On the first day of each month archive last month.
 day=`date '+%d'`
 if [[ "$day" == 01 ]];
@@ -684,4 +714,5 @@ if [ "$runmodel" = true ]; then
   echo "### SUCCESSFULLY COMPLETED FORECAST ###"
 else
   echo "### SUCCESSFULLY COMPLETED TASK ###"
+fi
 fi
