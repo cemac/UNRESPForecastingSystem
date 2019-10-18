@@ -34,16 +34,19 @@ cwd=$(pwd)
 #------------------- DO NOT ALTER BELOW THIS LINE------------------------#
 #------------------------------------------------------------------------#
 
+#                       COMMAND LINE FLAG HANDELING                      #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
 vizhome=~earunres
 runVIS=false
+runallVIS=false
 rungoogle=false
 runsatellite=false
-runtopo=true
-runsatopo=true
+runtopo=false
 runSO4=false
-runSO2=true
+runSO2=false
 runSO24=false
 runffmpeg=false
 
@@ -72,7 +75,8 @@ print_usage() {
           background
  **
   -m turn OFF Forecasting model
-  -p turn ON viz steps: SO2 on topography only
+  -p turn ON viz steps: default to SO2 on topography only
+  -a turn ON all viz options except ffmpeg
   -b plot BOTH SO2 and SO4
   -t output BOTH satellite and topo backgrounds
   -g turn ON GOOGLE PLOTS
@@ -105,41 +109,71 @@ print_usage() {
 }
 
 set_viz() {
+  # description flags
   runVIS=true
+  runSO2=true
+  runtopo=true
+  # code option
+  SOopt=" --SO2 "
+  vizopt=" --topo "
+}
+
+set_allviz() {
+  # description flags
+  runallVIS=true
+  runVIS=true
+  runtopo=true
+  runSO24=true
+  rungoogle=ture
+  runsatellite=false
+  # code option
+  vizopt=" --all "
+  SOopt=" --SO2 --SO4 "
 }
 
 set_SO4() {
+  # description flags
   runSO4=true
   runSO2=false
+  # code option
+  SOopt=" --SO4 "
 }
 
 set_SO24() {
+  # description flags
   runSO24=true
   runSO2=false
   runSO4=false
+  # code option
+  SOopt=" --SO2 --SO4 "
 }
 
 add_google() {
-  rungoogle=ture
+  googleopt=" --google "
 }
-
-
 only_google() {
+  # description flags
   rungoogle=ture
   runsatellite=false
   runtopo=false
-  runsatopo=false
+  # code option
+  vizopt=" --google "
 }
 
 set_satellite() {
+  # description flags
   runsatellite=true
   runtopo=false
+  # code option
+  vizopt=" --satellite "
 }
 
 set_sattopo() {
-  runsatopo=true
-  runsatellite=false
-  runtopo=false
+  # description flags
+  runsatellite=true
+  runtopo=true
+  # code option
+  vizopt=" --topo --satellite"
 }
 
 set_ffmpeg() {
@@ -155,16 +189,17 @@ set_model() {
   runCALPUFF=false
   runmodel=false
 }
-while getopts 'd:n:x:pmsbgrtyfh' flag; do
+while getopts 'd:n:x:pamsbgrtyfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
     x) res="${OPTARG}" ;;
     p) set_viz ;;
+    a) set_allviz ;;
     m) set_model ;;
     s) set_SO4 ;;
     b) set_SO24 ;;
-    g) add_google ;;
+    y) set_google ;;
     y) only_google ;;
     r) set_satellite ;;
     t) set_sattopo ;;
@@ -244,7 +279,14 @@ if ! has_param '-p' "$@" ; then
     echo "WARNING viz turned off"
     exit 0
   fi
+  if has_param '-a' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
 fi
+
+#                       Description of Settings                          #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 echo 'Running with the following options set:'
 echo 'CALPUFF grid resolution: ' $res
@@ -280,6 +322,9 @@ if [ ${runVIS} = false ] & [ ${runmodel} = false ]; then
   exit 1
 fi
 
+#                               RUN DATE                                 #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
 enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
@@ -293,6 +338,8 @@ endYear=${enddate:0:4}
 endMonth=${enddate:4:2}
 endDay=${enddate:6:2}
 
+#                               RUN MODEL                                #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 if [ "$runmodel" = true ]; then
   echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 fi
@@ -330,7 +377,8 @@ if [ "$runMAKEGEO" = true ]; then
   fi
 fi
 
-### NAM data ###
+#              GET AND PROCESS NAM DATA              #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 if [ "$run3DDAT" = true ]; then
   echo "run3DDAT"
   if [ -d ./NAM_data/raw/${rundate} ]; then
@@ -378,9 +426,11 @@ if [ "$runCALPUFF" = true ]; then
   echo " ---> FINISHED ###"
 fi
 
-### VISUALISATION ###
+#                              RUN VISUALIZATION                         #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 if [ ${runVIS} = true ]; then
   echo "VIZ"
+  python genmaps_test.py $rundate $vizopt $SOopt $googleopt
   if [ ${runffmpeg} = true ]; then
     echo "Running ffmpeg"
   fi
@@ -395,6 +445,7 @@ if [ ${runVIS} = true ]; then
   fi
   echo 'COMPLETED all visualisation steps'
 fi
+
 #------------------------------------------------------------------------#
 #------------------- BESPOKE LEEDS ARCHIVNG FLAGS------------------------#
 #------------------------------------------------------------------------#

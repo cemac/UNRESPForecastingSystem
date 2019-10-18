@@ -48,9 +48,9 @@ parser.add_argument("--conc", help=hstring, type=str)
 # Switches
 parser.add_argument('--all', help='Plots all types of maps',
                     action='store_true')
-parser.add_argument('--SO2', help=r'Plot SO$_2$ only',
+parser.add_argument('--SO2', help=r'Plot SO$_2$',
                     action='store_true')
-parser.add_argument('--SO4', help=r'Plot SO$_4$ only',
+parser.add_argument('--SO4', help=r'Plot SO$_4$'',
                     action='store_true')
 parser.add_argument('--topo', help='Turn on basic maps',
                     action='store_true')
