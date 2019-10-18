@@ -1,21 +1,17 @@
 #!/usr/bin/bash --login
 
-#This script was created by CEMAC (University of Leeds) as part of the UNRESP
-#Project
-#Setup environment
-set -e #stop at first error
+# This script was created by CEMAC (University of Leeds) as
+# part of the UNRESP Project
+# Setup environment (should not need to be edited)
+set -e # stop at first error
+# load modules (Leeds)
 module load intel/17.0.0
 module load python2 python-libs
+# For Mark only:
 export PYTHONPATH="/nfs/see-fs-02_users/earmgr/SW/eccodes-2.6.0/lib/python2.7/site-packages:${PYTHONPATH}"
-# Defaults that can be overwritten via command line
-rundate=$(date +%Y%m%d)
-vizhome=~earunres
-runVIS=false
-rungoogle=false
-runsatellite=false
-runSO4=false
-runSO24=false
-runffmpeg=false
+
+# Resolution (m) of intended CALPUFF grid.  100 < (integer) < 1000
+res=1000
 # Defaults that can be overwritten by editing HERE:
 # Command line option m switches all to false
 runTERREL=true
@@ -25,6 +21,35 @@ run3DDAT=true
 runCALMET=true
 runCALPUFF=true
 runmodel=true
+
+# Set other parameters (unlikely to need editing)
+let NX=90000/$res+1
+let NY=54000/$res+1
+DGRIDKM=$(echo "scale=3; $res/1000" | bc)
+let MESHGLAZ=1000/$res+1
+cwd=$(pwd)
+# Number of nam files for 48 hours
+NAMno=17
+
+#------------------------------------------------------------------------#
+#------------------- DO NOT ALTER BELOW THIS LINE------------------------#
+#------------------------------------------------------------------------#
+
+#                       COMMAND LINE FLAG HANDELING                      #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
+# Defaults that can be overwritten via command line
+rundate=$(date +%Y%m%d)
+vizhome=~earunres
+runVIS=false
+runallVIS=false
+rungoogle=false
+runsatellite=false
+runtopo=false
+runSO4=false
+runSO2=false
+runSO24=false
+runffmpeg=false
 
 print_usage() {
   echo "
@@ -42,41 +67,114 @@ print_usage() {
  Options:
   -d <date> YYYYMMDD DEFAULT: <today's date>
   -n <home> name of viz defaults to ~earunres
+  -x <res> resolution in m (100 < x < 1000)
  **
  The following switches can be used to overwrite
  Default behaviour.
 
- DEFAULT: output todays concrec files only
+ DEFAULT: output todays SO2 concrec files on topography
+          background
  **
   -m turn OFF Forecasting model
-  -p turn ON viz steps: SO2 on topography only
-  -f turn ON ffmpeg mp4 production
-  -s SO4 plots ONLY
+  -p turn ON viz steps: default to SO2 on topography only
+  -a turn ON all viz options except ffmpeg
   -b plot BOTH SO2 and SO4
-  -g output google
-  -r plot on high Resolution satellite background
-  -t plot satellite and topo backgrounds
+  -t output BOTH satellite and topo backgrounds
+  -g turn ON GOOGLE PLOTS
+  -r SWITCH to satellite background
+  -s SWITCH to SO4
+  -y plot ONLY GOOGLE PLOTS
+  -f turn ON ffmpeg mp4 production
+  -h HELP: prints this message!
+
  long options are currently not avaible.
- "
+
+ ------------------------------------------------
+
+ Other Code Possible Options:
+
+ The model is split into various components, these can
+ be induvidually turned on or off for development purposes
+ via editing the upper part of this script.
+
+  runTERREL=true
+  runCTGPROC=true
+  runMAKEGEO=true
+  run3DDAT=true
+  runCALMET=true
+  runCALPUFF=true
+  runmodel=true
+
+
+  "
 }
 
 set_viz() {
+  # description flags
   runVIS=true
+  runSO2=true
+  runtopo=true
+  # code option
+  SOopt=" --SO2 "
+  vizopt=" --topo "
+}
+
+set_allviz() {
+  # description flags
+  runallVIS=true
+  runVIS=true
+  runtopo=true
+  runSO24=true
+  rungoogle=ture
+  runsatellite=false
+  # code option
+  vizopt=" --all "
+  SOopt=" --SO2 --SO4 "
 }
 
 set_SO4() {
+  # description flags
   runSO4=true
+  runSO2=false
+  # code option
+  SOopt=" --SO4 "
 }
 
 set_SO24() {
+  # description flags
   runSO24=true
+  runSO2=false
+  runSO4=false
+  # code option
+  SOopt=" --SO2 --SO4 "
 }
 
-set_google() {
-  rungoogle=ture
+add_google() {
+  googleopt=" --google "
 }
+only_google() {
+  # description flags
+  rungoogle=ture
+  runsatellite=false
+  runtopo=false
+  # code option
+  vizopt=" --google "
+}
+
 set_satellite() {
+  # description flags
   runsatellite=true
+  runtopo=false
+  # code option
+  vizopt=" --satellite "
+}
+
+set_sattopo() {
+  # description flags
+  runsatellite=true
+  runtopo=true
+  # code option
+  vizopt=" --topo --satellite"
 }
 
 set_ffmpeg() {
@@ -92,34 +190,122 @@ set_model() {
   runCALPUFF=false
   runmodel=false
 }
-while getopts 'd:n:pmsbgrfh' flag; do
+while getopts 'd:n:x:pamsbgrtyfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
     n) vizhome="${OPTARG}" ;;
+    x) res="${OPTARG}" ;;
     p) set_viz ;;
+    a) set_allviz ;;
     m) set_model ;;
     s) set_SO4 ;;
     b) set_SO24 ;;
-    g) set_google ;;
+    y) set_google ;;
+    y) only_google ;;
     r) set_satellite ;;
+    t) set_sattopo ;;
     f) set_ffmpeg ;;
     h) print_usage
-       exit 1 ;;
+      exit 1 ;;
     *) print_usage
-       exit 1 ;;
+      exit 1 ;;
   esac
 done
 
+## Checking for inconsistent flags
+
+has_param() {
+    local term="$1"
+    shift
+    for arg; do
+        if [[ $arg == "$term" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# SO24
+if  has_param '-b' "$@" ; then
+if has_param '-s' "$@" ; then
+  echo "WARNING: inconsistent settings"
+  echo "-b sets both SO2 and SO4"
+  echo "-s sets ONLY SO4"
+  exit 0
+fi
+fi
+
+# plot both
+if  has_param '-t' "$@" ; then
+if has_param '-r' "$@" ; then
+  echo "WARNING: inconsistent settings"
+  echo "-t sets both satellite and topography"
+  echo "-r sets ONLY statellite"
+  exit 0
+fi
+if has_param '-y' "$@" ; then
+  echo "WARNING: inconsistent settings"
+  echo "-t sets both satellite and topography"
+  echo "-y sets ONLY googleplots"
+  exit 0
+fi
+fi
+
+if ! has_param '-p' "$@" ; then
+  if has_param '-b' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-s' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-g' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-y' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-r' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-t' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-f' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+  if has_param '-a' "$@" ; then
+    echo "WARNING viz turned off"
+    exit 0
+  fi
+fi
+
+#                       Description of Settings                          #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
 echo 'Running with the following options set:'
+echo 'CALPUFF grid resolution: ' $res
 echo 'date: '$rundate
 echo 'run model: '$runmodel
+echo 'resoltuion: '$res
 echo 'vizulisation: '$runVIS
 if [ ${runVIS} = true ]; then
   echo 'vizulisation options:'
-  echo 'plot SO2: '$runVIS
-  echo 'plot SO4: '$runSO4
-  echo 'plot high res set_satellite: '$runsatellite
-  echo 'output goolge htmls: '$rungoogle
+  echo '..defaults..'
+  echo 'basic plots on: '$runtopo
+  echo 'plot SO2: '$runSO2
+  echo '..extra..'
+  echo 'plot BOTH SO2 and SO4: '$runSO24
+  echo 'plot ONLY SO4: '$runSO4
+  echo 'include goolge htmls: '$rungoogle
+  echo 'plot ONLY SO4: '$runSO4
+  echo 'plot ONLY high res set_satellite: '$runsatellite
   echo 'make mp4: ' $runffmpeg
   # VISUALISATION  PATH --> public_html/UNRESP_VIZ/ folders must exist in
   # viz destination.
@@ -127,13 +313,16 @@ if [ ${runVIS} = true ]; then
   echo 'vizulisation output to: '$VIZPATH
 fi
 
-fi [ ${runVIS} = false ] & [ ${runmodel} = false ]; then
+if [ ${runVIS} = false ] && [ ${runmodel} = false ]; then
   echo 'running model and vizulisation turned off'
   echo 'terminating programme'
   echo 'plrease review options'
   print_usage
   exit 1
 fi
+
+#                               RUN DATE                                 #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
 middate=$(date -d "$rundate + 1 day" +%Y%m%d)
@@ -148,152 +337,141 @@ endYear=${enddate:0:4}
 endMonth=${enddate:4:2}
 endDay=${enddate:6:2}
 
-#Set other parameters
-res=1000 #Resolution (m) of intended CALPUFF grid.  100 < (integer) < 1000
-let NX=90000/$res+1
-let NY=54000/$res+1
-DGRIDKM=$(echo "scale=3; $res/1000" | bc)
-let MESHGLAZ=1000/$res+1
-
-echo 'CALPUFF grid resolution: ' $res
-cwd=$(pwd)
-
-
-#------------------------------------------------------------------------#
-#------------------- DO NOT ALTER BELOW THIS LINE------------------------#
-#------------------------------------------------------------------------#
+#                               RUN MODEL                                #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 if [ "$runmodel" = true ]; then
-echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
+  echo "### RUNNING FORECAST SYSTEM FOR DATE "${rundate}" ###"
 fi
-###TERREL###
+### TERREL ###
 if [ "$runTERREL" = true ]; then
-  #Compile TERREL if required:
+  # Compile TERREL if required:
   cd CALPUFF_EXE
   if [ ! -f ./terrel_intel.exe ]; then
-      echo -n "### COMPILING TERREL"
+    echo -n "### COMPILING TERREL"
       ifort -O0 -fltconsistency -w ../CALPUFF_SRC/TERREL/terrel.for -o terrel_intel.exe
-      echo " ---> FINISHED ###"
+    echo " ---> FINISHED ###"
   else
-      echo "### TERREL ALREADY COMPILED ###"
+    echo "### TERREL ALREADY COMPILED ###"
   fi
   cd ..
-  #Remove any old files before running:
+  # Remove any old files before running:
   echo -n "### DELETING ANY OLD TERREL OUTPUT FILES"
   rm -rf *.dat *.grd *.lst *.sav *.log
   cd CALPUFF_OUT/TERREL
   find . ! -name 'README' -type f -exec rm -f {} +
   cd ../..
   echo " ---> FINISHED ###"
-  #Update input file:
+  # Update input file:
   echo -n "### SETTING UP TERREL INPUT FILE"
   sed -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/terrel_template.inp > ./CALPUFF_INP/terrel.inp
   echo " ---> FINISHED ###"
-  #Run TERREL:
+  # Run TERREL:
   echo "### RUNNING TERREL"
   ./CALPUFF_EXE/terrel_intel.exe ./CALPUFF_INP/terrel.inp > terrel.log
   echo " ---> FINISHED ###"
-  #Move output files:
+  # Move output files:
   echo -n "### MOVING TERREL OUTPUT FILES"
   mv *.dat *.grd *.lst *.sav *.log ./CALPUFF_OUT/TERREL/.
   echo " ---> FINISHED ###"
 fi
 
-###CTGPROC###
+### CTGPROC ###
 if [ "$runCTGPROC" = true ]; then
-  #Compile CTGPROC if required:
+  # Compile CTGPROC if required:
   cd CALPUFF_EXE
   if [ ! -f ./ctgproc_intel.exe ]; then
-      echo -n "### COMPILING CTGPROC"
-      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CTGPROC/ctgproc.for -o ctgproc_intel.exe
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING CTGPROC"
+    ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CTGPROC/ctgproc.for -o ctgproc_intel.exe
+    echo " ---> FINISHED ###"
   else
-      echo "### CTGPROC ALREADY COMPILED ###"
+    echo "### CTGPROC ALREADY COMPILED ###"
   fi
   cd ..
-  #Remove any old files before running:
+  # Remove any old files before running:
   echo -n "### DELETING ANY OLD CTGPROC OUTPUT FILES"
   rm -rf *.dat *.lst *.log
   cd CALPUFF_OUT/CTGPROC
   find . ! -name 'README' -type f -exec rm -f {} +
   cd ../..
   echo " ---> FINISHED ###"
-  #Update input file:
+  # Update input file:
   echo -n "### SETTING UP CTGPROC INPUT FILE"
   sed -e "s/?MESHGLAZ?/$MESHGLAZ/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/ctgproc_template.inp > ./CALPUFF_INP/ctgproc.inp
   echo " ---> FINISHED ###"
-  #Run CTGPROC:
+  # Run CTGPROC:
   echo "### RUNNING CTGPROC"
   ./CALPUFF_EXE/ctgproc_intel.exe ./CALPUFF_INP/ctgproc.inp > ctgproc.log
   echo " ---> FINISHED ###"
-  #Move output files:
+  # Move output files:
   echo -n "### MOVING CTGPROC OUTPUT FILES"
   mv *.dat *.lst *.log ./CALPUFF_OUT/CTGPROC/.
   echo " ---> FINISHED ###"
 fi
 
-###MAKEGEO###
+### MAKEGEO ###
 if [ "$runMAKEGEO" = true ]; then
-  #Compile MAKEGEO if required:
+  # Compile MAKEGEO if required:
   cd CALPUFF_EXE
   if [ ! -f ./makegeo_intel.exe ]; then
-      echo -n "### COMPILING MAKEGEO"
-      ifort -O0 -fltconsistency -w ../CALPUFF_SRC/MAKEGEO/makegeo.for -o makegeo_intel.exe
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING MAKEGEO"
+    ifort -O0 -fltconsistency -w ../CALPUFF_SRC/MAKEGEO/makegeo.for -o makegeo_intel.exe
+    echo " ---> FINISHED ###"
   else
-      echo "### MAKEGEO ALREADY COMPILED ###"
+    echo "### MAKEGEO ALREADY COMPILED ###"
   fi
   cd ..
-  #Copy data files from TERREL and CTGPROC across to the data directory
+  # Copy data files from TERREL and CTGPROC across to the data directory
   echo -n "### COPYING GEO DATA FILES ACROSS"
   cp -f ./CALPUFF_OUT/TERREL/masaya.dat data/.
   cp -f ./CALPUFF_OUT/CTGPROC/lulc1km_masaya.dat data/.
   echo " ---> FINISHED ###"
-  #Remove any old files before running:
+  # Remove any old files before running:
   echo -n "### DELETING ANY OLD MAKEGEO OUTPUT FILES"
   rm -rf *.dat *.lst *.clr *.log *.grd
   cd CALPUFF_OUT/MAKEGEO
   find . ! -name 'README' -type f -exec rm -f {} +
   cd ../..
   echo " ---> FINISHED ###"
-  #Update input file:
+  # Update input file:
   echo -n "### SETTING UP MAKEGEO INPUT FILE"
   sed -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/makegeo_template.inp > ./CALPUFF_INP/makegeo.inp
   echo " ---> FINISHED ###"
-  #Run MAKEGEO:
+  # Run MAKEGEO:
   echo "### RUNNING MAKEGEO"
   ./CALPUFF_EXE/makegeo_intel.exe ./CALPUFF_INP/makegeo.inp > makegeo.log
   echo " ---> FINISHED ###"
-  #Move output files:
+  # Move output files:
   echo -n "### MOVING MAKEGEO OUTPUT FILES"
   mv *.dat *.lst *.clr *.log *.grd ./CALPUFF_OUT/MAKEGEO/.
   echo " ---> FINISHED ###"
 fi
 
-###NAM data###
+#              GET AND PROCESS NAM DATA              #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 if [ "$run3DDAT" = true ]; then
-  ##Download NAM data if required:
-  #How many files downloaded already?:
+  ## Download NAM data if required:
+  # How many files downloaded already?:
   if [ -d ./NAM_data/raw/${rundate} ]; then
     eval numfiles=$(ls ./NAM_data/raw/${rundate} | wc -l)
   else
     numfiles=0
   fi
-  #if not 17 files, need to download more:
-  if [ ${numfiles} != 17 ]; then
+  # if not correct no files, need to download more:
+  if [ ${numfiles} != $NAMno ]; then
     echo "### ATTEMPTING TO DOWNLOAD NAM DATA"
-    #Make data directory if required:
+    # Make data directory if required:
     if [ ! -d ./NAM_data/raw/${rundate}  ]; then
       mkdir NAM_data/raw/${rundate}
     fi
     cd NAM_data/raw/${rundate}
-    #Download each NAM data file if required:
+    # Download each NAM data file if required:
     for i in `seq 0 3 48`; do
       hour=`printf "%02d" $i`
       if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
 	echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
-	#Entire GRIB file:
-	#wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2
-	#Subset of GRIB file using GRIB filter (http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl):
+	# Entire GRIB file:
+	# wget http://www.ftp.ncep.noaa.gov/data/nccf/com/nam/prod/nam.${rundate}/nam.t00z.afwaca${hour}.tm00.grib2
+	# Subset of GRIB file using GRIB filter (http://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl):
   #WARNING https not http as of Jan 2019
 	curl "https://nomads.ncep.noaa.gov/cgi-bin/filter_nam_crb.pl?file=nam.t00z.afwaca"${hour}".tm00.grib2&"\
 "lev_1000_mb=on&lev_100_mb=on&lev_10_mb=on&lev_150_mb=on&lev_200_mb=on&lev_20_mb=on&lev_250_mb=on&"\
@@ -307,7 +485,15 @@ if [ "$run3DDAT" = true ]; then
     cd ../../..
     echo " ---> FINISHED ###"
   fi
-  #Extract NAM data into CALMET input file format:
+  # CHECK files are all as expected!
+  cd NAM_data/raw/${rundate}
+  eval checkgrib=$(file -b --mime-type * | sed 's|/.*||' | grep text | wc -l)
+  cd ../../..
+  # Extract NAM data into CALMET input file format:
+  if [ ${checkgrib} != 0 ]; then
+    echo "Grib check failed, check internet connect or NAM data availability"
+    exit 0
+  fi
   echo "### EXTRACTING NAM DATA INTO CALMET INPUT FILE FORMAT"
   rm -f NAM_data/processed/met_${rundate}.dat
   cd Python
@@ -316,72 +502,72 @@ if [ "$run3DDAT" = true ]; then
   echo " ---> FINISHED ###"
 fi
 
-###CALMET###
+### CALMET ###
 if [ "$runCALMET" = true ]; then
-  #Compile CALMET if required:
+  # Compile CALMET if required:
   cd CALPUFF_EXE
   if [ ! -f ./calmet_intel.exe ]; then
-      echo -n "### COMPILING CALMET"
-      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALMET/calmet.for -o calmet_intel.exe
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING CALMET"
+    ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALMET/calmet.for -o calmet_intel.exe
+    echo " ---> FINISHED ###"
   else
-      echo "### CTGPROC ALREADY COMPILED ###"
+    echo "### CALMET ALREADY COMPILED ###"
   fi
   cd ..
-  #Remove any old data files and copy relevant new files into the data directory
+  # Remove any old data files and copy relevant new files into the data directory
   echo -n "### SETTING UP DATA DIRECTORY"
   rm -f data/geo_masaya.dat
   cp -f ./CALPUFF_OUT/MAKEGEO/geo_masaya.dat data/.
   rm -f data/met_*.dat
   cp -f ./NAM_data/processed/met_${rundate}.dat data/.
   echo " ---> FINISHED ###"
-  #Remove any old CALMET files before running:
+  # Remove any old CALMET files before running:
   echo -n "### DELETING ANY OLD CALMET OUTPUT FILES"
   rm -rf *.dat *.DAT *.bna *.lst *.aux
   rm -rf ./CALPUFF_OUT/CALMET/${rundate}
   echo " ---> FINISHED ###"
-  #Update input file:
+  # Update input file:
   echo -n "### SETTING UP CALMET INPUT FILE"
   sed -e "s/YYYYb/$startYear/g" -e "s/MMb/$startMonth/g" -e "s/DDb/$startDay/g" -e "s/YYYYe/$endYear/g" \
 -e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?3DDAT?/met_${rundate}.dat/g" \
 -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" ./CALPUFF_INP/calmet_template.inp > ./CALPUFF_INP/calmet.inp
   echo " ---> FINISHED ###"
-  #Run CALMET:
+  # Run CALMET:
   echo "### RUNNING CALMET"
   ./CALPUFF_EXE/calmet_intel.exe ./CALPUFF_INP/calmet.inp
   echo " ---> FINISHED ###"
-  #Move output files:
+  # Move output files:
   echo -n "### MOVING CALMET OUTPUT FILES"
   mkdir ./CALPUFF_OUT/CALMET/${rundate}
   mv *.dat *.DAT *.bna *.lst *.aux ./CALPUFF_OUT/CALMET/${rundate}/.
   echo " ---> FINISHED ###"
 fi
 
-###CALPUFF###
+### CALPUFF ###
 if [ "$runCALPUFF" = true ]; then
-  #Compile CALPUFF if required:
+  # Compile CALPUFF if required:
   if [ ! -f ./CALPUFF_EXE/calpuff_intel.exe ]; then
-      echo -n "### COMPILING CALPUFF"
-      cd CALPUFF_SRC/CALPUFF
-      ifort -c modules.for
-      cd ../../CALPUFF_EXE
-      ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALPUFF/calpuff.for ../CALPUFF_SRC/CALPUFF/modules.o -o calpuff_intel.exe
-      cd ..
-      echo " ---> FINISHED ###"
+    echo -n "### COMPILING CALPUFF"
+    cd CALPUFF_SRC/CALPUFF
+    ifort -c modules.for
+    cd ../../CALPUFF_EXE
+    ifort -O0 -fltconsistency -mcmodel=medium -w ../CALPUFF_SRC/CALPUFF/calpuff.for ../CALPUFF_SRC/CALPUFF/modules.o -o calpuff_intel.exe
+    cd ..
+    echo " ---> FINISHED ###"
   else
-      echo "### CALPUFF ALREADY COMPILED ###"
+    echo "### CALPUFF ALREADY COMPILED ###"
   fi
-  #Remove old and copy new CALMET data file across to the data directory
+  # Remove old and copy new CALMET data file across to the data directory
   echo -n "### SETTING UP DATA DIRECTORY"
   rm -f data/calmet_*.dat
   cp -f ./CALPUFF_OUT/CALMET/${rundate}/calmet.dat data/calmet_${rundate}.dat
   echo " ---> FINISHED ###"
-  #Remove any old files before running:
+  # Remove any old files before running:
   echo -n "### DELETING ANY OLD CALPUFF OUTPUT FILES"
   rm -rf *.con *.lst *.dat *.clr *.bna *.grd
   rm -rf ./CALPUFF_OUT/CALPUFF/${rundate}
   echo " ---> FINISHED ###"
-  #Set up input file for first 24hrs:
+  # Set up input file for first 24hrs:
   echo -n "### SETTING UP CALPUFF INPUT FILE FOR FIRST 24 HOURS"
   if [ -f ./CALPUFF_OUT/CALPUFF/${prevdate}/restart_${rundate}.dat ]; then
     mres=3
@@ -397,18 +583,18 @@ if [ "$runCALPUFF" = true ]; then
 -e "s/?MRES?/$mres/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" \
 ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
-  #Run CALPUFF for first 24 hours:
+  # Run CALPUFF for first 24 hours:
   echo "### RUNNING CALPUFF FOR FIRST 24 HOURS"
   ./CALPUFF_EXE/calpuff_intel.exe ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
-  #Move output files from first 24 hours:
+  # Move output files from first 24 hours:
   echo -n "### MOVING CALPUFF OUTPUT FILES FROM FIRST 24 HOURS"
   mkdir ./CALPUFF_OUT/CALPUFF/${rundate}
   mv concrec*.dat restart_${middate}.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
   rm -rf *.con *.lst *.dat *.clr *.bna *.grd
   cp CALPUFF_OUT/CALPUFF/${rundate}/restart_${middate}.dat .
   echo " ---> FINISHED ###"
-  #Set up input file for second 24hrs:
+  # Set up input file for second 24hrs:
   echo -n "### SETTING UP CALPUFF INPUT FILE FOR SECOND 24 HOURS"
   sed -e "s/YYYYb/$midYear/g" -e "s/MMb/$midMonth/g" -e "s/DDb/$midDay/g" -e "s/YYYYe/$endYear/g" \
 -e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
@@ -416,11 +602,11 @@ if [ "$runCALPUFF" = true ]; then
 -e "s/?MRES?/1/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" \
 ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
-  #Run CALPUFF for second 24 hours:
+  # Run CALPUFF for second 24 hours:
   echo "### RUNNING CALPUFF FOR SECOND 24 HOURS"
   ./CALPUFF_EXE/calpuff_intel.exe ./CALPUFF_INP/calpuff.inp
   echo " ---> FINISHED ###"
-  #Rename and move output files from second 24 hours:
+  # Rename and move output files from second 24 hours:
   echo -n "### RENAMING AND MOVING CALPUFF OUTPUT FILES FROM SECOND 24 HOURS"
   for i in `seq 1 24`; do
     let "j = i + 24"
@@ -430,26 +616,23 @@ if [ "$runCALPUFF" = true ]; then
     mv concrec0200${i2}.dat concrec0200${j2}.dat
   done
   mv concrec*.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
-  rm -rf *.con *.lst *.dat *.clr *.bna *.grd
+  rm -f *.con *.lst *.dat *.clr *.bna *.grd
   echo " ---> FINISHED ###"
 fi
 
-###VISUALISATION###
+#                              RUN VISUALIZATION                         #
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 if [ ${runVIS} = true ]; then
   echo "### RUNNING VISUALISATION TOOLS"
   rm -rf ./vis/${rundate}
   mkdir ./vis/${rundate}
   cd Python
-  if [ ${runSO4} = true ]; then
-    ./genmaps.py ${rundate} --google
-  else
-    ./genmaps.py ${rundate} --SO4 --google
-  fi
+  python genmaps_test.py $rundate $vizopt $SOopt $googleopt
   cd ..
   cd vis/${rundate}
   if [ ${runffmpeg} = true ]; then
-  echo "Running ffmpeg"
-  ffmpeg -i SO2_static_concrec0100%02d.png -c:v libx264 -crf 23 -profile:v baseline -level 3.0 -pix_fmt yuv420p -c:a aac -ac 2 -b:a 128k -r 4 -movflags faststart movie_${rundate}.mp4
+    echo "Running ffmpeg"
+    ffmpeg -i SO2_static_concrec0100%02d.png -c:v libx264 -crf 23 -profile:v baseline -level 3.0 -pix_fmt yuv420p -c:a aac -ac 2 -b:a 128k -r 4 -movflags faststart movie_${rundate}.mp4
   fi
   cd ../..
   echo " ---> FINISHED ###"
@@ -486,8 +669,9 @@ if [ ${runVIS} = true ]; then
   cd $cwd
   echo 'COMPLETED all visualisation steps'
 fi
+
 #------------------------------------------------------------------------#
-#--------------------- BESPOKE LEEDS ARCHIVNG ---------------------------#
+#------------------- BESPOKE LEEDS ARCHIVNG FLAGS------------------------#
 #------------------------------------------------------------------------#
 
 # On the first day of each month archive last month.
