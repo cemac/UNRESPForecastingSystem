@@ -50,7 +50,7 @@ parser.add_argument('--all', help='Plots all types of maps',
                     action='store_true')
 parser.add_argument('--SO2', help=r'Plot SO$_2$',
                     action='store_true')
-parser.add_argument('--SO4', help=r'Plot SO$_4$'',
+parser.add_argument('--SO4', help=r'Plot SO$_4$',
                     action='store_true')
 parser.add_argument('--topo', help='Turn on basic maps',
                     action='store_true')
@@ -107,15 +107,12 @@ except AssertionError:
 
 if TopoMaps:
     if SO2 and SO4:
-        print('topo SO2 and SO4')
-        # mpt.plot_staticmaps('topo', SOX='SO2')
-        # mpt.plot_staticmaps('topo', SOX='SO4')
+        mpt.plot_staticmaps('topo', SOX='SO2')
+        mpt.plot_staticmaps('topo', SOX='SO4')
     elif SO4:
-        print('SO4')
-        # mpt.plot_staticmaps('topo', SOX='SO4')
+        mpt.plot_staticmaps('topo', SOX='SO4')
     elif SO2:
-        print('SO2')
-        # mpt.plot_staticmaps('topo', SOX='SO2')
+        mpt.plot_staticmaps('topo', SOX='SO2')
     else:
         print(r'Conc must be set to SO$_2$ or SO$_4$ or both (default)')
         print(r'most likely the --custom flag has been used with out:')
@@ -123,13 +120,12 @@ if TopoMaps:
 
 if SatelliteMaps:
     if SO2 and SO4:
-        print('satellite SO2 and SO4')
+        mpt.plot_staticmaps('satellite', SOX='SO2')
+        mpt.plot_staticmaps('satellite', SOX='SO4')
     elif SO2:
-        print('sat SO2')
-        # mpt.plot_staticmaps('satellite', SOX='SO2')
+        mpt.plot_staticmaps('satellite', SOX='SO2')
     elif SO4:
-        print('sat SO4')
-        # mpt.plot_staticmaps('satellite', SOX='SO4')
+        mpt.plot_staticmaps('satellite', SOX='SO4')
     else:
         print(r'Conc must be set to SO$_2$ or SO$_4$ or both (default)')
         print(r'most likely the --custom flag has been used with out:')
@@ -137,13 +133,12 @@ if SatelliteMaps:
 
 if GoogleMaps:
     if SO2 and SO4:
-        print('google SO2 and SO4')
+        mpt.plot_google(SOX='SO2')
+        mpt.plot_google(SOX='SO4')
     elif SO2:
-        print('sat SO2')
-        # mpt.plot_google(SOX='SO2')
+        mpt.plot_google(SOX='SO2')
     elif SO4:
-        print('sat SO4')
-        # mpt.plot_google(SOX='SO4')
+        mpt.plot_google(SOX='SO4')
     else:
         print(r'Conc must be set to SO$_2$ and/or SO$_4$ ')
         print(r'most likely the --custom flag has been used with out:')
