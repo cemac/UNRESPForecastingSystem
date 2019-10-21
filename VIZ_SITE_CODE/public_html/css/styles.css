@@ -1,23 +1,76 @@
- /* Container holding the image and the text */
-.container {
-    position: relative;
-    text-align: center;
-    color: black;
+html,
+body {
+    width: 80%;
+    height: 90%;
+    font-family: 'Open Sans','Helvetica Neue',Arial,sans-serif;
+
 }
 
-/* Bottom left text */
-.bottom-left {
-    position: absolute;
-    bottom: 8px;
-    left: 16px;
+.column {
+  float: left;
+  width: 33%;
 }
-.umid-left {
-    position: absolute;
-    top: 160px;
-    left: 16px;
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
 }
-.bmid-left {
-    position: absolute;
-    bottom: 35px;
-    left: 16px;
+
+ /* Responsive layout - when the screen is less than 600px wide, make the three columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+}
+
+.collist3 {
+  -webkit-column-count: 3; /* Old Chrome, Safari and Opera */
+  -moz-column-count: 3; /* Old Firefox */
+  column-count: 3;
+}
+
+.collist4 {
+  -webkit-column-count: 4; /* Old Chrome, Safari and Opera */
+  -moz-column-count: 4; /* Old Firefox */
+  column-count: 4;
+}
+
+.collist2 {
+  -webkit-column-count: 2; /* Old Chrome, Safari and Opera */
+  -moz-column-count: 2; /* Old Firefox */
+  column-count: 2;
+  with: 20% ;
+}
+
+ul {
+  margin: 0;
+}
+ul.dashed {
+  list-style-type: none;
+}
+ul.dashed > li {
+  text-indent: -5px;
+}
+ul.dashed > li:before {
+  content: "-";
+  text-indent: -5px;
+}
+
+.content {
+  max-width: 500px;
+  margin: auto;
+}
+
+ // Replace X and Y with a number and u with a unit. do calculations
+ // and remove parens
+.centered_div {
+   width: 70%;
+   height: 100%;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   margin-left: -(70/2)%;
+   margin-top: -(100/2)%;
 }
