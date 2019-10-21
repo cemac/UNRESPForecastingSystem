@@ -75,7 +75,7 @@ print_usage() {
   .\Run.sh <opts>
 
  No options runs a default production configuration:
- Today, Viz on, plots production area.
+ Today, Viz off, 48 hours.
 
  Options:
   -d <date> YYYYMMDD DEFAULT: <today's date>
@@ -119,6 +119,14 @@ print_usage() {
   runCALPUFF=true
   runmodel=true
 
+** TROUBLESHOOTING
+ * Missing .so file --> most like intel library
+   Try loading system intel e.g. module load intel or set LD_LIBRARY_PATH
+ * Missing python modules --> mostly likely conda environment failure
+   try `source activate unresp`
+   or `conda activate unresp`
+   or `load your system python libraries`
+ ^^^ these fixes can be added to .env file for bespoke Setup
 
   "
 }

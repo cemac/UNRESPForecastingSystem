@@ -50,7 +50,7 @@ Non anaconda installations require a separate build of ecCodes python API:
 
 ## Installation ##
 
-Anaconda python (conda 4.6.14), unix systems (recommended), intel compilers or compiled executables
+Anaconda python (conda 4.7.1), unix systems (recommended), intel compilers or compiled executables
 
 ```
 git clone https://github.com/cemac/UNRESPForecastingSystem.git
@@ -61,40 +61,54 @@ conda env create -f environment.yml
 
 ## Usage Quick-Start ##
 
-For external users, once installed to run full forecast and visualisation with default options:
+Once installed to run full forecast and visualisation with default options:
 
 ```bash
 cd $HOME/UNRESPForecastingSystem
-./Run_ext.sh
+./Run.sh -p
 ```
 
 **NB** If no intel compilers the executables and libraries must be copied over to CALPUFF_EXE
 
-For help run `.\Run_ext.sh -h`
+For help run `.\Run.sh -h`
 
 ```
- Run_ext.sh
+ Run.sh
 
  A CEMAC script to Run CALPUFF WITH NAM DATA input
  winds and produces plots of SO2 and SO4.
 
  Usage:
-  .\Run_ext.sh <opts>
+  .\Run.sh <opts>
 
  No options runs a default production configuration:
- Today, Viz on, plots production area (~earunres).
+
+ Today, Viz off. 48 hours.
 
  Options:
   -d <date> YYYYMMDD DEFAULT: <today's date>
-  -n <home> name of viz defaults to ~earunres
+  -v <home> name of viz defaults to UNRESPForecastingSystem/VIZ_SITE_CODE
+  -n <numhours> forescast hours defaults to 48
+  -x <res> resolution in m (100 < x < 1000)
  **
  The following switches can be used to overwrite
  Default behaviour.
+
+ DEFAULT: output todays SO2 concrec files on topography
+          background
  **
-  -s turn OFF SO4 plotting
-  -m turn OFF Forecasting model (e.g to run viz only)
-  -p turn OFF viz steps (no jpgs etc to be produced)
+  -m turn OFF Forecasting model
+  -p turn ON viz steps: default to SO2 on topography only
+  -a turn ON all viz options except ffmpeg
+  -b plot BOTH SO2 and SO4
+  -t output BOTH satellite and topo backgrounds
+  -g turn ON GOOGLE PLOTS
+  -r SWITCH to satellite background
+  -s SWITCH to SO4
+  -y plot ONLY GOOGLE PLOTS
   -f turn ON ffmpeg mp4 production
+  -h HELP: prints this message!
+
  ** TROUBLESHOOTING
  * Missing .so file --> most like intel library
    Try loading system intel e.g. module load intel or set LD_LIBRARY_PATH
@@ -104,8 +118,6 @@ For help run `.\Run_ext.sh -h`
    or `load your system python libraries`
  ^^^ these fixes can be added to .env file for bespoke Setup
 ```
-
-Run.sh is set up default to leeds production behaviour to run as a chronjob displaying at [~earunres](https://homepages.see.leeds.ac.uk/~earunres/UNRESP_VIZ/index.html)
 
 ## Visualization
 
