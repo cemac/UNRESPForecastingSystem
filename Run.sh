@@ -713,9 +713,9 @@ then
   echo "### WARNING: Time to Archive Previous month ###"
 fi
 fi
+
 if [ "$runmodel" = true ]; then
   echo "### SUCCESSFULLY COMPLETED FORECAST ###"
 else
   echo "### SUCCESSFULLY COMPLETED TASK ###"
-fi
 fi
