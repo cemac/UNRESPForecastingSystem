@@ -655,8 +655,10 @@ if [ ${runVIS} = true ]; then
   case $numhours in
     48)
       python genmaps.py $rundate $vizopt $SOopt $googleopt
+      ;;
     24)
       python genmaps.py $rundate --conc 24 $vizopt $SOopt $googleopt
+      ;;
   esac
   cd ..
   cd vis/${rundate}
@@ -709,6 +711,7 @@ day=`date '+%d'`
 if [[ "$day" == 01 ]];
 then
   echo "### WARNING: Time to Archive Previous month ###"
+fi
 fi
 if [ "$runmodel" = true ]; then
   echo "### SUCCESSFULLY COMPLETED FORECAST ###"
