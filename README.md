@@ -40,13 +40,14 @@ Summary documention
 ## Requirements ##
 
 * UNIX operating system (tested: CentOS Ubuntu)
-* [anaconda python](https://www.anaconda.com/distribution/#download-section)(recommended code works in python 2 and 3) (conda => 4.6.14 recommended)
-  * requirements in environment.yml (python 3)
-  * non environment set up can be followed using requirements.txt if desired
+* [anaconda python](https://www.anaconda.com/distribution/#download-section)(recommended code works in python 2 and 3) (conda => 4.7.1 recommended)
+  * requirements in `environment.yml` (python 3)
+  * Analysis code requires additional packages covered in `unresp_analysis.yml` instead of environment.yml
 * Intel compiler **OR** executables and library (only for similar architecture as built)
 
 Non anaconda installations require a separate build of ecCodes python API:
 * [ecCodes python API](https://confluence.ecmwf.int//display/ECC/Releases)
+  * non environment set up can be followed using requirements.txt if desired
 
 ## Installation ##
 
