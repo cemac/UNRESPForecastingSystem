@@ -44,5 +44,9 @@ ln -sf ../../CALPUFF_MODS/TERREL/* .
 cd ../..
 
 echo 'COMPLETED:'
+echo '*************************************************'
 echo ' Please make future code mods in CALPUFF_MODS to keep track of changes'
 echo ' Rerun makecodemods.sh to include new files after making changes'
+echo '*************************************************'
+echo 'Please Agree to CALPUFF License Agreements'
+echo 'http://www.src.com/calpuff/calpuff_eula.htm'

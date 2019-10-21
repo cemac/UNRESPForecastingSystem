@@ -1,29 +1,17 @@
-#!/usr/bin/bash -
+#!/usr/bin/bash --login
 
 # This script was created by CEMAC (University of Leeds) as
 # part of the UNRESP Project
 # Setup environment (should not need to be edited)
 set -e # stop at first error
 # load modules (Leeds)
-if [ $USER == earmgr ]; then
-  module load intel/17.0.0
-  module load python2 python-libs
-  # For Mark only:
-  export PYTHONPATH="/nfs/see-fs-02_users/earmgr/SW/eccodes-2.6.0/lib/python2.7/site-packages:${PYTHONPATH}"
-  vizhome=~earunres
-else
-  if [ $CONDA_DEFAULT_ENV != unresp ]; then
-    echo "trying to activate unresp python environment..."
-    eval "$(conda shell.bash hook)"
-    conda activate
-    conda activate unresp
-  fi
-  # Put any bespoke setup steps in .env
-  source .env
-  vizhome=$HOME/UNRESPForecastingSystem/VIZ_SITE_CODE
-fi
+module load intel/17.0.0
+module load python2 python-libs
+# For Mark only:
+export PYTHONPATH="/nfs/see-fs-02_users/earmgr/SW/eccodes-2.6.0/lib/python2.7/site-packages:${PYTHONPATH}"
+
 # Resolution (m) of intended CALPUFF grid.  100 < (integer) < 1000
-res=500
+res=1000
 # Defaults that can be overwritten by editing HERE:
 # Command line option m switches all to false
 runTERREL=true
@@ -34,7 +22,6 @@ runCALMET=true
 runCALPUFF=true
 runmodel=true
 
-set -e # stop at first error
 # Set other parameters (unlikely to need editing)
 let NX=90000/$res+1
 let NY=54000/$res+1
@@ -53,7 +40,7 @@ NAMno=17
 
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
-numhours=48
+vizhome=~earunres
 runVIS=false
 runallVIS=false
 rungoogle=false
@@ -75,12 +62,11 @@ print_usage() {
   .\Run.sh <opts>
 
  No options runs a default production configuration:
- Today, Viz off, 48 hours.
+ Today, Viz on, plots production area (~earunres).
 
  Options:
   -d <date> YYYYMMDD DEFAULT: <today's date>
-  -v <home> name of viz defaults to UNRESPForecastingSystem/VIZ_SITE_CODE
-  -n <numhours> forescast hours defaults to 48
+  -n <home> name of viz defaults to ~earunres
   -x <res> resolution in m (100 < x < 1000)
  **
  The following switches can be used to overwrite
@@ -119,14 +105,6 @@ print_usage() {
   runCALPUFF=true
   runmodel=true
 
-** TROUBLESHOOTING
- * Missing .so file --> most like intel library
-   Try loading system intel e.g. module load intel or set LD_LIBRARY_PATH
- * Missing python modules --> mostly likely conda environment failure
-   try `source activate unresp`
-   or `conda activate unresp`
-   or `load your system python libraries`
- ^^^ these fixes can be added to .env file for bespoke Setup
 
   "
 }
@@ -212,11 +190,10 @@ set_model() {
   runCALPUFF=false
   runmodel=false
 }
-while getopts 'd:n:v:x:pamsbgrtyfh' flag; do
+while getopts 'd:n:x:pamsbgrtyfh' flag; do
   case "${flag}" in
     d) rundate="${OPTARG}" ;;
-    n) numhours="${OPTARG}" ;;
-    v) vizhome="${OPTARG}" ;;
+    n) vizhome="${OPTARG}" ;;
     x) res="${OPTARG}" ;;
     p) set_viz ;;
     a) set_allviz ;;
@@ -315,7 +292,6 @@ fi
 echo 'Running with the following options set:'
 echo 'CALPUFF grid resolution: ' $res
 echo 'date: '$rundate
-echo 'forecast hours: ' $numhours
 echo 'run model: '$runmodel
 echo 'resoltuion: '$res
 echo 'vizulisation: '$runVIS
@@ -347,18 +323,10 @@ fi
 
 #                               RUN DATE                                 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-case $numhours in
-  48)
-    prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
-    middate=$(date -d "$rundate + 1 day" +%Y%m%d)
-    enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
-  ;;
-  24)
-    prevdate=$(date -d "$rundate + 0 day" +%Y%m%d)
-    middate=$(date -d "$rundate + 1 day" +%Y%m%d)
-    enddate=$(date -d "$rundate + 1 days" +%Y%m%d)
-  ;;
-esac
+
+prevdate=$(date -d "$rundate - 1 day" +%Y%m%d)
+middate=$(date -d "$rundate + 1 day" +%Y%m%d)
+enddate=$(date -d "$rundate + 2 days" +%Y%m%d)
 startYear=${rundate:0:4}
 startMonth=${rundate:4:2}
 startDay=${rundate:6:2}
@@ -624,34 +592,32 @@ if [ "$runCALPUFF" = true ]; then
   mkdir ./CALPUFF_OUT/CALPUFF/${rundate}
   mv concrec*.dat restart_${middate}.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
   rm -rf *.con *.lst *.dat *.clr *.bna *.grd
-  if [ ${numhours} == 48 ] ; then
-    cp CALPUFF_OUT/CALPUFF/${rundate}/restart_${middate}.dat .
-    echo " ---> FINISHED ###"
-    # Set up input file for second 24hrs:
-    echo -n "### SETTING UP CALPUFF INPUT FILE FOR SECOND 24 HOURS"
-    sed -e "s/YYYYb/$midYear/g" -e "s/MMb/$midMonth/g" -e "s/DDb/$midDay/g" -e "s/YYYYe/$endYear/g" \
+  cp CALPUFF_OUT/CALPUFF/${rundate}/restart_${middate}.dat .
+  echo " ---> FINISHED ###"
+  # Set up input file for second 24hrs:
+  echo -n "### SETTING UP CALPUFF INPUT FILE FOR SECOND 24 HOURS"
+  sed -e "s/YYYYb/$midYear/g" -e "s/MMb/$midMonth/g" -e "s/DDb/$midDay/g" -e "s/YYYYe/$endYear/g" \
 -e "s/MMe/$endMonth/g" -e "s/DDe/$endDay/g" -e "s/?METDAT?/calmet_${rundate}.dat/g" \
 -e "s/?RSTARTB?/restart_$middate.dat/g" -e "s/?RSTARTE?/restart_$enddate.dat/g" \
 -e "s/?MRES?/1/g" -e "s/?NX?/$NX/g" -e "s/?NY?/$NY/g" -e "s/?DGRIDKM?/$DGRIDKM/g" \
 ./CALPUFF_INP/calpuff_template.inp > ./CALPUFF_INP/calpuff.inp
-    echo " ---> FINISHED ###"
-    # Run CALPUFF for second 24 hours:
-    echo "### RUNNING CALPUFF FOR SECOND 24 HOURS"
-    ./CALPUFF_EXE/calpuff_intel.exe ./CALPUFF_INP/calpuff.inp
-    echo " ---> FINISHED ###"
-    # Rename and move output files from second 24 hours:
-    echo -n "### RENAMING AND MOVING CALPUFF OUTPUT FILES FROM SECOND 24 HOURS"
-    for i in `seq 1 24`; do
-      let "j = i + 24"
-      i2=`printf "%02d" $i`
-      j2=`printf "%02d" $j`
-      mv concrec0100${i2}.dat concrec0100${j2}.dat
-      mv concrec0200${i2}.dat concrec0200${j2}.dat
-    done
-    mv concrec*.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
-    rm -f *.con *.lst *.dat *.clr *.bna *.grd
-    echo " ---> FINISHED ###"
-  fi
+  echo " ---> FINISHED ###"
+  # Run CALPUFF for second 24 hours:
+  echo "### RUNNING CALPUFF FOR SECOND 24 HOURS"
+  ./CALPUFF_EXE/calpuff_intel.exe ./CALPUFF_INP/calpuff.inp
+  echo " ---> FINISHED ###"
+  # Rename and move output files from second 24 hours:
+  echo -n "### RENAMING AND MOVING CALPUFF OUTPUT FILES FROM SECOND 24 HOURS"
+  for i in `seq 1 24`; do
+    let "j = i + 24"
+    i2=`printf "%02d" $i`
+    j2=`printf "%02d" $j`
+    mv concrec0100${i2}.dat concrec0100${j2}.dat
+    mv concrec0200${i2}.dat concrec0200${j2}.dat
+  done
+  mv concrec*.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
+  rm -f *.con *.lst *.dat *.clr *.bna *.grd
+  echo " ---> FINISHED ###"
 fi
 
 #                              RUN VISUALIZATION                         #
@@ -661,14 +627,7 @@ if [ ${runVIS} = true ]; then
   rm -rf ./vis/${rundate}
   mkdir ./vis/${rundate}
   cd Python
-  case $numhours in
-    48)
-      python genmaps.py $rundate $vizopt $SOopt $googleopt
-      ;;
-    24)
-      python genmaps.py $rundate --conc 24 $vizopt $SOopt $googleopt
-      ;;
-  esac
+  python genmaps_test.py $rundate $vizopt $SOopt $googleopt
   cd ..
   cd vis/${rundate}
   if [ ${runffmpeg} = true ]; then
@@ -714,15 +673,13 @@ fi
 #------------------------------------------------------------------------#
 #------------------- BESPOKE LEEDS ARCHIVNG FLAGS------------------------#
 #------------------------------------------------------------------------#
-if [ $USER == earmgr ];  then
+
 # On the first day of each month archive last month.
 day=`date '+%d'`
 if [[ "$day" == 01 ]];
 then
   echo "### WARNING: Time to Archive Previous month ###"
 fi
-fi
-
 if [ "$runmodel" = true ]; then
   echo "### SUCCESSFULLY COMPLETED FORECAST ###"
 else

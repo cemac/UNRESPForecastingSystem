@@ -196,7 +196,7 @@ def conc_array(ny, nx, file_path, binLims):
     return concA, conc
 
 
-def gen_im(lonMin, latMin, lonMax, latMax, imtype="World_Imagery",):
+def gen_im(lonMin, latMin, lonMax, latMax, imtype="World_Street_Map",):
     """gen_im
     description
     args:
@@ -416,7 +416,7 @@ class MasayaMaps():
         font0.set_family('monospace')
         plt.plot(self.volcCoords[0], self.volcCoords[1], '^r', markersize=6)
         plt.suptitle(so2title, fontsize=24)
-        plt.title(self.dates[ita].strftime('%c %Z'), fontsize=18)
+        plt.title(self.dates[ita].strftime('%c %z'), fontsize=18)
         PNGfile = SOX + '_static_' + out + fle[-17:-4] + '.png'
         print("Writing out file " + PNGfile)
         PNGpath = os.path.join(self.outDir, PNGfile)
