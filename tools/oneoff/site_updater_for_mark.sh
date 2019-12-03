@@ -10,7 +10,7 @@
 #============================================================================
 
 newcodehome='/nfs/earcemac/projects/unresp/ForecastVisualized/UNRESPForecastingSystem/VIZ_SITE_CODE/public_html/'
-oldcodehome='~earunres/public_html'
+oldcodehome='/home/earunres/public_html'
 
 cp ${newcodehome}/_includes/* ${oldcodehome}/_includes/
 cp ${newcodehome}/css/custom4.css ${oldcodehome}/css/custom4.css
