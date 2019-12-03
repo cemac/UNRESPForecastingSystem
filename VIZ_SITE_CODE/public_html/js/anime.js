@@ -2,7 +2,7 @@ var current_image = 0;
 var play_mode = 0;
 var oldIndex = 0;
 var last_pict = 47;
-var nameSequence = "RUN (Today's Forecaset Only)";
+var nameSequence = "ANIMATE";
 var nameStop = "Stop";
 
 function GoToImage(number) {

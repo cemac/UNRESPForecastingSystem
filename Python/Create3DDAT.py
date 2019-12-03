@@ -228,7 +228,13 @@ for i in range(mcount):
 #####
 
 #####GET REQUIRED GIDS (AT REQUIRED LEVELS)
-gidPRMSL = varNames.index("prmsl")+1  # Pressure reduced to mean sea level
+try:
+    gidPRMSL = varNames.index("prmsl")+1  # Pressure reduced to mean sea level
+except ValueError:
+    print('Variables not found, usually this is due to a NAM data download failure')
+    print('1. please check NAM_data/raw files for corresponting day contain full sized grib files')
+    print('2. Erroroneous files may contain html code with futher information')
+    sys.exit()
 gidHGT = np.flipud([i+1 for i in range(len(varNames)) if (varNames[i] == 'gh' and levels[i] in levsIncl)]) #Height
 gidTMP = np.flipud([i+1 for i in range(len(varNames)) if (varNames[i] == 't' and levels[i] in levsIncl)]) #Temperature
 gidU = np.flipud([i+1 for i in range(len(varNames)) if (varNames[i] == 'u' and levels[i] in levsIncl)]) #U-component of wind
