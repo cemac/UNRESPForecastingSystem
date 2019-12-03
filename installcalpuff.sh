@@ -75,5 +75,6 @@ for i in *; do mv $i `echo $i | tr [:upper:] [:lower:]`; done
 cd ..
 cd ..
 echo 'complete - ready to compile executables'
-
+echo 'please Agree to CALPUFF License Agreements'
+echo 'http://www.src.com/calpuff/calpuff_eula.htm'
 ./makecodemods.sh
