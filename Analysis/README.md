@@ -30,7 +30,7 @@ Summary of meteological data:
 1. Extract Observational data
 2. Fill in missing values with ML alogrithm , but keep raw incomplete data set
 3. Extract model data, nearest point and surrounding points (mean, min max) accept that the model accuracy is not such that the exact station point will be well defined.
-4. Coallate data sets and perform statistical analysis
+4. Collate data sets and perform statistical analysis
 5. Plot obervations vs model data
 
 ### Other possible steps:
@@ -38,6 +38,23 @@ Summary of meteological data:
 * calculate: daily/hourly/month max, min, mean (for area around station), see if it's comparable to data
 * calculate other useful statistics e.g. RMS and std to see variability and error
 * Normalise the data sets to see if there's any peak correleation.
+
+### Dec 2019
+
+* Normalise data,?
+* Composite days?
+* Scatter plot peak location data?
+* Rough estimates of PBL heights between NAM and EMCWF? Afternoon (only) estimates from HOROWORTZ 1964 would be possible vertical profile of theta is 1.5 that of the surface level (), gribs contain the required vars
+* Compiled metseries tool to generate rose plot!
+
+# Normalised Plots:
+
+[Stats.py](Stats.py) plots normalised time series (scaled by max/min), the results are plotted for [ElPanama](TimeSeries_Data/ElPanama/Timeseries_Normalised) and [Pacaya](TimeSeries_Data/Pacaya/Timeseries_Normalised).
+
+Note that ElPanama is only to March 25th as Timeseries incomplete for Observation
+
+* The models still perform poorly although ECMWF looks marginally better
+* Statistics are in Stats_Normalised.html
 
 ## Acknowledgements
 
