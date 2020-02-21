@@ -649,7 +649,7 @@ if [ "$runCALPUFF" = true ]; then
       mv concrec0200${i2}.dat concrec0200${j2}.dat
     done
     mv concrec*.dat ./CALPUFF_OUT/CALPUFF/${rundate}/.
-    rm -f *.con *.lst *.dat *.clr *.bna *.grd
+    #rm -f *.con *.lst *.dat *.clr *.bna *.grd
     echo " ---> FINISHED ###"
   fi
 fi
