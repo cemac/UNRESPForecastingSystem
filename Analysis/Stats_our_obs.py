@@ -57,6 +57,21 @@ def getdatamarch(StationName, var1='PM2.5', var2=None):
     alldata2 = alldata2.loc['2017-03-01':'2017-04-01']
     return alldata, alldata2
 
+def dateparse(x): return pd.datetime.strptime(x, '%d/%m/%Y %H:%M')
+
+
+def getdatamarchorgi(StationName, var1='PM2.5', var2=None):
+    obs = '/scratch/Projects/UNRESP_Data/OBS'
+    df = pd.read_csv(glob.glob(obs + '/' + StationName + '*.csv')[0], index_col=0,
+                     parse_dates=True)
+    data = day_data[day_data.SensorLabel == var1]
+    alldata = data[data.Status == 'Valid']
+    if var2 is not None:
+        data2 = day_data[day_data.SensorLabel == var2]
+        alldata2 = data2[data2.Status == 'Valid']
+    alldata = alldata.loc['2017-03-01':'2017-04-01']
+    alldata2 = alldata2.loc['2017-03-01':'2017-04-01']
+    return alldata, alldata2
 
 def dateparse(x): return pd.datetime.strptime(x, '%d/%m/%Y %H:%M')
 # -------------------------------------------------------------------------- #
@@ -95,13 +110,32 @@ def gen_normalised_plots(town, plot=None):
 pm25so2, datanorm = gen_normalised_plots('ElPanama')
 datanorm.to_csv('NormalisedPM25SO_ElPanama_Mar2017.csv')
 pm25so2.to_csv('PM25SO_ElPanama_Mar2017.csv')
+test = datanorm.reset_index()
 fig, ax = plt.subplots(figsize=(10, 5))
-pm25so2.plot(ax=ax)
-pm25so2, datanorm = gen_normalised_plots('Pacaya')
+test.plot.scatter(x='TETimestamp',y='SO2',style='.',ax=ax, s=1)
+test.plot.scatter(x='TETimestamp',y='PM25',style='.',ax=ax, s=1, color='r')
+plt.legend(['PM25','SO2'])
+plt.show()
+fig, ax = plt.subplots(figsize=(10, 5))
+test[['SO2','PM25']].plot(ax=ax)
+plt.show()
+test = pm25so2.reset_index()
+fig, ax = plt.subplots(figsize=(10, 5))
+test.plot.scatter(x='TETimestamp',y='SO2',style='.',ax=ax, s=1)
+test.plot.scatter(x='TETimestamp',y='PM25',style='.',ax=ax, s=1, color='r')
+plt.legend(['PM25','SO2'])
+plt.show()
+fig, ax = plt.subplots(figsize=(10, 5))
+test[['SO2','PM25']].plot(ax=ax)
+plt.show()
+pm25so2, datanorm = gNormalisedPen_normalised_plots('Pacaya')
 datanorm.to_csv('NormalisedPM25SO_Pacaya_Mar2017.csv')
 pm25so2.to_csv('PM25SO_Pacaya_Mar2017.csv')
 fig, ax = plt.subplots(figsize=(10, 5))
 pm25so2.plot(ax=ax)
+
+
+
 
 if NormalisePlots is True:
     for town in Towns:
