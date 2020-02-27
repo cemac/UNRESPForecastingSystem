@@ -26,7 +26,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 from sklearn import preprocessing
-import pandas_profiling
 warnings.filterwarnings("ignore")
 # University System python may be broken
 # If some one insists on using it...
@@ -39,7 +38,7 @@ if BACKEND == 'Qt4Agg' and sys.version_info[0] == 2:
 Towns = ['ElPanama', 'Pacaya']
 NormalisePlots = False
 CompositePlots = False
-ScatterPlots = False
+ScatterPlots = True
 
 
 # 0 get our data
@@ -47,7 +46,7 @@ ScatterPlots = False
 def getdatamarch(StationName, var1='PM2.5', var2=None):
     pname = 'AQMeshData'+'/data/' + StationName + '/AQMeshData*_2017*.csv'
     for rw in glob.iglob(pname):
-        day_data = pd.read_csv(rw, index_col=1, parse_dates=True)
+        day_data = pd.read_csv(rw, index_col=1, parse_dates=True, )
         data = day_data[day_data.SensorLabel == var1]
         alldata = data[data.Status == 'Valid']
         if var2 is not None:
@@ -107,6 +106,7 @@ def gen_normalised_plots(town, plot=None):
 # Notes ElPanama
 # ECMWF Looked Crazy at the end of March and we had no data for end of March
 # so i removed that data?
+"""
 pm25so2, datanorm = gen_normalised_plots('ElPanama')
 datanorm.to_csv('NormalisedPM25SO_ElPanama_Mar2017.csv')
 pm25so2.to_csv('PM25SO_ElPanama_Mar2017.csv')
@@ -133,7 +133,7 @@ datanorm.to_csv('NormalisedPM25SO_Pacaya_Mar2017.csv')
 pm25so2.to_csv('PM25SO_Pacaya_Mar2017.csv')
 fig, ax = plt.subplots(figsize=(10, 5))
 pm25so2.plot(ax=ax)
-
+"""
 
 
 
@@ -141,8 +141,8 @@ if NormalisePlots is True:
     for town in Towns:
         df = gen_normalised_plots(town, plot='Y')[0]
         plt.clf()
-        profile = pandas_profiling.ProfileReport(df)
-        profile.to_file(town + 'normalised_stats.html')
+        #profile = pandas_profiling.ProfileReport(df)
+        #profile.to_file(town + 'normalised_stats.html')
 
 # ------------------------ 2. Composite days (normalised)-------------------- #
 if CompositePlots is True:
@@ -168,56 +168,98 @@ if CompositePlots is True:
 
 if ScatterPlots is True:
     for town in Towns:
-        df = gen_normalised_plots(town)[0]
+        pm25so2, df = gen_normalised_plots(town)
         # add an hour of day column
+        th=0.2
         df['hour'] = df.index.hour
+        df['minute'] = df.index.minute
+        df['minod'] = df.hour*60+df.minute
         # Plot as scatter plot
         fig, ax = plt.subplots(figsize=(10, 5))
-        plt.scatter(df.hour, df.Observations, marker='d', alpha=0.5)
-        plt.scatter(df.hour, df.NAM, marker='*', alpha=0.6)
-        plt.scatter(df.hour, df.ECMWF, marker='x', alpha=0.6)
-        plt.title('Scatter plot of Normalised concentrations grouped by hour' +
+        plt.scatter(df.minod[df.PM25.values>=th], df.PM25[df.PM25.values>=th], marker='*', alpha=0.4)
+        plt.scatter(df.minod[df.SO2.values>=th], df.SO2[df.SO2.values>=th], marker='d', alpha=0.2)
+        plt.title('Scatter plot of Normalised concentrations grouped by min' +
                   ' of day \n' + town)
         plt.ylabel('Normalised concentrations')
-        plt.xlabel('hour of day')
-        plt.legend(['Obs', 'NAM', 'ECMWF'])
-        plt.savefig(town+'scatterbyhour.png')
+        plt.xlabel('min of day')
+        plt.legend(['PM25', 'SO2'])
+        plt.savefig(town+'scatterbymin_newgrpbymin_threshold_'+str(th)+'.png')
         plt.clf()
         # Plot as rose/ clock thing..
         times = [6, 3, 0,  21, 18, 15, 12, 9]
         fig = plt.figure(figsize=(12, 10))
         ax = fig.add_subplot(221, projection='polar')
-        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.hour / 24, df.Observations,
-                    alpha=0.60, marker='d', label='observations')
+        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.minod / (24*60), df.PM25,
+                    alpha=0.40, marker='d', label='PM25')
         ax.set_xticklabels(times)
-        ax.set_title('\n Observations')
+        ax.set_title('\n PM25')
         plt.legend(scatterpoints=5, loc="upper left", bbox_to_anchor=(1.04, 1))
         ax = fig.add_subplot(222, projection='polar')
-        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.hour / 24, df.NAM,
-                    alpha=0.80, marker='x', color='orange', label='NAM')
+        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.minod[df.SO2.values>=th] / (24*60), df.SO2[df.SO2.values>=th],
+                    alpha=0.50, marker='x', color='orange', label='SO2')
+        times = [6, 3, 0,  21, 18, 15, 12, 9]
         ax.set_xticklabels(times)
-        ax.set_title('NAM')
-        plt.legend(scatterpoints=5, loc="upper left", bbox_to_anchor=(1.04, 1))
-        ax = fig.add_subplot(223, projection='polar')
-        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.hour / 24, df.ECMWF,
-                    alpha=0.60, marker='+', color='g', label='ECMWF')
-        ax.set_xticklabels(times)
-        ax.set_title('ECMWF')
+        ax.set_title('SO2')
         plt.legend(scatterpoints=5, loc="upper left", bbox_to_anchor=(1.04, 1))
         ax = fig.add_subplot(224, projection='polar')
-        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.hour / 24, df.Observations,
-                    alpha=0.60, marker='d', label='observations')
-        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.hour / 24, df.NAM,
-                    alpha=0.80, marker='x', label='NAM')
-        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.hour / 24, df.ECMWF,
-                    alpha=0.60, marker='+', label='ECMWF')
+        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.minod / (24*60), df.PM25,
+                    alpha=0.40, marker='d', label='PM25')
+        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.minod[df.SO2.values>=th] / (24*60), df.SO2[df.SO2.values>=th],
+                    alpha=0.50, marker='x', label='SO2')
         ax.set_xticklabels(times)
-        ax.set_title('All')
+        ax.set_title('both')
         plt.legend(scatterpoints=5, loc="upper left", bbox_to_anchor=(1.04, 1))
         plt.suptitle('Scatter plots in polar co-ordinates of normalised ' +
                      'concentrations \n for ' + town + '\n')
         plt.tight_layout()
-        plt.savefig(town + 'normalised_clock_scatter.png')
+        plt.savefig(town + 'normalised_clock_scatter_newdata_grpbymin_threshold_'+str(th)+'.png')
         plt.clf()
 
-# ------------------------ 3. Dayly maxium (normailised)-------------------- #
+if ScatterPlots is True:
+    for town in Towns:
+        pm25so2, df = gen_normalised_plots(town)
+        # add an hour of day column
+        th=0.2
+        df['hour'] = df.index.hour
+        df['minute'] = df.index.minute
+        df['minod'] = df.hour
+        # Plot as scatter plot
+        fig, ax = plt.subplots(figsize=(10, 5))
+        plt.scatter(df.minod[df.PM25.values>=th], df.PM25[df.PM25.values>=th], marker='*', alpha=0.4)
+        plt.scatter(df.minod[df.SO2.values>=th], df.SO2[df.SO2.values>=th], marker='d', alpha=0.2)
+        plt.title('Scatter plot of Normalised concentrations grouped by hour' +
+                  ' of day \n' + town)
+        plt.ylabel('Normalised concentrations')
+        plt.xlabel('min of day')
+        plt.legend(['PM25', 'SO2'])
+        plt.savefig(town+'scatterbyhour_new_grphour_threshold_'+str(th)+'.png')
+        plt.clf()
+        # Plot as rose/ clock thing..
+        times = [6, 3, 0,  21, 18, 15, 12, 9]
+        fig = plt.figure(figsize=(12, 10))
+        ax = fig.add_subplot(221, projection='polar')
+        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.minod / (24), df.PM25,
+                    alpha=0.40, marker='d', label='PM25')
+        ax.set_xticklabels(times)
+        ax.set_title('\n PM25')
+        plt.legend(scatterpoints=5, loc="upper left", bbox_to_anchor=(1.04, 1))
+        ax = fig.add_subplot(222, projection='polar')
+        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.minod[df.SO2.values>=th] / (24), df.SO2[df.SO2.values>=th],
+                    alpha=0.50, marker='x', color='orange', label='SO2')
+        times = [6, 3, 0,  21, 18, 15, 12, 9]
+        ax.set_xticklabels(times)
+        ax.set_title('SO2')
+        plt.legend(scatterpoints=5, loc="upper left", bbox_to_anchor=(1.04, 1))
+        ax = fig.add_subplot(224, projection='polar')
+        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.minod / (24), df.PM25,
+                    alpha=0.40, marker='d', label='PM25')
+        plt.scatter(np.pi / 2.0 - 2 * np.pi * df.minod[df.SO2.values>=th] / (24), df.SO2[df.SO2.values>=th],
+                    alpha=0.50, marker='x', label='SO2')
+        ax.set_xticklabels(times)
+        ax.set_title('both')
+        plt.legend(scatterpoints=5, loc="upper left", bbox_to_anchor=(1.04, 1))
+        plt.suptitle('Scatter plots in polar co-ordinates of normalised ' +
+                     'concentrations \n for ' + town + '\n')
+        plt.tight_layout()
+        plt.savefig(town + 'normalised_clock_scatter_newdata_grphour_threshold_'+str(th)+'.png')
+        plt.clf()
