@@ -447,19 +447,21 @@ latMinCP = 11.7  # Min lat of CALPUFF grid
 latMaxCP = 12.2  # Max lat of CALPUFF grid
 lonMinCP = 273.2  # Min lon of CALPUFF grid
 lonMaxCP = 274.1  # Max lon of CALPUFF grid
-inDir = '/nfs/earcemac/projects/unresp/ForecastVisualized/UNRESPForecastingSystem/NAM_data/raw/' + date  # Directory containing GRIB files
+inDir = '../NAM_data/raw/'+date   # Directory containing GRIB files
 # Number of GRIB files (files are 6 hourly,
 # so 24 hours is 5 files including hours 00 24)
 nfiles = 5
-outFile = '/nfs/earcemac/projects/unresp/ForecastVisualized/UNRESPForecastingSystem/NAM_data/processed/met_' + date + '.dat'  # Output file path
+outFile =  '../NAM_data/processed/met_'+date+'.dat'   # Output file path
 # pressure levels to include in output
 levsIncl = [1000, 950, 925, 900, 850, 800, 700, 600, 500, 400, 300, 250, 200,
             150, 100, 75, 50, 30, 20, 10, 7, 5, 2]
 
 # SET FILENAMES
-filePrefix = 'nam.t'
-fileSuffix = 'z.afwaca00.tm00.grib2'
-# fileSuffix = 'z.afwaca00.grb2.tm00'
+#filePrefix = 'nam.t'
+#fileSuffix = 'z.afwaca00.tm00.grib2'
+#fileSuffix = 'z.afwaca00.grb2.tm00'
+filePrefix = 'nam.t00z.afwaca'
+fileSuffix = '.tm00.grib2'
 filenames = []
 filePaths = []
 for i in range(nfiles):
