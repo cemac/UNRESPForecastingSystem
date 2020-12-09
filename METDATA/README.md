@@ -14,7 +14,7 @@ preprocessing is done via `Create3DDAT.py` following Sara's method
 for injesting the ECMWF data
 
 1. check scripts
-2. Comparte grib to dat file produced
+2. Compare grib to dat file produced
 3. Compare ECMWF dat file to NAM
 4. Check Calmet files
 
@@ -24,6 +24,9 @@ the 2017 data was from a random source
 
 1. Check grib raw and interpolated
 2. Check against 2019 data
+
+1. Check nam.t12z.afwaca00.grb2.tm00 vs nam.t18z.afwaca00.tm00.grib2
+  * on the 21st file names change
 
 ## Plot time series of met data vs NAM data
 
