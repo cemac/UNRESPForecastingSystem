@@ -1,0 +1,42 @@
+c --- GRIBCAL.CM1 ------
+c     Common blocks in general use
+
+      character*100 title,infile,infile2,outfile,outfile2,logfile
+      character*12 cset3d,cset2d,cver,clevel
+      character*100 inbase,outbase
+      character*4 cgid(mxfiles)
+
+      dimension xy212(6,mxnx,mxny)
+      dimension id3d(n3d),id2d(n2d)
+      dimension pres(mxnz)
+      dimension x3d(mxnx,mxny,mxnz,n3d),x2d(mxnx,mxny,n2d)
+      dimension ter(mxnx,mxny)
+      dimension ichk3d(mxnz,n3d),ichk2d(n2d)
+      dimension nfiles(3,nfst)
+
+      common /geo/xy212,nx212,ny212,flats,flonv,re,conf
+     &       ,xbm,xem,dxm,ybm,yem,dym,xbc,ybc,dxym
+      common /gridconf/nvar,idpick,rlatmin,rlatmax
+     &        ,rlonmin,rlonmax,nx1,nx2,ny1,ny2,nz1,nz2
+     &        ,nxsub,nysub,nzsub,iter1,jter1,iter2,jter2
+     &        ,rlatsw,rlonsw,xorg,yorg,rlatswsub,rlonswsub
+     &        ,xorgsub,yorgsub,ic,jc,truelat1,truelat2
+     &        ,rlatc,rlonc,iscan
+      common /header/title,infile,infile2,outfile,outfile2,logfile
+     &        ,cset3d,cset2d,cver,clevel
+      common /inpfile/cgid,inbase,outbase,id3d,id2d,nfiles
+     &        ,nfile
+      common /ioutput/ioutw,ioutq,ioutc,iouti,ioutg,iosrf
+     &        ,inhyd,imphys,icupa,ibltyp,ifrad,isoil
+     &        ,ifddaan,ifddaob,igrdt,ipbl,ishf,ilhf,iustr,iswdn
+     &        ,ilwdn,ist1,ist2,ist3,ist4,ist5,ist6,iswou,ilwou
+     &        ,idate,idateout,ihr_fst,istart,icheck
+      common /press/pres
+      common /xdata/x3d,x2d,ter,ichk3d,ichk2d
+
+C XY212: AWIPS 212 grid config. 
+C        Order(7 vars): 1,2: X,Y in map proj; 3,4, Lon,Lat;
+C                       5,6: X,Y relative to domain center;
+C                       7: map factor
+C Nfiles: Number of AWIP Grib files, starting and ending indices
+C         for each forecast

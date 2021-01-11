@@ -1,0 +1,20 @@
+c --- GRIBCAL include Parameters -----
+
+C       Parameters needed by general processing                                
+        parameter(mxnx=145, mxny=49, mxnz=25,mxfiles=16)
+	parameter(n3d=6,n2d=3,nfst=4)
+        parameter(ict=21,ilg=22,in=23,im3d=24,im2d=25,iout=26)
+	parameter(imiss=-999,fmiss=-999,iyr212=2001)
+
+C mxnx: Maximum grib number in X-direction in AWIPS and CALMM5 arrays
+C mxny: Maximum grib number in Y-direction in AWIPS and CALMM5 arrays
+C mxnz: Maximum grib number in Z-direction in AWIPS and CALMM5 arrays
+C mxfiles: Maximum Number of GRIB files processed
+C n3d: Number of 3D variables extracted from grib files 
+C n2d: Number of 2D variables extracted from grib files 
+C ict: Unit number of control input file
+C ilg: Unit number of run-log file
+C in:  Unit number of awip212 input grib file
+C im3d: Unit number of output M3D file
+C im2d: Unit number of output M2D file
+C iout: Unit number of readable output file

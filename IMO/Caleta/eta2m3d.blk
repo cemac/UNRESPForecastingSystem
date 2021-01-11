@@ -1,0 +1,148 @@
+c --- AWIP212.BLK ------
+c     Data block in general use
+
+      Block data General
+
+      include 'eta2m3d.par'
+      include 'eta2m3d.cm1'
+
+      data cver,clevel/'1.0','020715'/
+
+      data cset3d,cset2d/'MM53D.DAT','MM52D.DAT'/
+      data ioutw,ioutq,ioutc,iouti,ioutg,iosrf/1,1,0,0,0,0/
+      data inhyd,imphys,icupa,ibltyp,ifrad,isoil,
+     &     ifddaan,ifddaob,igrdt,ipbl,ishf,ilhf,iustr,iswdn,
+     &     ilwdn,ist1,ist2,ist3,ist4,ist5,ist6,iswou,ilwou
+     &     /0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0/
+C --- The following data are related with the LAMI_BO (nz=22)official pressure levels
+c      data pres/1050,1000,950,925,900,850,800
+c     &          ,750,700,650,600,550
+c     &          ,500,450,400,350,300,250,200,150,100,50/
+C --- The following data are related with the CINECA (nz=14)official pressure levels
+c      data pres/1000,950,925,850
+c     &          ,700,600
+c     &          ,500,400,300,250,200,150,100,50/
+C --- The following data are related with the LAMI (nz=13)official pressure level
+c      data pres/1000,950,925,850,700,600,500,400,300
+c     &          ,250,200,150,100/
+C --- The following data are related with the ECMWF (nz=25) pressure level used at IMO
+      data pres/1000,950,925,900,850,
+     &          800,700,600,
+     &          500,400,300,
+     &          250,200,150,100,70,50,30,20,10,7,5,3,2,1/
+C --- The following data are related with the ECMWF ERA_INTERIM (nz=37) pressure level used at IMO
+c      data pres/1000,975,950,925,900,875,850,
+c     &          825,800,775,750,700,650,600,
+c     &          550,500,450,400,350,300,
+c     &          250,225,200,175,150,125,100,70,50,30,20,10,7,5,3,2,1/
+C --- The following data are related with the HARMONIE (nz=15) official pressure level for dispersal forecast
+c      data pres/1000,950,925,900,850,800,700,600,500,400,300
+c     &          ,250,200,150,100/
+C --- The following data are related with the HARMONIE (nz=9) official pressure level
+c      data pres/1000,950,925,900,850,800,700,600,500/ 
+cC --- The following data are related with the ECMWF official pressure level
+c      data pres/1000,950,925,900,850,800,700,600,500,400,300
+c     &          ,250,200,150,100/
+C --- The following data are related with the NOAA (nz=47) official pressure level
+c      data pres/1000,975,950,925,900,875,850,825,800,775,750,725,700,
+c     &           675,650,625,600,575,550,525,500,475,450,425,400,375,
+c     &           350,325,300,275,250,225,200,175,150,125,100,70,50,30
+c     &           ,20,10,7,5,3,2,1/
+C --- The following data are related with the NOAA-central america (nz=45) official pressure level
+c      data pres/1000,975,950,925,900,875,850,825,800,775,750,725,700,
+c     &           675,650,625,600,575,550,525,500,475,450,425,400,375,
+c     &           350,325,300,275,250,225,200,175,150,125,100,70,50,30
+c     &           ,20,10,7,5,2/
+C --- The following are data related with the AM official parameters
+c      data id3d/6,11,52,33,34,39/
+c               GH,T,RH, U, V,WP
+c      data id2d/2,61,65/
+C             SLP,Pr,SN  
+C --- The following are data related with the LAMI official parameters
+c      data id3d/6,11,52,33,34,39/
+C               GH,T,RH, U, V,WP
+c      data id2d/2,61,65/
+C             SLP,Pr,SN  
+C --- The following are data related with the HARMONIE official parameters
+c      data id3d/7,11,51,33,34,40/
+C               GP,T,SH, U, V,VV
+c      data id2d/2,61,65/
+C             SLP,Pr,SN  
+C --- The following are data related with the ECMWF official parameters
+      data id3d/7,11,51,33,34,39/
+C               GP,T,SH, U, V,WP
+      data id2d/2,61,65/
+C             SLP,Pr,SN  
+C --- The following are data related with the NOAA official parameters
+c      data id3d/7,11,52,33,34,39/
+C               GH,T,RH, U, V,WP
+c      data id2d/2,61,65/
+C             SLP,Pr,SN  
+      data cgid/'YxRA','ZxRB','YxRB','ZxRE','YxRC','ZxRH'
+     &         ,'YxRD','ZxRK','YxRE','ZxRL','YxRF','ZxRO'
+     &         ,'YxRG','ZxRP','YxRH','ZxRQ'/
+c     &         ,'ZxRM','ZxRS','YxRJ' 
+c     &         ,'YxRF','ZxRF','YxRM','ZxRG'/ 
+c     &         ,'ZxRG','ZxRC','ZxRH','ZxRD','ZxRI','YxRL'
+c     &         ,'YxRO','YxRQ','YxRP','YxRR' / ! 0-60hr at every 3 hours
+C  For 12-hour M3D files starting at 36
+c      data nfiles/5,13,17    
+c     &           ,5,13,17
+c     &           ,5,13,17
+c     &           ,5,13,17/
+C  For 24-hour M3D files starting at 12
+c      data nfiles/9,5,13    
+c     &           ,9,5,13
+c     &           ,9,5,13
+c     &           ,9,5,13/
+C  For 24-hour M3D files starting at 00
+C      data nfiles/9,1,9    
+C     &           ,9,1,9
+C     &           ,9,1,9
+C     &           ,9,1,9/
+cC  For 72-hour CALPUFF runs starting at 00
+c      data nfiles/13,1,13    
+c     &           ,12,2,13
+c     &           ,24,1,26
+c     &           , 9,5,13/
+C  For 72-hour CALPUFF runs starting at 12
+c      data nfiles/13,9,17    
+c     &           ,12,2,13
+c     &           ,24,5,29
+c     &           , 8,6,13/
+C  For 48-hours CALPUFF runs starting at 00
+      data nfiles/16,1,17    
+     &           ,16,1,17
+     &           ,16,1,17
+     &           ,16,1,17/
+CC  For 24-hour M3D files starting at 24
+c      data nfiles/9,5,13    
+c     &           ,9,5,13
+c     &           ,9,5,13
+c     &           ,9,9,17/
+CC  For 72-hour M3D files starting at 00
+c      data nfiles/24,1,25    
+c     &           ,24,1,25
+c     &           ,24,1,25
+c     &           ,24,1,25/
+CC  For 48-hour M3D files starting at 00 orario
+c      data nfiles/24,1,25    
+c     &           ,24,1,25
+c     &           ,24,1,25
+c     &           ,24,1,25/
+C   for reading various data
+c      data nfiles/4,1,4    
+c     &           ,4,1,4
+c     &           ,4,1,4
+c     &           ,4,1,4/
+
+
+      end
+
+C pres: Pressure levels in all awips212 grib files
+C id3d: Parameter IDs for extracting M3D data
+C id2d: Parameter IDs for extracting M2D data
+C Nfiles: Number of AWIP Grib files, starting and ending indices
+C         for initial hours of 00, 06, 12, and 18 GMT
+
+

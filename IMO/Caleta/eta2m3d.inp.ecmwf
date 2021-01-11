@@ -1,0 +1,8 @@
+M3D file Created from ETA AWIPS 212 Grid for Falconbridge CALMET 
+3               ! Flag indicating if LAMI(1),NOAA(0)or LM_BO(2),ECMWF(3), HARMONIE(4) input data
+../NAM_data/raw/ ! Directory of Input ETA GRIB files
+../ !output directory
+eta2m3d.lst     ! list file name  (no space before or within filename)  
+11.5,12.5     ! Range Lat
+272,275      ! Range Long
+1, 25           ! Vertical levels
