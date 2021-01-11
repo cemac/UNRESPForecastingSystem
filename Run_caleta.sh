@@ -529,7 +529,7 @@ if [ "$run3DDAT" = true ]; then
   fi
   echo "### EXTRACTING NAM DATA INTO CALMET INPUT FILE FORMAT"
   rm -f NAM_data/processed/met_${rundate}.dat
-  cd /NAM_data/raw/input
+  cd NAM_data/raw/input
   for hr in `seq 0 3 48`; do
     hr=`printf "%02d" $hr`
     ln -sf ../${rundate}/nam.t00z.afwaca${hr}.tm00.grib2 VOLC_MAS${hr}${timeforfile}.grib
