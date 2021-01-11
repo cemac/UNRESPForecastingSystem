@@ -53,7 +53,7 @@ NAMno=17
 
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
-timeforfile=00$(date +%d%m%Y)
+timeforfile=$(date +%d%m%Y)
 numhours=24
 runVIS=false
 runallVIS=false
@@ -524,21 +524,24 @@ if [ "$run3DDAT" = true ]; then
   cd ../../..
   # Extract NAM data into CALMET input file format:
   if [ ${checkgrib} != 0 ]; then
-    echo "Grib check failed, check internet connect or NAM data availability"
+    echo "Grib check failed, checkcd internet connect or NAM data availability"
     exit 0
   fi
   echo "### EXTRACTING NAM DATA INTO CALMET INPUT FILE FORMAT"
   rm -f NAM_data/processed/met_${rundate}.dat
+  cd /NAM_data/raw/input
   for hr in `seq 0 3 48`; do
-    ln -sf NAM_data/raw/${rundate}/nam.t00z.afwaca${hr}.tm00.grib2 NAM_data/raw/input/VOLC_MAS${hr}04122020.grib
+    hr=`printf "%02d" $hr`
+    ln -sf ../${rundate}/nam.t00z.afwaca${hr}.tm00.grib2 VOLC_MAS${hr}${timeforfile}.grib
   done
-  echo ${timeforfile} > timestmp.dat
+  cd ../../..
+  echo 00${timeforfile} > timestmp.dat
   cp IMO/Caleta/grid.dat .
   ./CALPUFF_EXE/caleta_masaya
-  if [ ! -d ../NAM_data/processed/${rundate} ]; then
+  if [ ! -d NAM_data/processed/${rundate} ]; then
     mkdir NAM_data/processed/${rundate}
   fi
-  mv out_caleta.m3d ../NAM_data/processed/${rundate}/met_${rundate}.dat
+  mv out_caleta.m3d NAM_data/processed/${rundate}/met_${rundate}.dat
   echo " ---> FINISHED ###"
 fi
 
