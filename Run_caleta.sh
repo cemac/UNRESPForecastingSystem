@@ -533,6 +533,7 @@ if [ "$run3DDAT" = true ]; then
     ln -sf NAM_data/raw/${rundate}/nam.t00z.afwaca${hr}.tm00.grib2 NAM_data/raw/input/VOLC_MAS${hr}04122020.grib
   done
   echo ${timeforfile} > timestmp.dat
+  cp IMO/Caleta/grid.dat .
   ./CALPUFF_EXE/caleta_masaya
   if [ ! -d ../NAM_data/processed/${rundate} ]; then
     mkdir NAM_data/processed/${rundate}
