@@ -53,8 +53,8 @@ NAMno=17
 
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
-timeforfile=0gitls 0$(date +%d%m%Y)
-numhours=48
+timeforfile=00$(date +%d%m%Y)
+numhours=24
 runVIS=false
 runallVIS=false
 rungoogle=false
