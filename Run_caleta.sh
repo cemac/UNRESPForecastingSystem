@@ -538,10 +538,7 @@ if [ "$run3DDAT" = true ]; then
   echo 00${timeforfile} > timestmp.dat
   cp IMO/Caleta/grid.dat .
   ./CALPUFF_EXE/caleta_masaya
-  if [ ! -d NAM_data/processed/${rundate} ]; then
-    mkdir NAM_data/processed/${rundate}
-  fi
-  mv out_caleta.m3d NAM_data/processed/${rundate}/met_${rundate}.dat
+  mv out_caleta.m3d NAM_data/processed/met_${rundate}.dat
   echo " ---> FINISHED ###"
 fi
 
