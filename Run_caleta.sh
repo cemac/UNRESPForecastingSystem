@@ -535,7 +535,8 @@ if [ "$run3DDAT" = true ]; then
     ln -sf ../${rundate}/nam.t00z.afwaca${hr}.tm00.grib2 VOLC_MAS${hr}${timeforfile}.grib
   done
   cd ../../..
-  echo 00${timeforfile} > timestmp.dat
+  #echo 00${timeforfile} > timestmp.dat
+  echo ${rundate}00 > timestmp.dat
   cp IMO/Caleta/grid.dat .
   ./CALPUFF_EXE/caleta_masaya
   mv out_caleta.m3d NAM_data/processed/met_${rundate}.dat

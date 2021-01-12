@@ -1,14 +1,13 @@
 ETA Model in AWIPS 212 Grid
-NAM_data/raw/ ! Directory of Input ETA GRIB files
+NAM_data/raw/input ! Directory of Input ETA GRIB files
 ./met.dat ! Output 3D.DAT file name (no space before or within filename)
 caleta.lst ! List file name (no space before or within filename)
 10,16 ! Range of Lat (positive for Northern Hemisphere),grid size
--98,-96.5 ! Range of Lon (negative for Western Hemisphere),grid size
+272,278 ! Range of Lon (negative for Western Hemisphere),grid size
 1,25 ! Range of vertical levels selected
 212 ! AWIPS Flag (212,218,245,246,247,248,249,250)
-2005041418 ! Beginning UTC Date-Hour (YYYYMMDDHH) for 3D.DAT file
-2005041600 ! Ending UTC Date-Hour (YYYYMMDDHH) for 3D.DAT file
-6 ! Time interval (hours) between ETA runs
+2021011200 ! Beginning UTC Date-Hour (YYYYMMDDHH) for 3D.DAT file
+2021011300 ! Ending UTC Date-Hour (YYYYMMDDHH) for 3D.DAT file
+3 ! Time interval (hours) between ETA runs
 1 ! File naming convention (1 = renamed; 0 = original)
-0 ! Run mode (1 = Hybrid; 0 = Forecast)
 1 ! Web site (1 = NCEP; 0 = NWS) where ETA GRIB file downloaded
