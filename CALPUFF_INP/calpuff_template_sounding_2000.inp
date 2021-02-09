@@ -1,0 +1,3574 @@
+CALPUFF.INP     7.0             Groups 0f,0g added; new emission scaling
+CALPUFF Demonstration Run
+(Not intended as a guide for configuring options)
+
+---------------- Run title (3 lines) ------------------------------------------
+   MODEL:  Version TNG
+SOFTWARE:  CALApps v2.0197 (Beta) - September 22, 2014
+-------------------------------------------------------------------------------
+
+                    CALPUFF MODEL CONTROL FILE
+                    --------------------------
+
+-------------------------------------------------------------------------------
+
+INPUT GROUP: 0 -- Input and Output File Names
+--------------
+
+Default Name  Type          File Name
+------------  ----          ---------
+CALMET.DAT    input    ! METDAT = data/calmet_20190414.dat   !
+    or
+ISCMET.DAT    input    * ISCDAT =             *
+    or
+PLMMET.DAT    input    * PLMDAT =             *
+    or
+PROFILE.DAT   input    * PRFDAT =             *
+SURFACE.DAT   input    * SFCDAT =             *
+RESTARTB.DAT  input    ! RSTARTB= restart_20190414.dat !
+--------------------------------------------------------------------------------
+CALPUFF.LST   output   ! PUFLST =CALPUFF.LST  !
+CONC.DAT      output   ! CONDAT =CALPUFF.CON     !
+DFLX.DAT      output   * DFDAT  =CALPUFF.DRY     *
+WFLX.DAT      output   * WFDAT  =CALPUFF.WET     *
+
+VISB.DAT      output   * VISDAT =CALPUFF.VIS     *
+TK2D.DAT      output   * T2DDAT =             *
+RHO2D.DAT     output   * RHODAT =             *
+RESTARTE.DAT  output   ! RSTARTE= restart_20190415.dat !
+--------------------------------------------------------------------------------
+Other Files
+-----------
+OZONE.DAT     input    * OZDAT  =OZONE.DAT    *
+VD.DAT        input    * VDDAT  =             *
+CHEM.DAT      input    * CHEMDAT=             *
+AUX           input    ! AUXEXT =aux     !
+(Extension added to METDAT filename(s) for files
+ with auxiliary 2D and 3D data)
+H2O2.DAT      input    * H2O2DAT=             *
+NH3Z.DAT      input    * NH3ZDAT=             *
+HILL.DAT      input    * HILDAT=             *
+HILLRCT.DAT   input    * RCTDAT=             *
+COASTLN.DAT   input    * CSTDAT=             *
+FLUXBDY.DAT   input    * BDYDAT=             *
+BCON.DAT      input    * BCNDAT=             *
+DEBUG.DAT     output   ! DEBUG = debug.dat   !
+MASSFLX.DAT   output   * FLXDAT=             *
+MASSBAL.DAT   output   ! BALDAT=massbal.dat  !
+FOG.DAT       output   * FOGDAT=             *
+RISE.DAT      output   * RISDAT=             *
+PFTRAK.DAT    output   * TRKDAT=             *
+--------------------------------------------------------------------------------
+All file names will be converted to lower case if LCFILES = T
+Otherwise, if LCFILES = F, file names will be converted to UPPER CASE
+         T = lower case      ! LCFILES = T !
+         F = UPPER CASE
+NOTE: (1) file/path names can be up to 132 characters in length
+
+
+Provision for multiple CALMET Domains and files
+-----------------------------------------------------
+
+     Number of CALMET.DAT Domains (NMETDOM)
+                                     Default: 1       ! NMETDOM =   1   !
+
+     Number of CALMET.DAT files (NMETDAT)
+     (Total for ALL Domains)
+                                     Default: 1       ! NMETDAT =   1   !
+
+Variable point/area/volume/flare emissions input files
+-------------------------------------------------------
+
+     Number of POINT source files (PTEMARB.DAT) 
+     with time-varying data (NPTDAT)
+                                     Default: 0       ! NPTDAT =  0   !
+
+     Number of BUOYANT AREA source files (BAEMARB.DAT) 
+     with time-varying data (NARDAT)
+                                     Default: 0       ! NARDAT =  0   !
+
+     Number of VOLUME source files (VOLEMARB.DAT) 
+     with time-varying data (NVOLDAT)
+                                     Default: 0       ! NVOLDAT =  0  !
+
+     Number of FLARE source files (FLEMARB.DAT) 
+     with time-varying data (NFLDAT)
+                                     Default: 0       ! NFLDAT   =  0 !
+
+     Number of ROAD source files (RDEMARB.DAT) 
+     with time-varying data (NRDDAT)
+                                     Default: 0       ! NRDDAT   =  0 !
+
+     Number of BUOYANT LINE source files (LNEMARB.DAT) 
+     with time-varying data (NLNDAT)
+                                     Default: 0       ! NLNDAT   =  0 !
+     Note:  Only 1 BUOYANT LINE source file is allowed
+     -----
+
+!END!
+
+
+-------------
+Subgroup (0a)
+-------------
+
+  Provide a name for each CALMET domain if NMETDOM > 1
+  Enter NMETDOM lines.
+                                    a,b
+Default Name             Domain Name
+------------             ------------
+ none                  * DOMAIN1=     *   *END*
+ none                  * DOMAIN2=     *   *END*
+ none                  * DOMAIN3=     *   *END*
+
+
+  The following CALMET.DAT filenames are processed in sequence
+  if NMETDAT > 1
+
+  Enter NMETDAT lines, 1 line for each file name.
+
+                                     a,c,d
+Default Name  Type          File Name
+------------  ----          ---------
+ none         input    * METDAT1=     *   *END*
+ none         input    * METDAT2=     *   *END*
+ none         input    * METDAT3=     *   *END*
+
+-------------
+    a
+     The name for each CALMET domain and each CALMET.DAT file is treated
+     as a separate input subgroup and therefore must end with an input
+     group terminator.
+    b
+     Use DOMAIN1= to assign the name for the outermost CALMET domain.
+     Use DOMAIN2= to assign the name for the next inner CALMET domain.
+     Use DOMAIN3= to assign the name for the next inner CALMET domain, etc.
+      --------------------------------------------------------------------
+      |   When inner domains with equal resolution (grid-cell size)      |
+      |   overlap, the data from the FIRST such domain in the list will  |
+      |   be used if all other criteria for choosing the controlling     |
+      |   grid domain are inconclusive.                                  |
+      --------------------------------------------------------------------
+    c
+     Use METDAT1= to assign the file names for the outermost CALMET domain.
+     Use METDAT2= to assign the file names for the next inner CALMET domain.
+     Use METDAT3= to assign the file names for the next inner CALMET domain, etc.
+    d
+     The filenames for each domain must be provided in sequential order
+     
+
+-------------
+Subgroup (0b) – PTEMARB.DAT files
+-------------
+
+  POINT Source File Names
+  The following PTEMARB.DAT filenames are processed if NPTDAT>0
+  A total of NPTDAT lines is expected with one file name assigned per line
+  Each line is treated as an input group and must terminate with END
+  (surrounded by delimiters)
+  (Each file contains emissions parameters for the entire period modeled
+   for 1 or more sources)
+
+Default Name  Type          File Name
+------------  ----          ---------
+ none         input       * PTDAT=     *   *END*
+
+
+-------------
+Subgroup (0c) – BAEMARB.DAT files
+-------------
+
+  BUOYANT AREA Source File Names
+  The following BAEMARB.DAT filenames are processed if NARDAT>0
+  A total of NARDAT lines is expected with one file name assigned per line
+  Each line is treated as an input group and must terminate with END
+  (surrounded by delimiters)
+  (Each file contains emissions parameters for the entire period modeled
+   for 1 or more sources)
+
+Default Name  Type          File Name
+------------  ----          ---------
+ none         input       * ARDAT=     *   *END*
+
+
+-------------
+Subgroup (0d) – VOLEMARB.DAT files
+-------------
+
+  VOLUME Source File Names
+  The following VOLEMARB.DAT filenames are processed if NVOLDAT>0
+  A total of NVOLDAT lines is expected with one file name assigned per line
+  Each line is treated as an input group and must terminate with END
+  (surrounded by delimiters)
+  (Each file contains emissions parameters for the entire period modeled
+   for 1 or more sources)
+
+Default Name  Type          File Name
+------------  ----          ---------
+ none         input       * VOLDAT=     *   *END*
+
+
+-------------
+Subgroup (0e) – FLEMARB.DAT files
+-------------
+
+  FLARE Source File Names
+  The following FLEMARB.DAT filenames are processed if NFLDAT>0
+  A total of NFLDAT lines is expected with one file name assigned per line
+  Each line is treated as an input group and must terminate with END
+  (surrounded by delimiters)
+  (Each file contains emissions parameters for the entire period modeled
+   for 1 or more sources)
+
+Default Name  Type          File Name
+------------  ----          ---------
+ none         input       * FLDAT=     *   *END*
+
+
+-------------
+Subgroup (0f) – RDEMARB.DAT files
+-------------
+
+  ROAD Source File Names
+  The following RDEMARB.DAT filenames are processed if NRDDAT>0
+  A total of NRDDAT lines is expected with one file name assigned per line
+  Each line is treated as an input group and must terminate with END
+  (surrounded by delimiters)
+  (Each file contains emissions parameters for the entire period modeled
+   for 1 or more sources)
+
+Default Name  Type          File Name
+------------  ----          ---------
+ none         input       * RDDAT=     *   *END*
+
+
+-------------
+Subgroup (0g) – LNEMARB.DAT file
+-------------
+
+  BUOYANT LINE Source File Name  (not more than 1)
+  The following LNEMARB.DAT filename is processed if NLNDAT>0
+  The assignment is treated as an input group and must terminate with END
+  (surrounded by delimiters)
+
+Default Name  Type          File Name
+------------  ----          ---------
+LNEMARB.DAT   input       * LNDAT=     *   *END*
+
+
+--------------------------------------------------------------------------------
+
+INPUT GROUP: 1 -- General run control parameters
+--------------
+
+    Option to run all periods found
+    in the met. file     (METRUN)   Default: 0       ! METRUN =   0  !
+
+         METRUN = 0 - Run period explicitly defined below
+         METRUN = 1 - Run all periods in met. file
+
+     Starting date:    Year   (IBYR)  --    No default   ! IBYR  =  2019  !
+                       Month  (IBMO)  --    No default   ! IBMO  =  04  !
+                       Day    (IBDY)  --    No default   ! IBDY  =  14  !
+     Starting time:    Hour   (IBHR)  --    No default   ! IBHR  =  0  !
+                       Minute (IBMIN) --    No default   ! IBMIN =  0  !
+                       Second (IBSEC) --    No default   ! IBSEC =  0  !
+
+     Ending date:      Year   (IEYR)  --    No default   ! IEYR  =  2019  !
+                       Month  (IEMO)  --    No default   ! IEMO  =  04 !
+                       Day    (IEDY)  --    No default   ! IEDY  =  15  !
+     Ending time:      Hour   (IEHR)  --    No default   ! IEHR  =  0  !
+                       Minute (IEMIN) --    No default   ! IEMIN =  0  !
+                       Second (IESEC) --    No default   ! IESEC =  0  !
+
+     (These are only used if METRUN = 0)
+
+     Base time zone:          (ABTZ)  --    No default   ! ABTZ= UTC+0000 !
+      (character*8)
+     The modeling domain may span multiple time zones.  ABTZ defines the
+     base time zone used for the entire simulation.  This must match the
+     base time zone of the meteorological data.
+     Examples:
+         Greenwich Mean Time (GMT) = UTC+0000
+         EST                       = UTC-0500 
+         CST                       = UTC-0600
+         MST                       = UTC-0700
+         PST                       = UTC-0800
+         Los Angeles, USA          = UTC-0800
+         New York, USA             = UTC-0500
+         Santiago, Chile           = UTC-0400
+         UK                        = UTC+0000
+         Western Europe            = UTC+0100
+         Rome, Italy               = UTC+0100
+         Cape Town, S.Africa       = UTC+0200
+         Sydney, Australia         = UTC+1000
+
+     Length of modeling time-step (seconds)
+     Equal to update period in the primary
+     meteorological data files, or an
+     integer fraction of it (1/2, 1/3 ...)
+     Must be no larger than 1 hour
+     (NSECDT)                        Default:3600     ! NSECDT =  3600  !
+                                     Units: seconds
+
+     Number of chemical species (NSPEC)
+                                     Default: 5       ! NSPEC =  2   !
+
+     Number of chemical species
+     to be emitted  (NSE)            Default: 3       ! NSE =  1   !
+
+     Flag to stop run after
+     SETUP phase (ITEST)             Default: 2       ! ITEST =  2   !
+     (Used to allow checking
+     of the model inputs, files, etc.)
+           ITEST = 1 - STOPS program after SETUP phase
+           ITEST = 2 - Continues with execution of program
+                       after SETUP
+
+     Restart Configuration:
+
+        Control flag (MRESTART)      Default: 0       ! MRESTART =  2   !
+
+           0 = Do not read or write a restart file
+           1 = Read a restart file at the beginning of
+               the run
+           2 = Write a restart file during run
+           3 = Read a restart file at beginning of run
+               and write a restart file during run
+
+        Number of periods in Restart
+        output cycle (NREPD)        Default: 0       ! NRESPD =  0   !
+
+           0 = File written only at last period
+          >0 = File updated every NRESPD periods
+
+     Meteorological Data Format (METFM)
+                                     Default: 1       ! METFM =  1   !
+
+           METFM = 1 - CALMET binary file (CALMET.MET)
+           METFM = 2 - ISC ASCII file (ISCMET.MET)
+           METFM = 3 - AUSPLUME ASCII file (PLMMET.MET)
+           METFM = 4 - CTDM plus tower file (PROFILE.DAT) and
+                       surface parameters file (SURFACE.DAT)
+           METFM = 5 - AERMET tower file (PROFILE.DAT) and
+                       surface parameters file (SURFACE.DAT)
+
+     Meteorological Profile Data Format (MPRFFM)
+            (used only for METFM = 1, 2, 3)
+                                     Default: 1       ! MPRFFM =  1   !
+
+           MPRFFM = 1 - CTDM plus tower file (PROFILE.DAT)
+           MPRFFM = 2 - AERMET tower file (PROFILE.DAT)
+
+
+     Sigma-y is adjusted by the factor (AVET/PGTIME)**0.2 to either
+     decrease it if the averaging time selected is less than the base
+     averaging time, or increase it if the averaging time is greater.
+     The base averaging time is denoted as PGTIME due to historical
+     reasons as this adjustment was originally applied to the PG sigma
+     option.  It is now applied to all dispersion options.
+     The factor is applied to the ambient turbulence sigma-v (m/s) and
+     does not alter buoyancy enhancement or far-field Heffter growth.
+
+     Averaging Time (minutes) (AVET)
+                                     Default: 60.0    ! AVET = 60. !
+     Base Averaging Time (minutes) (PGTIME)
+                                     Default: 60.0    ! PGTIME = 60. !
+
+
+     Output units for binary concentration and flux files
+     written in Dataset v2.2 or later formats
+     (IOUTU)                         Default: 1       ! IOUTU = 1 !
+         1 = mass      -  g/m3 (conc) or g/m2/s (dep)
+         2 = odour     -  odour_units (conc)
+         3 = radiation -  Bq/m3 (conc) or Bq/m2/s (dep)
+
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+INPUT GROUP: 2-- Technical options
+--------------
+
+
+     Vertical distribution used in the
+     near field (MGAUSS)                   Default: 1     ! MGAUSS =  1   !
+        0 = uniform
+        1 = Gaussian
+
+     Terrain adjustment method
+     (MCTADJ)                              Default: 3     ! MCTADJ =  3   !
+        0 = no adjustment
+        1 = ISC-type of terrain adjustment
+        2 = simple, CALPUFF-type of terrain
+            adjustment 
+        3 = partial plume path adjustment
+
+     Subgrid-scale complex terrain
+     flag (MCTSG)                          Default: 0     ! MCTSG =  0   !
+        0 = not modeled
+        1 = modeled
+
+     Near-field puffs modeled as
+     elongated slugs? (MSLUG)              Default: 0     ! MSLUG =  0   !
+        0 = no
+        1 = yes (slug model used)
+
+     Transitional plume rise modeled?
+     (MTRANS)                              Default: 1     ! MTRANS =  0   !
+        0 = no  (i.e., final rise only)
+        1 = yes (i.e., transitional rise computed)
+
+     Stack tip downwash? (MTIP)            Default: 1     ! MTIP =  0  !
+        0 = no  (i.e., no stack tip downwash)
+        1 = yes (i.e., use stack tip downwash)
+
+     Method used to compute plume rise for
+     point sources not subject to building
+     downwash? (MRISE)                     Default: 1     ! MRISE =   1  !
+        1 = Briggs plume rise
+        2 = Numerical plume rise
+
+     Apply stack-tip downwash to FLARE sources?
+     (MTIP_FL)                             Default: 0     ! MTIP_FL  =  0 !
+        0 = no  (no stack-tip downwash)
+        1 = yes (apply stack-tip downwash)
+
+     Plume rise module for FLARE sources
+     (MRISE_FL)                            Default: 2     ! MRISE_FL =  2 !
+        1 = Briggs module
+        2 = Numerical rise module
+
+     Method used to simulate building
+     downwash? (MBDW)                      Default: 1     ! MBDW =   2  !
+        1 = ISC method
+        2 = PRIME method
+
+     Vertical wind shear modeled above
+     stack top (modified Briggs plume rise)?
+     (MSHEAR)                              Default: 0     ! MSHEAR =  1  !
+        0 = no  (i.e., vertical wind shear not modeled)
+        1 = yes (i.e., vertical wind shear modeled)
+
+     Puff splitting allowed? (MSPLIT)      Default: 0     ! MSPLIT =  0  !
+        0 = no (i.e., puffs not split)
+        1 = yes (i.e., puffs are split)
+
+     Chemical mechanism flag (MCHEM)       Default: 1     ! MCHEM =  1   !
+        0 = chemical transformation not
+            modeled
+        1 = transformation rates computed
+            internally (MESOPUFF II scheme)
+        2 = user-specified transformation
+            rates used
+        3 = transformation rates computed
+            internally (RIVAD/ARM3 scheme)
+        4 = secondary organic aerosol formation
+            computed (MESOPUFF II scheme for OH)
+        5 = user-specified half-life with or
+            without transfer to child species
+        6 = transformation rates computed
+            internally (Updated RIVAD scheme with
+            ISORROPIA equilibrium)
+        7 = transformation rates computed
+            internally (Updated RIVAD scheme with
+            ISORROPIA equilibrium and CalTech SOA)
+
+     Aqueous phase transformation flag (MAQCHEM)
+     (Used only if MCHEM = 6, or 7)        Default: 0     ! MAQCHEM =  0   !
+        0 = aqueous phase transformation
+            not modeled
+        1 = transformation rates and wet
+            scavenging coefficients adjusted
+            for in-cloud aqueous phase reactions
+            (adapted from RADM cloud model 
+             implementation in CMAQ/SCICHEM)
+
+     Liquid Water Content flag (MLWC)
+     (Used only if MAQCHEM = 1)            Default: 1     ! MLWC =  1   !
+        0 = water content estimated from cloud cover
+            and presence of precipitation
+        1 = gridded cloud water data read from CALMET
+            water content output files (filenames are
+            the CALMET.DAT names PLUS the extension
+            AUXEXT provided in Input Group 0)
+
+     Wet removal modeled ? (MWET)          Default: 1     ! MWET =  0   !
+        0 = no
+        1 = yes
+
+     Dry deposition modeled ? (MDRY)       Default: 1     ! MDRY =  1   !
+        0 = no
+        1 = yes
+        (dry deposition method specified
+         for each species in Input Group 3)
+
+
+     Gravitational settling (plume tilt)
+     modeled ? (MTILT)                     Default: 0     ! MTILT =  0   !
+        0 = no
+        1 = yes
+        (puff center falls at the gravitational
+         settling velocity for 1 particle species)
+
+     Restrictions:
+         - MDRY  = 1
+         - NSPEC = 1  (must be particle species as well)
+         - sg    = 0  GEOMETRIC STANDARD DEVIATION in Group 8 is
+                      set to zero for a single particle diameter
+
+     Method used to compute dispersion
+     coefficients (MDISP)                  Default: 3     ! MDISP =  3   !
+
+        1 = dispersion coefficients computed from measured values
+            of turbulence, sigma v, sigma w
+        2 = dispersion coefficients from internally calculated 
+            sigma v, sigma w using micrometeorological variables
+            (u*, w*, L, etc.)
+        3 = PG dispersion coefficients for RURAL areas (computed using
+            the ISCST multi-segment approximation) and MP coefficients in
+            urban areas
+        4 = same as 3 except PG coefficients computed using
+            the MESOPUFF II eqns.
+        5 = CTDM sigmas used for stable and neutral conditions.
+            For unstable conditions, sigmas are computed as in
+            MDISP = 3, described above.  MDISP = 5 assumes that
+            measured values are read
+
+     Sigma-v/sigma-theta, sigma-w measurements used? (MTURBVW)
+     (Used only if MDISP = 1 or 5)         Default: 3     ! MTURBVW =  3  !
+        1 = use sigma-v or sigma-theta measurements
+            from PROFILE.DAT to compute sigma-y
+            (valid for METFM = 1, 2, 3, 4, 5)
+        2 = use sigma-w measurements
+            from PROFILE.DAT to compute sigma-z
+            (valid for METFM = 1, 2, 3, 4, 5)
+        3 = use both sigma-(v/theta) and sigma-w
+            from PROFILE.DAT to compute sigma-y and sigma-z
+            (valid for METFM = 1, 2, 3, 4, 5)
+        4 = use sigma-theta measurements
+            from PLMMET.DAT to compute sigma-y
+            (valid only if METFM = 3)
+
+     Back-up method used to compute dispersion
+     when measured turbulence data are
+     missing (MDISP2)                      Default: 3     ! MDISP2 =  3  !
+     (used only if MDISP = 1 or 5)
+        2 = dispersion coefficients from internally calculated 
+            sigma v, sigma w using micrometeorological variables
+            (u*, w*, L, etc.)
+        3 = PG dispersion coefficients for RURAL areas (computed using
+            the ISCST multi-segment approximation) and MP coefficients in
+            urban areas
+        4 = same as 3 except PG coefficients computed using
+            the MESOPUFF II eqns.
+
+     [DIAGNOSTIC FEATURE]
+     Method used for Lagrangian timescale for Sigma-y
+     (used only if MDISP=1,2 or MDISP2=1,2)
+     (MTAULY)                              Default: 0     ! MTAULY =  0  !
+        0 = Draxler default 617.284 (s)
+        1 = Computed as Lag. Length / (.75 q) -- after SCIPUFF
+       10 < Direct user input (s)             -- e.g., 306.9
+
+
+     [DIAGNOSTIC FEATURE]
+     Method used for Advective-Decay timescale for Turbulence
+     (used only if MDISP=2 or MDISP2=2)
+     (MTAUADV)                             Default: 0     ! MTAUADV =  0  !
+        0 = No turbulence advection
+        1 = Computed (OPTION NOT IMPLEMENTED)
+       10 < Direct user input (s)   -- e.g., 800
+
+
+     Method used to compute turbulence sigma-v &
+     sigma-w using micrometeorological variables
+     (Used only if MDISP = 2 or MDISP2 = 2)
+     (MCTURB)                              Default: 1     ! MCTURB =  1  !
+        1 = Standard CALPUFF subroutines
+        2 = AERMOD subroutines
+
+     PG sigma-y,z adj. for roughness?      Default: 0     ! MROUGH =  0  !
+     (MROUGH)
+        0 = no
+        1 = yes
+
+     Partial plume penetration of          Default: 1     ! MPARTL =  0  !
+     elevated inversion modeled for
+     point sources?
+     (MPARTL)
+        0 = no
+        1 = yes
+
+     Partial plume penetration of          Default: 1     ! MPARTLBA =  0  !
+     elevated inversion modeled for
+     buoyant area sources?
+     (MPARTLBA)
+        0 = no
+        1 = yes
+
+     Strength of temperature inversion     Default: 0     ! MTINV =  0  !
+     provided in PROFILE.DAT extended records?
+     (MTINV)
+        0 = no (computed from measured/default gradients)
+        1 = yes
+
+     PDF used for dispersion under convective conditions?
+                                           Default: 0     ! MPDF =  0  !
+     (MPDF)
+        0 = no
+        1 = yes
+
+     Sub-Grid TIBL module used for shore line?
+                                           Default: 0     ! MSGTIBL = 0  !
+     (MSGTIBL)
+        0 = no
+        1 = yes
+
+     Boundary conditions (concentration) modeled?
+                                           Default: 0     ! MBCON = 0  !
+     (MBCON)
+        0 = no
+        1 = yes, using formatted BCON.DAT file
+        2 = yes, using unformatted CONC.DAT file
+
+     Note:  MBCON > 0 requires that the last species modeled
+            be 'BCON'.  Mass is placed in species BCON when
+            generating boundary condition puffs so that clean
+            air entering the modeling domain can be simulated
+            in the same way as polluted air.  Specify zero
+            emission of species BCON for all regular sources.
+
+     Individual source contributions saved?
+                                           Default: 0     ! MSOURCE = 0  !
+     (MSOURCE)
+        0 = no
+        1 = yes
+
+
+     Analyses of fogging and icing impacts due to emissions from
+     arrays of mechanically-forced cooling towers can be performed
+     using CALPUFF in conjunction with a cooling tower emissions
+     processor (CTEMISS) and its associated postprocessors.  Hourly
+     emissions of water vapor and temperature from each cooling tower
+     cell are computed for the current cell configuration and ambient
+     conditions by CTEMISS. CALPUFF models the dispersion of these
+     emissions and provides cloud information in a specialized format
+     for further analysis. Output to FOG.DAT is provided in either
+     'plume mode' or 'receptor mode' format.
+
+     Configure for FOG Model output?
+                                           Default: 0     ! MFOG =  0   !
+     (MFOG)
+        0 = no
+        1 = yes  - report results in PLUME Mode format
+        2 = yes  - report results in RECEPTOR Mode format
+
+
+     Test options specified to see if
+     they conform to regulatory
+     values? (MREG)                        Default: 1     ! MREG =  0   !
+
+        0 = NO checks are made
+        1 = Technical options must conform to USEPA
+            Long Range Transport (LRT) guidance
+                       METFM    1 or 2
+                       AVET     60. (min)
+                       PGTIME   60. (min)
+                       MGAUSS   1
+                       MCTADJ   3
+                       MTRANS   1
+                       MTIP     1
+                       MRISE    1
+                       MCHEM    1 or 3 (if modeling SOx, NOx)
+                       MWET     1
+                       MDRY     1
+                       MDISP    2 or 3
+                       MPDF     0 if MDISP=3
+                                1 if MDISP=2
+                       MROUGH   0
+                       MPARTL   1
+                       MPARTLBA 0
+                       SYTDEP   550. (m)
+                       MHFTSZ   0
+                       SVMIN    0.5 (m/s)
+
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+INPUT GROUP: 3a, 3b -- Species list
+-------------------
+
+------------
+Subgroup (3a)
+------------
+
+  The following species are modeled:
+
+! CSPEC =          SO2 !         !END!
+! CSPEC =          SO4 !         !END!
+
+                                                       Dry                OUTPUT GROUP
+    SPECIES          MODELED          EMITTED       DEPOSITED                NUMBER
+     NAME         (0=NO, 1=YES)    (0=NO, 1=YES)    (0=NO,                 (0=NONE,
+   (Limit: 12                                        1=COMPUTED-GAS        1=1st CGRUP,
+    Characters                                       2=COMPUTED-PARTICLE   2=2nd CGRUP,
+    in length)                                       3=USER-SPECIFIED)     3= etc.)
+
+!          SO2  =         1,               1,           1,                 0   !
+!          SO4  =         1,               0,           2,                 0   !
+
+!END!
+
+  Note:  The last species in (3a) must be 'BCON' when using the
+         boundary condition option (MBCON > 0).  Species BCON should
+         typically be modeled as inert (no chem transformation or
+         removal).
+
+
+-------------
+Subgroup (3b)
+-------------
+  The following names are used for Species-Groups in which results
+  for certain species are combined (added) prior to output.  The
+  CGRUP name will be used as the species name in output files.
+  Use this feature to model specific particle-size distributions
+  by treating each size-range as a separate species.
+  Order must be consistent with 3(a) above.
+
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 4 -- Map Projection and Grid control parameters
+--------------
+
+     Projection for all (X,Y):
+     -------------------------
+
+     Map projection
+     (PMAP)                     Default: UTM    ! PMAP = UTM  !
+
+         UTM :  Universal Transverse Mercator
+         TTM :  Tangential Transverse Mercator
+         LCC :  Lambert Conformal Conic
+          PS :  Polar Stereographic
+          EM :  Equatorial Mercator
+        LAZA :  Lambert Azimuthal Equal Area
+
+     False Easting and Northing (km) at the projection origin
+     (Used only if PMAP= TTM, LCC, or LAZA)
+     (FEAST)                    Default=0.0     ! FEAST  = 0.000  !
+     (FNORTH)                   Default=0.0     ! FNORTH = 0.000  !
+
+     UTM zone (1 to 60)
+     (Used only if PMAP=UTM)
+     (IUTMZN)                   No Default      ! IUTMZN =  16   !
+
+     Hemisphere for UTM projection?
+     (Used only if PMAP=UTM)
+     (UTMHEM)                   Default: N      ! UTMHEM = N  !
+         N   :  Northern hemisphere projection
+         S   :  Southern hemisphere projection
+
+     Latitude and Longitude (decimal degrees) of projection origin
+     (Used only if PMAP= TTM, LCC, PS, EM, or LAZA)
+     (RLAT0)                    No Default      ! RLAT0 = 0N  !
+     (RLON0)                    No Default      ! RLON0 = 0E  !
+
+         TTM :  RLON0 identifies central (true N/S) meridian of projection
+                RLAT0 selected for convenience
+         LCC :  RLON0 identifies central (true N/S) meridian of projection
+                RLAT0 selected for convenience
+         PS  :  RLON0 identifies central (grid N/S) meridian of projection
+                RLAT0 selected for convenience
+         EM  :  RLON0 identifies central meridian of projection
+                RLAT0 is REPLACED by 0.0N (Equator)
+         LAZA:  RLON0 identifies longitude of tangent-point of mapping plane
+                RLAT0 identifies latitude of tangent-point of mapping plane
+
+     Matching parallel(s) of latitude (decimal degrees) for projection
+     (Used only if PMAP= LCC or PS)
+     (XLAT1)                    No Default      ! XLAT1 = 0N  !
+     (XLAT2)                    No Default      ! XLAT2 = 0N  !
+
+         LCC :  Projection cone slices through Earth's surface at XLAT1 and XLAT2
+         PS  :  Projection plane slices through Earth at XLAT1
+                (XLAT2 is not used)
+
+     ----------
+     Note:  Latitudes and longitudes should be positive, and include a
+            letter N,S,E, or W indicating north or south latitude, and
+            east or west longitude.  For example,
+            35.9  N Latitude  =  35.9N
+            118.7 E Longitude = 118.7E
+
+
+     Datum-region
+     ------------
+
+     The Datum-Region for the coordinates is identified by a character
+     string.  Many mapping products currently available use the model of the
+     Earth known as the World Geodetic System 1984 (WGS-84).  Other local
+     models may be in use, and their selection in CALMET will make its output
+     consistent with local mapping products.  The list of Datum-Regions with
+     official transformation parameters is provided by the National Imagery and
+     Mapping Agency (NIMA).
+
+     NIMA Datum - Regions(Examples)
+     ------------------------------------------------------------------------------
+     WGS-84    WGS-84 Reference Ellipsoid and Geoid, Global coverage (WGS84)
+     NAS-C     NORTH AMERICAN 1927 Clarke 1866 Spheroid, MEAN FOR CONUS (NAD27)
+     NAR-C     NORTH AMERICAN 1983 GRS 80 Spheroid, MEAN FOR CONUS (NAD83)
+     NWS-84    NWS 6370KM Radius, Sphere
+     ESR-S     ESRI REFERENCE 6371KM Radius, Sphere
+
+     Datum-region for output coordinates
+     (DATUM)                    Default: WGS-84    ! DATUM = WGS-84  !
+
+
+METEOROLOGICAL Grid (outermost if nested CALMET grids are used):
+
+     Rectangular grid defined for projection PMAP,
+     with X the Easting and Y the Northing coordinate
+
+            No. X grid cells (NX)      No default     ! NX =  181   !
+            No. Y grid cells (NY)      No default     ! NY =  109   !
+         No. vertical layers (NZ)      No default     ! NZ =  24   !
+
+           Grid spacing (DGRIDKM)      No default     ! DGRIDKM = .500 !
+                                       Units: km
+
+                Cell face heights
+                    (ZFACE(nz+1))      No defaults
+                                       Units: m
+   ! ZFACE = 0, 20, 60, 140, 260, 540, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000 !
+
+            Reference Coordinates
+           of SOUTHWEST corner of
+                 grid cell(1, 1):
+
+            X coordinate (XORIGKM)     No default     ! XORIGKM = 525.09417 !
+            Y coordinate (YORIGKM)     No default     ! YORIGKM = 1294.23926 !
+                                      Units: km
+
+
+COMPUTATIONAL Grid:
+
+     The computational grid is identical to or a subset of the MET. grid.
+     The lower left (LL) corner of the computational grid is at grid point
+     (IBCOMP, JBCOMP) of the MET. grid.  The upper right (UR) corner of the
+     computational grid is at grid point (IECOMP, JECOMP) of the MET. grid.
+     The grid spacing of the computational grid is the same as the MET. grid.
+
+        X index of LL corner (IBCOMP)      No default     ! IBCOMP =  1   !
+                  (1 <= IBCOMP <= NX)
+
+        Y index of LL corner (JBCOMP)      No default     ! JBCOMP =  1   !
+                  (1 <= JBCOMP <= NY)
+
+
+        X index of UR corner (IECOMP)      No default     ! IECOMP =  181   !
+                  (1 <= IECOMP <= NX)
+
+        Y index of UR corner (JECOMP)      No default     ! JECOMP =  109   !
+                  (1 <= JECOMP <= NY)
+
+
+
+SAMPLING Grid (GRIDDED RECEPTORS):
+
+     The lower left (LL) corner of the sampling grid is at grid point
+     (IBSAMP, JBSAMP) of the MET. grid.  The upper right (UR) corner of the
+     sampling grid is at grid point (IESAMP, JESAMP) of the MET. grid.
+     The sampling grid must be identical to or a subset of the computational
+     grid.  It may be a nested grid inside the computational grid.
+     The grid spacing of the sampling grid is DGRIDKM/MESHDN.
+
+        Logical flag indicating if gridded
+        receptors are used (LSAMP)         Default: T     ! LSAMP = F !
+        (T=yes, F=no)
+
+        X index of LL corner (IBSAMP)      No default     ! IBSAMP =  10   !
+         (IBCOMP <= IBSAMP <= IECOMP)
+
+        Y index of LL corner (JBSAMP)      No default     ! JBSAMP =  10   !
+         (JBCOMP <= JBSAMP <= JECOMP)
+
+
+        X index of UR corner (IESAMP)      No default     ! IESAMP =  80   !
+         (IBCOMP <= IESAMP <= IECOMP)
+
+        Y index of UR corner (JESAMP)      No default     ! JESAMP =  70   !
+         (JBCOMP <= JESAMP <= JECOMP)
+
+
+       Nesting factor of the sampling
+        grid (MESHDN)                      Default: 1     ! MESHDN =  1  !
+        (MESHDN is an integer >= 1)
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 5 -- Output Options
+--------------
+                                             *                          *
+     FILE                       DEFAULT VALUE             VALUE THIS RUN
+     ----                       -------------             --------------
+
+   Concentrations (ICON)              1                   !  ICON =  1   !
+   Dry Fluxes (IDRY)                  1                   !  IDRY =  0   !
+   Wet Fluxes (IWET)                  1                   !  IWET =  0   !
+   2D Temperature (IT2D)              0                   !  IT2D =  0   !
+   2D Density (IRHO)                  0                   !  IRHO =  0   !
+   Relative Humidity (IVIS)           1                   !  IVIS =  0   !
+    (relative humidity file is
+     required for visibility
+     analysis)
+   Use data compression option in output file?
+   (LCOMPRS)                           Default: T         ! LCOMPRS = F !
+
+   *
+    0 = Do not create file, 1 = create file
+
+
+    QA PLOT FILE OUTPUT OPTION:
+
+       Create a standard series of output files (e.g.
+       locations of sources, receptors, grids ...)
+       suitable for plotting?
+       (IQAPLOT)                       Default: 1         ! IQAPLOT =  1   !
+         0 = no
+         1 = yes
+
+    DIAGNOSTIC PUFF-TRACKING OUTPUT OPTION:
+
+       Puff locations and properties reported to
+       PFTRAK.DAT file for postprocessing?
+       (IPFTRAK)                       Default: 0         ! IPFTRAK =  0   !
+         0 = no
+         1 = yes, update puff output at end of each timestep
+         2 = yes, update puff output at end of each sampling step
+
+    DIAGNOSTIC MASS FLUX OUTPUT OPTIONS:
+
+       Mass flux across specified boundaries
+       for selected species reported?
+       (IMFLX)                         Default: 0         ! IMFLX =  0  !
+         0 = no
+         1 = yes (FLUXBDY.DAT and MASSFLX.DAT filenames
+                  are specified in Input Group 0)
+
+       Mass balance for each species
+       reported?
+       (IMBAL)                         Default: 0         ! IMBAL =  1  !
+         0 = no
+         1 = yes (MASSBAL.DAT filename is
+              specified in Input Group 0)
+
+
+    NUMERICAL RISE OUTPUT OPTION:
+
+       Create a file with plume properties for each rise
+       increment, for each model timestep?
+       This applies to sources modeled with numerical rise
+       and is limited to ONE source in the run.
+       (INRISE)                        Default: 0         ! INRISE =  1   !
+         0 = no
+         1 = yes (RISE.DAT filename is
+                  specified in Input Group 0)
+
+
+    LINE PRINTER OUTPUT OPTIONS:
+
+       Print concentrations (ICPRT)    Default: 0         ! ICPRT =  1   !
+       Print dry fluxes (IDPRT)        Default: 0         ! IDPRT =  0   !
+       Print wet fluxes (IWPRT)        Default: 0         ! IWPRT =  0   !
+       (0 = Do not print, 1 = Print)
+
+       Concentration print interval
+       (ICFRQ) in timesteps            Default: 1         ! ICFRQ =  24   !
+       Dry flux print interval
+       (IDFRQ) in timesteps            Default: 1         ! IDFRQ =  1   !
+       Wet flux print interval
+       (IWFRQ) in timesteps            Default: 1         ! IWFRQ =  1   !
+
+       Units for Line Printer Output
+       (IPRTU)                         Default: 1         ! IPRTU =  1   !
+                       for            for
+                  Concentration    Deposition
+           1 =       g/m**3         g/m**2/s
+           2 =      mg/m**3        mg/m**2/s
+           3 =      ug/m**3        ug/m**2/s
+           4 =      ng/m**3        ng/m**2/s
+           5 =     Odour Units
+           6 =      TBq/m**3       TBq/m**2/s    TBq=terabecquerel
+           7 =      GBq/m**3       GBq/m**2/s    GBq=gigabecquerel
+           8 =       Bq/m**3        Bq/m**2/s    Bq=becquerel (disintegrations/s)
+
+       Messages tracking progress of run
+       written to the screen ?
+       (IMESG)                         Default: 2         ! IMESG =  2   !
+         0 = no
+         1 = yes (advection step, puff ID)
+         2 = yes (YYYYJJJHH, # old puffs, # emitted puffs)
+
+
+     SPECIES (or GROUP for combined species) LIST FOR OUTPUT OPTIONS
+
+                 ---- CONCENTRATIONS ----   ------ DRY FLUXES ------   ------ WET FLUXES ------   -- MASS FLUX --
+   SPECIES
+   /GROUP        PRINTED?  SAVED ON DISK?   PRINTED?  SAVED ON DISK?   PRINTED?  SAVED ON DISK?   SAVED ON DISK?
+   -------       ------------------------   ------------------------   ------------------------   ---------------
+!          SO2 =     1,           1,           0,           0,           0,           0,           0   !
+!          SO4 =     1,           1,           0,           0,           0,           0,           0   !
+
+  Note:  Species BCON (for MBCON > 0) does not need to be saved on disk.
+
+
+     OPTIONS FOR PRINTING "DEBUG" QUANTITIES (much output)   
+
+       Logical for debug output
+       (LDEBUG)                                 Default: F     ! LDEBUG = F !
+
+       First puff to track
+       (IPFDEB)                                 Default: 1     ! IPFDEB =  1  !
+
+       Number of puffs to track
+       (NPFDEB)                                 Default: 1     ! NPFDEB =  1044  !
+
+       Met. period to start output
+       (NN1)                                    Default: 1     ! NN1 =  1   !
+
+       Met. period to end output
+       (NN2)                                    Default: 10    ! NN2 =  24  !
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 6a, 6b, & 6c -- Subgrid scale complex terrain inputs
+-------------------------
+
+---------------
+Subgroup (6a)
+---------------
+       Number of terrain features (NHILL)       Default: 0     ! NHILL =  0   !
+
+       Number of special complex terrain
+       receptors  (NCTREC)                      Default: 0     ! NCTREC =  0   !
+
+       Terrain and CTSG Receptor data for 
+       CTSG hills input in CTDM format ?
+       (MHILL)                                  No Default     ! MHILL =  2   !
+       1 = Hill and Receptor data created
+           by CTDM processors & read from
+           HILL.DAT and HILLRCT.DAT files
+       2 = Hill data created by OPTHILL &
+           input below in Subgroup (6b);
+           Receptor data in Subgroup (6c)
+
+       Factor to convert horizontal dimensions  Default: 1.0   ! XHILL2M = 0 !
+       to meters (MHILL=1)
+
+       Factor to convert vertical dimensions    Default: 1.0   ! ZHILL2M = 0 !
+       to meters (MHILL=1)
+
+       X-origin of CTDM system relative to      No Default     ! XCTDMKM = 0 !
+       CALPUFF coordinate system, in Kilometers (MHILL=1)
+
+       Y-origin of CTDM system relative to      No Default     ! YCTDMKM = 0 !
+       CALPUFF coordinate system, in Kilometers (MHILL=1)
+
+! END !
+
+---------------
+Subgroup (6b)
+---------------
+
+                      1 **
+     HILL information
+
+
+HILL           XC        YC       THETAH  ZGRID  RELIEF    EXPO 1    EXPO 2   SCALE 1    SCALE 2    AMAX1     AMAX2
+ NO.          (km)      (km)      (deg.)   (m)     (m)      (m)       (m)       (m)        (m)       (m)       (m)
+----          ----      ----      ------  -----  ------    ------    ------   -------    -------    -----     -----
+
+---------------
+Subgroup (6c)
+---------------
+
+    COMPLEX TERRAIN RECEPTOR INFORMATION
+
+                      XRCT         YRCT        ZRCT          XHH
+                      (km)         (km)         (m)
+                     ------        -----      ------         ----
+
+
+-------------------
+1
+     Description of Complex Terrain Variables:
+          XC, YC  = Coordinates of center of hill
+          THETAH  = Orientation of major axis of hill (clockwise from
+                    North)
+          ZGRID   = Height of the  0  of the grid above mean sea
+                    level
+          RELIEF  = Height of the crest of the hill above the grid elevation
+          EXPO 1  = Hill-shape exponent for the major axis
+          EXPO 2  = Hill-shape exponent for the major axis
+          SCALE 1 = Horizontal length scale along the major axis
+          SCALE 2 = Horizontal length scale along the minor axis
+          AMAX    = Maximum allowed axis length for the major axis
+          BMAX    = Maximum allowed axis length for the major axis
+
+          XRCT, YRCT = Coordinates of the complex terrain receptors
+          ZRCT    = Height of the ground (MSL) at the complex terrain
+                    Receptor
+          XHH     = Hill number associated with each complex terrain receptor
+                    (NOTE: MUST BE ENTERED AS A REAL NUMBER)
+
+   **
+     NOTE: DATA for each hill and CTSG receptor are treated as a separate
+           input subgroup and therefore must end with an input group terminator.
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 7 -- Chemical parameters for dry deposition of gases
+--------------
+
+      SPECIES     DIFFUSIVITY      ALPHA STAR      REACTIVITY    MESOPHYLL RESISTANCE     HENRY'S LAW COEFFICIENT
+       NAME        (cm**2/s)                                            (s/cm)                (dimensionless)
+      -------     -----------      ----------      ----------    --------------------     -----------------------
+!          SO2 =      .1509,        1000.0,           8.0,                .0,                   .04 !
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 8 -- Size parameters for dry deposition of particles
+--------------
+
+     For SINGLE SPECIES, the mean and standard deviation are used to
+     compute a deposition velocity for NINT (see group 9) size-ranges,
+     and these are then averaged to obtain a mean deposition velocity.
+
+     For GROUPED SPECIES, the size distribution should be explicitly
+     specified (by the 'species' in the group), and the standard deviation
+     for each should be entered as 0.  The model will then use the
+     deposition velocity for the stated mean diameter.
+
+      SPECIES      GEOMETRIC MASS MEAN        GEOMETRIC STANDARD
+       NAME             DIAMETER                   DEVIATION
+                        (microns)                  (microns)
+      -------      -------------------        ------------------
+!          SO4 =           .48,                     2.0   !
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 9 -- Miscellaneous dry deposition parameters
+--------------
+
+     Reference cuticle resistance (s/cm)
+     (RCUTR)                           Default: 30    !  RCUTR = 30.0 !
+     Reference ground resistance  (s/cm)
+     (RGR)                             Default: 10    !    RGR = 10.0 !
+     Reference pollutant reactivity
+     (REACTR)                          Default: 8     ! REACTR = 8.0 !
+
+     Number of particle-size intervals used to 
+     evaluate effective particle deposition velocity
+     (NINT)                            Default: 9     !   NINT =  9  !
+
+     Vegetation state in unirrigated areas
+     (IVEG)                            Default: 1     !   IVEG =  1   !
+        IVEG=1 for active and unstressed vegetation
+        IVEG=2 for active and stressed vegetation
+        IVEG=3 for inactive vegetation
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 10 -- Wet Deposition Parameters
+---------------
+                                                          
+                      Scavenging Coefficient -- Units: (sec)**(-1)
+
+       Pollutant      Liquid Precip.       Frozen Precip.
+       ---------      --------------       --------------
+!          SO2 =         2.61E-05,              3.0E-05 !
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 11a, 11b -- Chemistry Parameters
+---------------------
+
+---------------
+Subgroup (11a)
+---------------
+
+     Several parameters are needed for one or more of the chemical transformation
+     mechanisms.  Those used for each mechanism are:
+                                                               S            
+                                       M                 B  R  O      
+                                       A  B  R  R  R     C  H  4  B        N
+                                 B     V  C  N  N  N  M  K  -  -  C  O     D
+                                 C  M  G  K  I  I  I  H  H  I  I  K  F  V  E
+                              M  K  N  N  N  T  T  T  2  2  S  S  P  R  C  C
+                              O  O  H  H  H  E  E  E  O  O  R  R  M  A  N  A
+     Mechanism (MCHEM)        Z  3  3  3  3  1  2  3  2  2  P  P  F  C  X  Y
+     --------------------   --------------------------------------------------
+     0 None                   .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+     1 MESOPUFF II            X  X  .  .  X  X  X  X  .  .  .  .  .  .  .  .
+     2 User Rates             .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
+     3 RIVAD                  X  X  .  .  X  .  .  .  .  .  .  .  .  .  .  .
+     4 SOA                    X  X  .  .  .  .  .  .  .  .  .  .  X  X  X  .
+     5 Radioactive Decay      .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  X
+     6 RIVAD/ISORRPIA         X  X  X  X  X  X  .  .  X  X  X  X  .  .  .  .
+     7 RIVAD/ISORRPIA/SOA     X  X  X  X  X  X  .  .  X  X  X  X  X  X  .  .
+
+
+     Ozone data input option (MOZ)     Default: 1            ! MOZ =  0   !
+     (Used only if MCHEM = 1,3,4,6, or 7)
+        0 = use a monthly background ozone value
+        1 = read hourly ozone concentrations from
+            the OZONE.DAT data file
+
+     Monthly ozone concentrations in ppb (BCKO3)
+     (Used only if MCHEM = 1,3,4,6, or 7 and either
+        MOZ = 0, or 
+        MOZ = 1 and all hourly O3 data missing)
+                                       Default: 12*80.
+     !  BCKO3 = 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00 !
+
+     Ammonia data option (MNH3)        Default: 0            ! MNH3 =  0   !
+     (Used only if MCHEM = 6 or 7)
+        0 = use monthly background ammonia values (BCKNH3) - no vertical variation
+        1 = read monthly background ammonia values for each layer from
+            the NH3Z.DAT data file
+
+     Ammonia vertical averaging option (MAVGNH3)
+     (Used only if MCHEM = 6 or 7, and MNH3 = 1)
+        0 = use NH3 at puff center height (no averaging is done)
+        1 = average NH3 values over vertical extent of puff
+                                       Default: 1            ! MAVGNH3 =  0   !
+
+     Monthly ammonia concentrations in ppb (BCKNH3)
+     (Used only if MCHEM = 1 or 3, or
+                if MCHEM = 6 or 7, and MNH3 = 0)
+                                       Default: 12*10.       
+     !  BCKNH3 = 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 !
+
+     Nighttime SO2 loss rate in %/hour (RNITE1)
+     (Used only if MCHEM = 1, 6 or 7)
+     This rate is used only at night for MCHEM=1
+     and is added to the computed rate both day
+     and night for MCHEM=6,7 (heterogeneous reactions)
+                                       Default: 0.2          ! RNITE1 = .2 !
+
+     Nighttime NOx loss rate in %/hour (RNITE2)
+     (Used only if MCHEM = 1)
+                                       Default: 2.0          ! RNITE2 = 2.0 !
+
+     Nighttime HNO3 formation rate in %/hour (RNITE3)
+     (Used only if MCHEM = 1)
+                                       Default: 2.0          ! RNITE3 = 2.0 !
+
+     H2O2 data input option (MH2O2)    Default: 1            ! MH2O2 =  1   !
+     (Used only if MCHEM = 6 or 7, and MAQCHEM = 1)
+        0 = use a monthly background H2O2 value
+        1 = read hourly H2O2 concentrations from
+            the H2O2.DAT data file
+
+     Monthly H2O2 concentrations in ppb (BCKH2O2)
+     (Used only if MQACHEM = 1 and either
+        MH2O2 = 0 or
+        MH2O2 = 1 and all hourly H2O2 data missing)
+                                       Default: 12*1.        
+     !  BCKH2O2 = 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 !
+
+
+ --- Data for ISORROPIA Option
+     (used only if MCHEM = 6 or 7)
+
+     Minimum relative humidity used in ISORROPIA computations (RH_ISRP)
+                                       Default: 50.          ! RH_ISRP = 50.0 !
+                                       Units: %
+
+     Minimum SO4 used in ISORROPIA computations (SO4_ISRP)
+                                       Default: 0.4          ! SO4_ISRP = .4 !
+                                       Units: ug/m3
+
+
+ --- Data for SECONDARY ORGANIC AEROSOL (SOA) Options
+     (used only if MCHEM = 4 or 7)
+
+     The MCHEM = 4 SOA module uses monthly values of:
+          Fine particulate concentration in ug/m^3 (BCKPMF)
+          Organic fraction of fine particulate     (OFRAC)
+          VOC / NOX ratio (after reaction)         (VCNX)
+
+     The MCHEM = 7 SOA module uses monthly values of:
+          Fine particulate concentration in ug/m^3 (BCKPMF)
+          Organic fraction of fine particulate     (OFRAC)
+
+     These characterize the air mass when computing
+     the formation of SOA from VOC emissions.
+     Typical values for several distinct air mass types are:
+
+        Month    1    2    3    4    5    6    7    8    9   10   11   12
+                Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec
+
+     Clean Continental
+        BCKPMF   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.
+        OFRAC  .15  .15  .20  .20  .20  .20  .20  .20  .20  .20  .20  .15
+        VCNX    50.  50.  50.  50.  50.  50.  50.  50.  50.  50.  50.  50.
+
+     Clean Marine (surface)
+        BCKPMF  .5   .5   .5   .5   .5   .5   .5   .5   .5   .5   .5   .5
+        OFRAC  .25  .25  .30  .30  .30  .30  .30  .30  .30  .30  .30  .25
+        VCNX    50.  50.  50.  50.  50.  50.  50.  50.  50.  50.  50.  50.
+
+     Urban - low biogenic (controls present)
+        BCKPMF  30.  30.  30.  30.  30.  30.  30.  30.  30.  30.  30.  30.
+        OFRAC  .20  .20  .25  .25  .25  .25  .25  .25  .20  .20  .20  .20
+        VCNX     4.   4.   4.   4.   4.   4.   4.   4.   4.   4.   4.   4.
+
+     Urban - high biogenic (controls present)
+        BCKPMF  60.  60.  60.  60.  60.  60.  60.  60.  60.  60.  60.  60.
+        OFRAC  .25  .25  .30  .30  .30  .55  .55  .55  .35  .35  .35  .25
+        VCNX    15.  15.  15.  15.  15.  15.  15.  15.  15.  15.  15.  15.
+
+     Regional Plume
+        BCKPMF  20.  20.  20.  20.  20.  20.  20.  20.  20.  20.  20.  20.
+        OFRAC  .20  .20  .25  .35  .25  .40  .40  .40  .30  .30  .30  .20
+        VCNX    15.  15.  15.  15.  15.  15.  15.  15.  15.  15.  15.  15.
+
+     Urban - no controls present
+        BCKPMF 100. 100. 100. 100. 100. 100. 100. 100. 100. 100. 100. 100.
+        OFRAC  .30  .30  .35  .35  .35  .55  .55  .55  .35  .35  .35  .30
+        VCNX     2.   2.   2.   2.   2.   2.   2.   2.   2.   2.   2.   2.
+
+     Default: Clean Continental
+     !  BCKPMF = 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 !
+     !  OFRAC  = 0.15, 0.15, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.15 !
+     !  VCNX   = 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00 !
+
+ --- End Data for SECONDARY ORGANIC AEROSOL (SOA) Options
+
+
+     Number of half-life decay specification blocks provided in Subgroup 11b
+     (Used only if MCHEM = 5)
+     (NDECAY)                                   Default: 0      ! NDECAY =  0   !
+
+!END!
+
+
+--------------
+Subgroup (11b)
+--------------
+
+     Each species modeled may be assigned a decay half-life (sec), and the associated
+     mass lost may be assigned to one or more other modeled species using a mass yield
+     factor. This information is used only for MCHEM=5.
+
+     Provide NDECAY blocks assigning the half-life for a parent species and mass yield
+     factors for each child species (if any) produced by the decay.
+     Set HALF_LIFE=0.0 for NO decay (infinite half-life).
+
+                              a            b
+        SPECIES      Half-Life   Mass Yield
+         NAME          (sec)       Factor 
+        -------      ---------   ----------
+
+     *   SPEC1   =    3600.,        -1.0   *    (Parent)
+     *   SPEC2   =     -1.0,         0.0   *    (Child)
+   *END*
+
+--------
+    a
+     Specify a half life that is greater than or equal to zero for 1 parent species
+     in each block, and set the yield factor for this species to -1
+    b
+     Specify a yield factor that is greater than or equal to zero for 1 or more child
+     species in each block, and set the half-life for each of these species to -1
+
+     NOTE: Assignments in each block are treated as a separate input
+           subgroup and therefore must end with an input group terminator.
+           If NDECAY=0, no assignments and input group terminators should appear.
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 12 -- Misc. Dispersion and Computational Parameters
+---------------
+
+     Horizontal size of puff (m) beyond which
+     time-dependent dispersion equations (Heffter)
+     are used to determine sigma-y and
+     sigma-z (SYTDEP)                           Default: 550.   ! SYTDEP = 5.5E02 !
+
+     Switch for using Heffter equation for sigma z           
+     as above (0 = Not use Heffter; 1 = use Heffter
+     (MHFTSZ)                                   Default: 0      ! MHFTSZ =  0   !
+
+     Stability class used to determine plume
+     growth rates for puffs above the boundary
+     layer (JSUP)                               Default: 5      ! JSUP =  5   !
+
+     Vertical dispersion constant for stable
+     conditions (k1 in Eqn. 2.7-3)  (CONK1)     Default: 0.01   ! CONK1 = .01 !
+
+     Vertical dispersion constant for neutral/
+     unstable conditions (k2 in Eqn. 2.7-4)
+     (CONK2)                                    Default: 0.1    ! CONK2 = .1 !
+
+     Factor for determining Transition-point from
+     Schulman-Scire to Huber-Snyder Building Downwash
+     scheme (SS used for Hs < Hb + TBD * HL)
+     (TBD)                                      Default: 0.5    ! TBD = .5 !
+        TBD < 0   ==> always use Huber-Snyder
+        TBD = 1.5 ==> always use Schulman-Scire
+        TBD = 0.5 ==> ISC Transition-point
+
+     Range of land use categories for which
+     urban dispersion is assumed
+     (IURB1, IURB2)                             Default: 10     ! IURB1 =  10  !
+                                                         19     ! IURB2 =  19  !
+
+     Site characterization parameters for single-point Met data files ---------
+     (needed for METFM = 2,3,4,5)
+
+        Land use category for modeling domain
+        (ILANDUIN)                              Default: 20     ! ILANDUIN =  20  !
+
+        Roughness length (m) for modeling domain
+        (Z0IN)                                  Default: 0.25   ! Z0IN = .25 !
+
+        Leaf area index for modeling domain
+        (XLAIIN)                                Default: 3.0    ! XLAIIN = 3.0 !
+
+        Elevation above sea level (m)
+        (ELEVIN)                                Default: 0.0    ! ELEVIN = .0 !
+
+        Latitude (degrees) for met location
+        (XLATIN)                                Default: -999.  ! XLATIN = -999.0 !
+
+        Longitude (degrees) for met location
+        (XLONIN)                                Default: -999.  ! XLONIN = -999.0 !
+
+     Specialized information for interpreting single-point Met data files -----
+
+        Anemometer height (m) (Used only if METFM = 2,3)
+        (ANEMHT)                                Default: 10.    ! ANEMHT = 10.0 !
+
+        Form of lateral turbulance data in PROFILE.DAT file
+        (Used only if METFM = 4,5 or MTURBVW = 1 or 3)
+        (ISIGMAV)                               Default: 1      ! ISIGMAV =  1  !
+            0 = read sigma-theta
+            1 = read sigma-v
+
+        Choice of mixing heights (Used only if METFM = 4)
+        (IMIXCTDM)                              Default: 0      ! IMIXCTDM =  0  !
+            0 = read PREDICTED mixing heights
+            1 = read OBSERVED mixing heights
+
+     Maximum length of a slug (met. grid units)
+     (XMXLEN)                                   Default: 1.0    ! XMXLEN = 0.5 !
+
+     Maximum travel distance of a puff/slug (in
+     grid units) during one sampling step
+     (XSAMLEN)                                  Default: 1.0    ! XSAMLEN = 1.0 !
+
+     Maximum Number of slugs/puffs release from
+     one source during one time step            
+     (MXNEW)                                    Default: 99     ! MXNEW =  99   !
+
+     Maximum Number of sampling steps for    
+     one puff/slug during one time step             
+     (MXSAM)                                    Default: 99     ! MXSAM =  99   !
+
+     Number of iterations used when computing
+     the transport wind for a sampling step
+     that includes gradual rise (for CALMET
+     and PROFILE winds)
+     (NCOUNT)                                   Default: 2      ! NCOUNT =  5   !
+
+     Minimum sigma y for a new puff/slug (m)      
+     (SYMIN)                                    Default: 1.0    ! SYMIN = 1.0  !
+
+     Minimum sigma z for a new puff/slug (m)     
+     (SZMIN)                                    Default: 1.0    ! SZMIN = 1.0  !
+
+     Maximum sigma z (m) allowed to avoid
+     numerical problem in calculating virtual
+     time or distance.  Cap should be large
+     enough to have no influence on normal events.
+     Enter a negative cap to disable.
+     (SZCAP_M)                                  Default: 5.0e06 ! SZCAP_M = -1.0 !
+
+
+     Default minimum turbulence velocities sigma-v and sigma-w
+     for each stability class over land and over water (m/s)
+     (SVMIN(12) and SWMIN(12))
+
+                     ----------  LAND  ----------       ---------  WATER  ----------
+        Stab Class :  A    B    C    D    E    F         A    B    C    D    E    F
+                     ---  ---  ---  ---  ---  ---       ---  ---  ---  ---  ---  ---
+     Default SVMIN : .50, .50, .50, .50, .50, .50,      .37, .37, .37, .37, .37, .37
+     Default SWMIN : .20, .12, .08, .06, .03, .016,     .20, .12, .08, .06, .03, .016
+
+           ! SVMIN = 0.500, 0.500, 0.500, 0.500, 0.500, 0.500, 0.370, 0.370, 0.370, 0.370, 0.370, 0.370!
+           ! SWMIN = 0.200, 0.120, 0.080, 0.060, 0.030, 0.016, 0.200, 0.120, 0.080, 0.060, 0.030, 0.016!
+
+     Divergence criterion for dw/dz across puff
+     used to initiate adjustment for horizontal
+     convergence (1/s)
+     Partial adjustment starts at CDIV(1), and
+     full adjustment is reached at CDIV(2)
+     (CDIV(2))                                  Default: 0.0,0.0  ! CDIV = .0, .0 !
+
+     Search radius (number of cells) for nearest
+     land and water cells used in the subgrid
+     TIBL module
+     (NLUTIBL)                                  Default: 4      ! NLUTIBL = 4  !
+
+     Minimum wind speed (m/s) allowed for
+     non-calm conditions. Also used as minimum
+     speed returned when using power-law 
+     extrapolation toward surface
+     (WSCALM)                                   Default: 0.5    ! WSCALM = 0.01 !
+
+     Maximum mixing height (m)                      
+     (XMAXZI)                                   Default: 3000.  ! XMAXZI = 3000.0 !
+
+     Minimum mixing height (m)                     
+     (XMINZI)                                   Default: 50.    ! XMINZI = 20.0 !
+
+
+     Temperatures (K) used for defining upper bound of
+     categories for emissions scale-factors
+     11 upper bounds (K) are entered; the 12th class has no upper limit
+     (TKCAT(11))
+                 Default   : 265., 270., 275., 280., 285., 290., 295., 300., 305., 310., 315.  (315.+)
+                              <     <     <     <     <     <     <     <     <     <     <
+         Temperature Class :  1     2     3     4     5     6     7     8     9     10    11    (12)
+                             ----  ----  ----  ----  ----  ----  ----  ----  ----  ----  ----
+                  ! TKCAT  = 265., 270., 275., 280., 285., 290., 295., 300., 305., 310., 315. !
+
+     Wind Speeds (m/s) used for defining upper bound of
+     categories for emissions scale-factors
+     5 upper bounds (m/s) are entered; the 6th class has no upper limit
+     (WSCAT(5))                      Default   : 
+                                     ISC RURAL : 1.54, 3.09, 5.14, 8.23, 10.8 (10.8+)
+
+                              Wind Speed Class :  1     2     3     4     5  
+                                                 ---   ---   ---   ---   --- 
+                                       ! WSCAT = 1.54, 3.09, 5.14, 8.23, 10.80 !
+
+     Default wind speed profile power-law
+     exponents for stabilities 1-6
+     (PLX0(6))                       Default   : ISC RURAL values
+                                     ISC RURAL : .07, .07, .10, .15, .35, .55
+                                     ISC URBAN : .15, .15, .20, .25, .30, .30
+
+                               Stability Class :  A     B     C     D     E     F
+                                                 ---   ---   ---   ---   ---   ---
+                                        ! PLX0 = 0.07, 0.07, 0.10, 0.15, 0.35, 0.55 !
+
+     Default potential temperature gradient
+     for stable classes E, F (degK/m)
+     (PTG0(2))                       Default: 0.020, 0.035
+                                        ! PTG0 = 0.020,   0.035 !
+
+     Default plume path coefficients for
+     each stability class (used when option
+     for partial plume height terrain adjustment
+     is selected -- MCTADJ=3)
+     (PPC(6))                  Stability Class :  A     B     C     D     E     F
+                                  Default  PPC : .50,  .50,  .50,  .50,  .35,  .35
+                                                 ---   ---   ---   ---   ---   ---
+                                        !  PPC = 0.50, 0.50, 0.50, 0.50, 0.35, 0.35 !
+
+     Slug-to-puff transition criterion factor
+     equal to sigma-y/length of slug
+     (SL2PF)                               Default: 10.        ! SL2PF = 5.0 !
+
+     Receptor-specific puff/slug properties (e.g., sigmas and height above
+     ground at the time when the trajectory is nearest the receptor) may be
+     extrapolated forward or backward in time along the current step using
+     the current dispersion, for receptors that lie upwind of the puff/slug
+     position at the start of a step, or downwind at the end of a step.
+     Specify the upwind/downwind extrapolation zone in sigma-y units.
+     Using FCLIP=1.0 clips the the upwind zone at one sigma-y at the start
+     of the step and the downwind zone at one sigma-y at the end of the step.
+     This is consistent with the sampling done in CALPUFF versions through
+     v6.42 prior to the introduction of the FCLIP option.
+     The default is No Extrapolation, FCLIP=0.0.
+     (FCLIP)                               Default: 0.0        ! FCLIP = 0.0 !
+
+     Puff-splitting control variables ------------------------
+
+       VERTICAL SPLIT
+       --------------
+
+       Number of puffs that result every time a puff
+       is split - nsplit=2 means that 1 puff splits
+       into 2
+       (NSPLIT)                            Default:   3        ! NSPLIT =  3  !
+
+       Time(s) of a day when split puffs are eligible to
+       be split once again; this is typically set once
+       per day, around sunset before nocturnal shear develops.
+       24 values: 0 is midnight (00:00) and 23 is 11 PM (23:00)
+       0=do not re-split    1=eligible for re-split
+       (IRESPLIT(24))                      Default:  Hour 17 = 1
+       !  IRESPLIT = 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0 !
+
+       Split is allowed only if last hour's mixing
+       height (m) exceeds a minimum value
+       (ZISPLIT)                           Default: 100.       ! ZISPLIT = 100.0 !
+
+       Split is allowed only if ratio of last hour's
+       mixing ht to the maximum mixing ht experienced
+       by the puff is less than a maximum value (this
+       postpones a split until a nocturnal layer develops)
+       (ROLDMAX)                           Default: 0.25       ! ROLDMAX = 0.25 !
+
+
+       HORIZONTAL SPLIT
+       ----------------
+
+       Number of puffs that result every time a puff
+       is split - nsplith=5 means that 1 puff splits
+       into 5
+       (NSPLITH)                           Default:   5        ! NSPLITH =  5  !
+
+       Minimum sigma-y (Grid Cells Units) of puff
+       before it may be split
+       (SYSPLITH)                          Default:  1.0       ! SYSPLITH = 0.8 !
+
+       Minimum puff elongation rate (SYSPLITH/hr) due to
+       wind shear, before it may be split
+       (SHSPLITH)                          Default:  2.        ! SHSPLITH = 1.0 !
+
+       Minimum concentration (g/m^3) of each
+       species in puff before it may be split
+       Enter array of NSPEC values; if a single value is
+       entered, it will be used for ALL species
+       (CNSPLITH)                          Default:  1.0E-07   ! CNSPLITH = 1.0E-07 !
+
+     Integration control variables ------------------------
+
+       Fractional convergence criterion for numerical SLUG
+       sampling integration
+       (EPSSLUG)                           Default:   1.0e-04  ! EPSSLUG = 1.0E-04 !
+
+       Fractional convergence criterion for numerical AREA
+       source integration
+       (EPSAREA)                           Default:   1.0e-06  ! EPSAREA = 1.0E-06 !
+
+       Trajectory step-length (m) used for numerical rise
+       integration
+       (DSRISE)                            Default:   1.0      ! DSRISE = 1.0 !
+
+       Boundary Condition (BC) Puff control variables ------------------------
+
+       Minimum height (m) to which BC puffs are mixed as they are emitted
+       (MBCON=2 ONLY).  Actual height is reset to the current mixing height
+       at the release point if greater than this minimum.
+       (HTMINBC)                           Default:   500.     ! HTMINBC = 500.0 !
+
+       Search radius (km) about a receptor for sampling nearest BC puff.
+       BC puffs are typically emitted with a spacing of one grid cell
+       length, so the search radius should be greater than DGRIDKM.
+       (RSAMPBC)                           Default:   10.      ! RSAMPBC = 10.0 !
+
+       Near-Surface depletion adjustment to concentration profile used when
+       sampling BC puffs?
+       (MDEPBC)                            Default:   1        ! MDEPBC =  0  !
+          0 = Concentration is NOT adjusted for depletion
+          1 = Adjust Concentration for depletion
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUPS: 13a, 13b, 13c, 13d -- Point source parameters
+--------------------------------
+
+---------------
+Subgroup (13a)
+---------------
+
+     Number of point sources with
+     parameters provided below      (NPT1)  No default  !  NPT1 =  1  !
+
+     Units used for point source
+     emissions below                (IPTU)  Default: 1  !  IPTU =   1  !
+           1 =        g/s
+           2 =       kg/hr
+           3 =       lb/hr
+           4 =     tons/yr
+           5 =     Odour Unit * m**3/s  (vol. flux of odour compound)
+           6 =     Odour Unit * m**3/min
+           7 =     metric tons/yr
+           8 =     Bq/s  (Bq = becquerel = disintegrations/s)
+           9 =     GBq/yr 
+
+
+     Number of source-species
+     combinations with variable
+     emissions scaling factors
+     provided below in (13d)        (NSPT1) Default: 0  !  NSPT1 =  0  !
+
+     Number of point sources with
+     variable emission parameters
+     provided in external file      (NPT2)  No default  !  NPT2 =  0  !
+
+     (If NPT2 > 0, these point
+     source emissions are read from
+     the file: PTEMARB.DAT)
+
+!END!
+
+---------------
+Subgroup (13b)
+---------------
+                                      a
+          POINT SOURCE: CONSTANT DATA
+          -----------------------------
+                                                                              b          c
+  Source       X         Y       Stack    Base     Stack    Exit  Exit    Bldg.  Emission
+   No.     Coordinate Coordinate Height Elevation Diameter  Vel.  Temp.   Dwash   Rates
+              (km)      (km)       (m)      (m)       (m)  (m/s) (deg. K)         
+  ------   ---------- ---------- ------  ------   -------- ----- -------- ----- --------
+
+1 ! SRCNAM = MASAYA1 !
+1 ! X    =  590.689, 1324.874,       0,     520,   500,   1.0, 350, 0.,    3400 !
+!END!
+
+--------
+
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+     SRCNAM  is a 12-character name for a source
+             (No default)
+     X       is an array holding the source data listed by the column headings
+             (No default)
+     SIGYZI  is an array holding the initial sigma-y and sigma-z (m)
+             (Default: 0.,0.)
+     FMFAC   is a vertical momentum flux factor (0. or 1.0) used to represent
+             the effect of rain-caps or other physical configurations that
+             reduce momentum rise associated with the actual exit velocity.
+             (Default: 1.0  -- full momentum used)
+     ZPLTFM  is the platform height (m) for sources influenced by an isolated
+             structure that has a significant open area between the surface
+             and the bulk of the structure, such as an offshore oil platform.
+             The Base Elevation is that of the surface (ground or ocean),
+             and the Stack Height is the release height above the Base (not
+             above the platform).  Building heights entered in Subgroup 13c
+             must be those of the buildings on the platform, measured from
+             the platform deck.  ZPLTFM is used only with MBDW=1 (ISC
+             downwash method) for sources with building downwash.
+             (Default: 0.0)
+
+    b
+     0. = No building downwash modeled
+     1. = Downwash modeled for buildings resting on the surface
+     2. = Downwash modeled for buildings raised above the surface (ZPLTFM > 0.)
+     NOTE: must be entered as a REAL number (i.e., with decimal point)
+
+    c
+     An emission rate must be entered for every pollutant modeled.
+     Enter emission rate of zero for secondary pollutants that are
+     modeled, but not emitted.  Units are specified by IPTU
+     (e.g. 1 for g/s).
+
+---------------
+Subgroup (13c)
+---------------
+
+           BUILDING DIMENSION DATA FOR SOURCES SUBJECT TO DOWNWASH
+           -------------------------------------------------------
+Source                                                                     a
+ No.       Effective building height, width, length and X/Y offset (in meters)
+           every 10 degrees.  LENGTH, XBADJ, and YBADJ are only needed for
+           MBDW=2 (PRIME downwash option)
+------     --------------------------------------------------------------------
+ 1    * SRCNAM  =   STK1 *
+ 1    * HEIGHT  =  50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0 *
+ 1    * WIDTH  =   62.26,   72.64,   80.8,   86.51,   89.59,   89.95,   
+                   87.58,   82.54,   75.0,   82.54,   87.58,   89.95,   
+                   89.59,   86.51,   80.8,   72.64,   62.26,   50.0,   
+                   62.26,   72.64,   80.8,   86.51,   89.59,   89.95,   
+                   87.58,   82.54,   75.0,   82.54,   87.58,   89.95,   
+                   89.59,   86.51,   80.8,   72.64,   62.26,   50.0 *
+ 1  *  LENGTH =  82.54,  87.58,  89.95,  89.59,  86.51,  80.80, 
+                 72.64,  62.26,  50.00,  62.26,  72.64,  80.80, 
+                 86.51,  89.59,  89.95,  87.58,  82.54,  75.00, 
+                 82.54,  87.58,  89.95,  89.59,  86.51,  80.80, 
+                 72.64,  62.26,  50.00,  62.26,  72.64,  80.80, 
+                 86.51,  89.59,  89.95,  87.58,  82.54,  75.00 *
+ 1  *  XBADJ =  -47.35, -55.76, -62.48, -67.29, -70.07, -70.71, 
+                -69.21, -65.60, -60.00, -65.60, -69.21, -70.71, 
+                -70.07, -67.29, -62.48, -55.76, -47.35, -37.50, 
+                -35.19, -31.82, -27.48, -22.30, -16.44, -10.09, 
+                 -3.43,   3.34,  10.00,   3.34,  -3.43, -10.09, 
+                -16.44, -22.30, -27.48, -31.82, -35.19, -37.50 *
+ 1  *  YBADJ =   34.47,  32.89,  30.31,  26.81,  22.50,  17.50, 
+                 11.97,   6.08,   0.00,  -6.08, -11.97, -17.50, 
+                -22.50, -26.81, -30.31, -32.89, -34.47, -35.00, 
+                -34.47, -32.89, -30.31, -26.81, -22.50, -17.50, 
+                -11.97,  -6.08,   0.00,   6.08,  11.97,  17.50, 
+                 22.50,  26.81,  30.31,  32.89,  34.47,  35.00 *
+*END*
+
+
+--------
+
+    a
+     Building height, width, length, and X/Y offset from the source are treated
+     as a separate input subgroup for each source and therefore must end with
+     an input group terminator.  The X/Y offset is the position, relative to the
+     stack, of the center of the upwind face of the projected building, with the
+     x-axis pointing along the flow direction.
+
+---------------
+Subgroup (13d)
+---------------
+                                                      a
+          POINT SOURCE: EMISSION-RATE SCALING FACTORS
+          -------------------------------------------
+
+      Use this subgroup to identify temporal variations in the emission
+      rates given in 13b.  Factors assigned multiply the rates in 13b.
+      Skip sources here that have constant emissions.  For more elaborate
+      variation in source parameters, use PTEMARB.DAT and NPT2 > 0.
+
+      Sets of emission-rate scale factors are defined in Input Group 19, and
+      are referenced by the FACTORNAME.  Provide NSPT1 lines that identify the
+      emission-rate scale factor table for each source-species combination that
+      uses the scaling option.  Note that a scale-factor table can be used with
+      more than one source-species combination so a FACTORNAME can be repeated.
+
+
+  Source-               Source      Species      Scale-factor table
+  Species               Name   b    Name   c     Name        d
+   No.                 (SRCNAM)     (CSPEC)      (FACTORNAME)
+  ------               ------------ ------------ ---------------------
+
+
+--------
+    a
+     Assignment for each source-specie is treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     Source name must match one of the SRCNAM names defined in Input Group 13b
+    c
+     Species name must match one of the CSPEC names of emitted species defined in Input Group 3
+    d
+     Scale-factor name must match one of the FACTORNAME names defined in Input Group 19
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUPS: 14a, 14b, 14c, 14d -- Area source parameters
+--------------------------------
+
+---------------
+Subgroup (14a)
+---------------
+
+     Number of polygon area sources with
+     parameters specified below (NAR1)       No default  !  NAR1 =  0   !
+
+     Units used for area source
+     emissions below            (IARU)       Default: 1  !  IARU =   1  !
+           1 =        g/m**2/s
+           2 =       kg/m**2/hr
+           3 =       lb/m**2/hr
+           4 =     tons/m**2/yr
+           5 =     Odour Unit * m/s  (vol. flux/m**2 of odour compound)
+           6 =     Odour Unit * m/min
+           7 =     metric tons/m**2/yr
+           8 =     Bq/m**2/s  (Bq = becquerel = disintegrations/s)
+           9 =     GBq/m**2/yr 
+
+     Number of source-species
+     combinations with variable
+     emissions scaling factors
+     provided below in (14d)        (NSAR1) Default: 0  !  NSAR1 =  0  !
+
+     Number of buoyant polygon area sources
+     with variable location and emission
+     parameters (NAR2)                      No default  !  NAR2 =  0   !
+     (If NAR2 > 0, ALL parameter data for
+     these sources are read from the file: BAEMARB.DAT)
+
+!END!
+
+---------------
+Subgroup (14b)
+---------------
+                                     a
+          AREA SOURCE: CONSTANT DATA
+          ----------------------------
+                                                         b
+Source           Effect.    Base      Initial    Emission
+ No.             Height   Elevation   Sigma z     Rates
+                   (m)       (m)        (m)      
+-------          ------    ------     --------   ---------
+* SRCNAM = MASAYA2 *
+* X = 0, 520, 50, 0.004 *
+*END*
+
+--------
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     An emission rate must be entered for every pollutant modeled.
+     Enter emission rate of zero for secondary pollutants that are
+     modeled, but not emitted.  Units are specified by IARU 
+     (e.g. 1 for g/m**2/s).
+
+---------------
+Subgroup (14c)
+---------------
+
+           COORDINATES (km) FOR EACH VERTEX(4) OF EACH POLYGON
+           --------------------------------------------------------
+Source                                                               a
+ No.       Ordered list of X followed by list of Y, grouped by source
+------     ------------------------------------------------------------
+1 * SRCNAM = MASAYA2 *
+1 * XVERT = 590.495, 590.740, 590.702, 590.435*
+1 * YVERT = 1324.876, 1324.831, 1325.058, 1325.078*
+*END*
+
+--------
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+
+---------------
+Subgroup (14d)
+---------------
+                                                    a
+          AREA SOURCE: EMISSION-RATE SCALING FACTORS
+          -------------------------------------------
+
+      Use this subgroup to identify temporal variations in the emission
+      rates given in 14b.  Factors assigned multiply the rates in 14b.
+      Skip sources here that have constant emissions.  For more elaborate
+      variation in source parameters, use BAEMARB.DAT and NAR2 > 0.
+
+      Sets of emission-rate scale factors are defined in Input Group 19, and
+      are referenced by the FACTORNAME.  Provide NSAR1 lines that identify the
+      emission-rate scale factor table for each source-species combination that
+      uses the scaling option.  Note that a scale-factor table can be used with
+      more than one source-species combination so a FACTORNAME can be repeated.
+
+
+  Source-               Source      Species      Scale-factor table
+  Species               Name   b    Name   c     Name        d
+   No.                 (SRCNAM)     (CSPEC)      (FACTORNAME)
+  ------               ------------ ------------ ---------------------
+
+    1  * SCALEFACTOR  =   1,           SO2,       AREAS               *  *END*
+
+--------
+    a
+     Assignment for each source-specie is treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     Source name must match one of the SRCNAM names defined in Input Group 14b
+    c
+     Species name must match one of the CSPEC names of emitted species defined in Input Group 3
+    d
+     Scale-factor name must match one of the FACTORNAME names defined in Input Group 19
+
+
+-------------------------------------------------------------------------------
+
+INPUT GROUPS: 15a, 15b, 15c -- Line source parameters
+---------------------------
+
+---------------
+Subgroup (15a)
+---------------
+
+     Number of buoyant line sources
+     with variable location and emission
+     parameters (NLN2)                              No default  !  NLN2 =  0   !
+
+     (If NLN2 > 0, ALL parameter data for
+      these sources are read from the file: LNEMARB.DAT)
+
+     Number of buoyant line sources (NLINES)        No default   ! NLINES =  0  !
+
+     Units used for line source
+     emissions below                (ILNU)          Default: 1  !  ILNU =   1  !
+           1 =        g/s
+           2 =       kg/hr
+           3 =       lb/hr
+           4 =     tons/yr
+           5 =     Odour Unit * m**3/s  (vol. flux of odour compound)
+           6 =     Odour Unit * m**3/min
+           7 =     metric tons/yr
+           8 =     Bq/s  (Bq = becquerel = disintegrations/s)
+           9 =     GBq/yr 
+
+     Number of source-species
+     combinations with variable
+     emissions scaling factors
+     provided below in (15c)        (NSLN1)         Default: 0  !  NSLN1 =  0  !
+
+     Maximum number of segments used to model
+     each line (MXNSEG)                             Default: 7   ! MXNSEG =  7  !
+
+     The following variables are required only if NLINES > 0.  They are
+     used in the buoyant line source plume rise calculations.
+
+        Number of distances at which                Default: 6   ! NLRISE =  6  !
+        transitional rise is computed
+
+        Average building length (XL)                No default   ! XL = .0 !
+                                                    (in meters)
+
+        Average building height (HBL)               No default   ! HBL = .0 !
+                                                    (in meters)
+
+        Average building width (WBL)                No default   ! WBL = .0 !
+                                                    (in meters)
+
+        Average line source width (WML)             No default   ! WML = .0 !
+                                                    (in meters)
+
+        Average separation between buildings (DXL)  No default   ! DXL = .0 !
+                                                    (in meters)
+
+        Average buoyancy parameter (FPRIMEL)        No default   ! FPRIMEL = .0 !
+                                                    (in m**4/s**3)
+
+!END!
+
+---------------
+Subgroup (15b)
+---------------
+
+          BUOYANT LINE SOURCE: CONSTANT DATA
+          ----------------------------------
+                                                                                          a
+Source     Beg. X      Beg. Y      End. X    End. Y     Release    Base        Emission
+ No.     Coordinate  Coordinate  Coordinate Coordinate  Height    Elevation      Rates
+            (km)        (km)        (km)       (km)       (m)       (m)          
+------   ----------  ----------  ---------  ----------  -------   ---------    ---------
+
+--------
+
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+    b
+     An emission rate must be entered for every pollutant modeled.
+     Enter emission rate of zero for secondary pollutants that are
+     modeled, but not emitted.  Units are specified by ILNTU 
+     (e.g. 1 for g/s).
+
+---------------
+Subgroup (15c)
+---------------
+                                                            a
+          BUOYANT LINE SOURCE: EMISSION-RATE SCALING FACTORS
+          --------------------------------------------------
+
+      Use this subgroup to identify temporal variations in the emission
+      rates given in 15b.  Factors assigned multiply the rates in 15b.
+      Skip sources here that have constant emissions.  For more elaborate
+      variation in source parameters, use LNEMARB.DAT and NLN2 > 0.
+
+      Sets of emission-rate scale factors are defined in Input Group 19, and
+      are referenced by the FACTORNAME.  Provide NSLN1 lines that identify the
+      emission-rate scale factor table for each source-species combination that
+      uses the scaling option.  Note that a scale-factor table can be used with
+      more than one source-species combination so a FACTORNAME can be repeated.
+
+
+  Source-               Source      Species      Scale-factor table
+  Species               Name   b    Name   c     Name        d
+   No.                 (SRCNAM)     (CSPEC)      (FACTORNAME)
+  ------               ------------ ------------ ---------------------
+
+    1  * SCALEFACTOR  =   1,           SO2,       LINES               *  *END*
+
+--------
+    a
+     Assignment for each source-specie is treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     Source name must match one of the SRCNAM names defined in Input Group 15b
+    c
+     Species name must match one of the CSPEC names of emitted species defined in Input Group 3
+    d
+     Scale-factor name must match one of the FACTORNAME names defined in Input Group 19
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUPS: 16a, 16b, 16c -- Volume source parameters
+---------------------------
+
+---------------
+Subgroup (16a)
+---------------
+
+     Number of volume sources with
+     parameters provided in 16b,c (NVL1)     No default  !  NVL1 =  0   !
+
+     Units used for volume source
+     emissions below in 16b       (IVLU)     Default: 1  !  IVLU =   1  !
+           1 =        g/s
+           2 =       kg/hr
+           3 =       lb/hr
+           4 =     tons/yr
+           5 =     Odour Unit * m**3/s  (vol. flux of odour compound)
+           6 =     Odour Unit * m**3/min
+           7 =     metric tons/yr
+           8 =     Bq/s  (Bq = becquerel = disintegrations/s)
+           9 =     GBq/yr 
+
+     Number of source-species
+     combinations with variable
+     emissions scaling factors
+     provided below in (16c)      (NSVL1)    Default: 0  !  NSVL1 =  0  !
+
+     Number of volume sources with
+     variable location and emission
+     parameters                   (NVL2)     No default  !  NVL2 =   0   !
+
+     (If NVL2 > 0, ALL parameter data for
+      these sources are read from the VOLEMARB.DAT file(s) )
+
+!END!
+
+---------------
+Subgroup (16b)
+---------------
+                                        a
+           VOLUME SOURCE: CONSTANT DATA
+           ------------------------------
+                                                                                      b
+Source         X           Y        Effect.    Base     Initial    Initial    Emission
+ No.       Coordinate  Coordinate   Height   Elevation  Sigma y    Sigma z     Rates
+              (km)       (km)         (m)       (m)        (m)       (m)      
+------     ----------  ----------   ------    ------    --------   --------   --------
+
+--------
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+    b
+     An emission rate must be entered for every pollutant modeled.
+     Enter emission rate of zero for secondary pollutants that are
+     modeled, but not emitted.  Units are specified by IVLU 
+     (e.g. 1 for g/s).
+
+---------------
+Subgroup (16c)
+---------------
+                                                      a
+          VOLUME SOURCE: EMISSION-RATE SCALING FACTORS
+          --------------------------------------------
+
+      Use this subgroup to identify temporal variations in the emission
+      rates given in 16b.  Factors assigned multiply the rates in 16b.
+      Skip sources here that have constant emissions.  For more elaborate
+      variation in source parameters, use VOLEMARB.DAT and NVL2 > 0.
+
+      Sets of emission-rate scale factors are defined in Input Group 19, and
+      are referenced by the FACTORNAME.  Provide NSVL1 lines that identify the
+      emission-rate scale factor table for each source-species combination that
+      uses the scaling option.  Note that a scale-factor table can be used with
+      more than one source-species combination so a FACTORNAME can be repeated.
+
+
+  Source-               Source      Species      Scale-factor table
+  Species               Name   b    Name   c     Name        d
+   No.                 (SRCNAM)     (CSPEC)      (FACTORNAME)
+  ------               ------------ ------------ ---------------------
+
+    1  * SCALEFACTOR  =   1,           SO2,       VOLS_SO2           *  *END*
+
+--------
+    a
+     Assignment for each source-specie is treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     Source name must match one of the SRCNAM names defined in Input Group 16b
+    c
+     Species name must match one of the CSPEC names of emitted species defined in Input Group 3
+    d
+     Scale-factor name must match one of the FACTORNAME names defined in Input Group 19
+
+
+-------------------------------------------------------------------------------
+
+INPUT GROUP: 17  -- FLARE source control parameters (variable emissions file)
+---------------
+
+     Number of flare sources defined in FLEMARB.DAT file(s)
+     (NFL2)                                Default: 0     !  NFL2    =  0 !
+
+     (At least 1 FLEMARB.DAT file is needed if NFL2 > 0)
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUPS: 18a, 18b, 18c -- Road Emissions parameters
+---------------------------
+
+---------------
+Subgroup (18a)
+---------------
+
+     Emissions from roads are generated from individual line segments defined
+     by a sequence of coordinates provided for each road-link.  Each link
+     is entered as a discrete source and is defined as a section of the road
+     for which emissions are uniform.
+
+     A long, winding isolated road might be characterized by a single link made
+     up of many coordinate triples (x,y,z) that describe its pathway.  These
+     points should be sufficient to resolve curves, but need not have uniform
+     spacing.  For example, a straight flat segment can be defined by 2 points,
+     regardless of the distance covered.  Long line segments are automatically
+     divided further within the model into segments that are limited by the
+     grid-cell boundaries (no segment may extend across multiple cells).
+     One emission rate (g/m/s) for each species is used for the entire road.
+
+     Near a congested intersection, many short links may be required to resolve
+     the spatial and temporal distribution of emissions.  Each is entered and
+     modeled as a discrete source.
+
+     Number of road-links with emission parameters
+     provided in Subgroup 18b (NRD1)      No default      !  NRD1 =  0   !
+
+     Number of road-links with arbitrarily time-varying
+     emission parameters (NRD2)           No default      !  NRD2 =  0   !
+     (If NRD2 > 0, ALL variable road data
+     are read from the file: RDEMARB.DAT)
+
+
+     Emissions from one or more of the roads presented in Subgroup 18b
+     may vary over time-based cycles or by meteorology.  This variability
+     is modeled by applying an emission-rate scale factor specified for
+     particular road links and species in Subgroup 18c.
+
+     Number of road links and species combinations
+     with variable emission-rate scale-factors
+     (NSFRDS)                             Default: 0      !  NSFRDS =  0   !
+
+!END!
+
+---------------
+Subgroup (18b)
+---------------
+                                                                a
+      DATA FOR ROADS WITH CONSTANT OR SCALED EMISSION PARAMETERS
+      -----------------------------------------------------------
+                                                               b
+Road                   Effect.   Initial    Initial    Emission
+ No.                   Height    Sigma z    Sigma y     Rates
+                       (mAGL)      (m)        (m)      (g/s/m)
+-------                ------    ------     --------   ---------
+            c
+ 1   *SRCNAM   = MAIN_ST_32 *
+ 1   *     X   =        2.0,       3.0,       4.2,       0.1  *   *END*
+
+ 2   *SRCNAM   = CENTRAL *
+ 2   *     X   =        1.0,       1.5,       3.5,       0.03 *   *END*
+
+--------
+    a
+     Data for each of the NRD1 roads are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     NSPEC Emission rates must be entered (one for every pollutant modeled).
+     Enter emission rate of zero for secondary pollutants.
+    c
+     Road-source names are entered without spaces, and may be 16 characters long.
+
+
+---------------
+Subgroup (18c)
+---------------
+                                   a
+      EMISSION-RATE SCALING FACTORS
+      ------------------------------
+
+      Use this subgroup to identify temporal variations in the emission
+      rates given in 18b.  Factors assigned multiply the rates in 18b.
+      Skip sources here that have constant emissions.  For more elaborate
+      variation in source parameters, use RDEMARB.DAT and NRD2 > 0.
+
+      Sets of emission-rate scale factors are defined in Input Group 19, and
+      are referenced by the FACTORNAME.  Provide NSFRDS lines that identify the
+      emission-rate scale factor table for each source-species combination that
+      uses the scaling option.  Note that a scale-factor table can be used with
+      more than one source-species combination so a FACTORNAME can be repeated.
+
+
+  Source-               Source      Species      Scale-factor table
+  Species               Name   b    Name   c     Name        d
+   No.                 (SRCNAM)     (CSPEC)      (FACTORNAME)
+  ------               ------------ ------------ ---------------------
+
+    1  * SCALEFACTOR  =   1,         PM2.5,      MAJOR_HIGHWAY_004     *  *END*
+
+--------
+    a
+     Assignment for each source-specie is treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     Source name must match one of the SRCNAM names defined in Input Group 18b
+    c
+     Species name must match one of the CSPEC names of emitted species defined in Input Group 3
+    d
+     Scale-factor name must match one of the FACTORNAME names defined in Input Group 19
+
+---------------
+Subgroup (18d)
+---------------
+                                          a
+           COORDINATES FOR EACH NAMED ROAD
+           -------------------------------
+
+                    X           Y         Ground
+Coordinate      Coordinate  Coordinate   Elevation
+ No.               (km)       (km)          (m)
+----------      ----------  ----------   ---------
+
+ *SRCNAM    = MAIN_ST_32 *
+ *NPTROAD   = 8          *
+ *END*
+ 1    * XYZ =       0.000,     0.500,      0.000   *   *END*
+ 2    * XYZ =       0.087,     0.492,      0.000   *   *END*
+ 3    * XYZ =       0.171,     0.470,      0.000   *   *END*
+ 4    * XYZ =       0.250,     0.433,      0.000   *   *END*
+ 5    * XYZ =       0.321,     0.383,      0.000   *   *END*
+ 6    * XYZ =       0.383,     0.321,      0.000   *   *END*
+ 7    * XYZ =       0.433,     0.250,      0.000   *   *END*
+ 8    * XYZ =       0.470,     0.171,      0.000   *   *END*
+
+ *SRCNAM    = CENTRAL *
+ *NPTROAD   = 4       *
+ *END*
+ 1    * XYZ =       1.000,    -0.500,      0.000   *   *END*
+ 2    * XYZ =       1.021,    -0.400,      0.000   *   *END*
+ 3    * XYZ =       1.370,     0.400,      0.000   *   *END*
+ 4    * XYZ =       1.750,     0.503,      0.000   *   *END*
+
+--------
+    a
+     Each line of coordinates is treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUPS: 19a, 19b -- Emission rate scale-factor tables
+----------------------
+
+     Use this group to enter variation factors applied to emission rates for any
+     source-specie combinations that use this feature.  The tables of emission-rate
+     scale factors are referenced by the name assigned to FACTORNAME.  These names
+     do not need to include specific source or species names used in the simulation,
+     particularly if one factor table is used for many types of sources and species,
+     but should be descriptive.  But if a factor table applies to just one source,
+     the reference name for it should generally contain that source-name.
+     FACTORNAME must NOT include spaces.
+
+     The FACTORTYPE for each table must be one of the following:
+
+         CONSTANT1          1   scaling factor
+         MONTH12            12  scaling factors: months 1-12
+         DAY7               7   scaling factors: days 1-7
+                            [SUNDAY,MONDAY, ... FRIDAY,SATURDAY]    
+         HOUR24             24  scaling factors: hours 1-24
+         HOUR24_DAY7        168 scaling factors: hours 1-24,
+                              repeated  7 times: SUNDAY, MONDAY, ... SATURDAY
+         HOUR24_MONTH12     288 scaling factors: hours 1-24,
+                              repeated 12 times: months 1-12
+         WSP6               6   scaling factors: wind speed classes 1-6
+                            [speed classes (WSCAT) defined in Group 12]
+         WSP6_PGCLASS6      36  scaling factors: wind speed classes 1-6
+                              repeated  6 times: PG classes A,B,C,D,E,F
+                            [speed classes (WSCAT) defined in Group 12]
+         TEMPERATURE12      12  scaling factors: temperature classes 1-12
+                            [temperature classes (TKCAT) defined in Group 12]
+
+     The number of tables defined may exceed the number of tables referenced in the
+     input groups for each source type above (for convenience), but tables for all
+     FACTORNAME names referenced must be present here.
+
+---------------
+Subgroup (19a)
+---------------
+
+     Number of Emission Scale-Factor
+     tables                        (NSFTAB) Default: 0  !  NSFTAB =  3  !
+
+     !END!
+
+
+---------------
+Subgroup (19b)
+---------------
+                                                          a,b,c
+     Enter factors for NSFTAB Emission Scale-Factor tables
+
+
+ 1   !FACTORNAME    = POINTS1         !
+ 1   !FACTORTYPE    = HOUR24_DAY7     !
+ 1   !FACTORTABLE   = 1.01, 1.02, 1.03, 1.04, 1.05, 1.06,    1.07, 1.08, 1.09, 1.10, 1.11, 1.12,
+                      1.13, 1.14, 1.15, 1.16, 1.17, 1.18,    1.19, 1.20, 1.21, 1.22, 1.23, 1.24,
+
+                      2.01, 2.02, 2.03, 2.04, 2.05, 2.06,    2.07, 2.08, 2.09, 2.10, 2.11, 2.12,
+                      2.13, 2.14, 2.15, 2.16, 2.17, 2.18,    2.19, 2.20, 2.21, 2.22, 2.23, 2.24,
+
+                      3.01, 3.02, 3.03, 3.04, 3.05, 3.06,    3.07, 3.08, 3.09, 3.10, 3.11, 3.12,
+                      3.13, 3.14, 3.15, 3.16, 3.17, 3.18,    3.19, 3.20, 3.21, 3.22, 3.23, 3.24,
+                                                                                            
+                      4.01, 4.02, 4.03, 4.04, 4.05, 4.06,    4.07, 4.08, 4.09, 4.10, 4.11, 4.12,
+                      4.13, 4.14, 4.15, 4.16, 4.17, 4.18,    4.19, 4.20, 4.21, 4.22, 4.23, 4.24,
+                                                                                            
+                      5.01, 5.02, 5.03, 5.04, 5.05, 5.06,    5.07, 5.08, 5.09, 5.10, 5.11, 5.12,
+                      5.13, 5.14, 5.15, 5.16, 5.17, 5.18,    5.19, 5.20, 5.21, 5.22, 5.23, 5.24,
+                                                                                            
+                      6.01, 6.02, 6.03, 6.04, 6.05, 6.06,    6.07, 6.08, 6.09, 6.10, 6.11, 6.12,
+                      6.13, 6.14, 6.15, 6.16, 6.17, 6.18,    6.19, 6.20, 6.21, 6.22, 6.23, 6.24,
+                                                                                            
+                      7.01, 7.02, 7.03, 7.04, 7.05, 7.06,    7.07, 7.08, 7.09, 7.10, 7.11, 7.12,
+                      7.13, 7.14, 7.15, 7.16, 7.17, 7.18,    7.19, 7.20, 7.21, 7.22, 7.23, 7.24!
+ 1   !END!
+
+
+ 2   !FACTORNAME    = MONTHLY_HEATING   !
+ 2   !FACTORTYPE    = MONTH12         !
+ 2   !FACTORTABLE   = 10.1, 10.2, 10.3, 6.4, 6.5, 1.06, 1.07, 1.08, 5.09, 6.10, 10.11, 10.12  !
+ 2   !END!
+
+
+ 3   !FACTORNAME    = POINTS_DIURNAL  !
+ 3   !FACTORTYPE    = HOUR24          !
+ 3   !FACTORTABLE   = 1.01, 1.02, 1.03, 2.04, 2.05, 2.06, 3.07, 3.08, 3.09, 3.10, 4.11, 4.12,  
+                      4.13, 4.14, 4.15, 4.16, 4.17, 4.18, 1.19, 1.20, 1.21, 1.22, 1.23, 1.24 !
+ 3   !END!
+
+
+--------
+    a
+     Assignments for each table are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     FACTORNAME must be no longer than 40 characters
+    c
+     Spaces are NOT allowed in any FACTORNAME or FACTORTYPE assignment,
+     and the names are NOT case-sensitive
+
+
+
+-------------------------------------------------------------------------------
+
+INPUT GROUPS: 20a, 20b, 20c -- Non-gridded (discrete) receptor information
+---------------------------
+
+---------------
+Subgroup (20a)
+---------------
+
+     Number of non-gridded receptors (NREC)  No default  !  NREC =  1000   !
+
+
+     Group names can be used to assign receptor locations in
+     Subgroup 20c and thereby provide an identification that
+     can be referenced when postprocessing receptors.  The
+     default assignment name X is used when NRGRP = 0.
+
+     Number of receptor group names (NRGRP)  Default: 0  !  NRGRP =  0   !
+
+!END!
+
+---------------
+Subgroup (20b)
+---------------
+
+     Provide a name for each receptor group if NRGRP>0.
+     Enter NRGRP lines.
+                      a,b
+            Group Name
+            ----------
+
+
+-------------
+    a
+     Each group name provided is treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     Receptor group names must not include blanks.
+
+
+---------------
+Subgroup (20c)
+---------------
+                                               a
+           NON-GRIDDED (DISCRETE) RECEPTOR DATA
+           ------------------------------------
+
+              c           X            Y          Ground        Height   b
+Receptor Group        Coordinate   Coordinate    Elevation   Above Ground
+  No.    Name            (km)         (km)          (m)           (m)
+-------- -----        ----------   ----------    ---------   ------------
+     1!X=     598.36401,    1324.56104,     237.00000,       10.000!  !END!
+     2!X=     598.36401,    1324.56104,     237.00000,       20.000!  !END!
+     3!X=     598.36401,    1324.56104,     237.00000,       30.000!  !END!
+     4!X=     598.36401,    1324.56104,     237.00000,       40.000!  !END!
+     5!X=     598.36401,    1324.56104,     237.00000,       50.000!  !END!
+     6!X=     598.36401,    1324.56104,     237.00000,       60.000!  !END!
+     7!X=     598.36401,    1324.56104,     237.00000,       70.000!  !END!
+     8!X=     598.36401,    1324.56104,     237.00000,       80.000!  !END!
+     9!X=     598.36401,    1324.56104,     237.00000,       90.000!  !END!
+    10!X=     598.36401,    1324.56104,     237.00000,      100.000!  !END!
+    11!X=     598.36401,    1324.56104,     237.00000,      110.000!  !END!
+    12!X=     598.36401,    1324.56104,     237.00000,      120.000!  !END!
+    13!X=     598.36401,    1324.56104,     237.00000,      130.000!  !END!
+    14!X=     598.36401,    1324.56104,     237.00000,      140.000!  !END!
+    15!X=     598.36401,    1324.56104,     237.00000,      150.000!  !END!
+    16!X=     598.36401,    1324.56104,     237.00000,      160.000!  !END!
+    17!X=     598.36401,    1324.56104,     237.00000,      170.000!  !END!
+    18!X=     598.36401,    1324.56104,     237.00000,      180.000!  !END!
+    19!X=     598.36401,    1324.56104,     237.00000,      190.000!  !END!
+    20!X=     598.36401,    1324.56104,     237.00000,      200.000!  !END!
+    21!X=     598.36401,    1324.56104,     237.00000,      210.000!  !END!
+    22!X=     598.36401,    1324.56104,     237.00000,      220.000!  !END!
+    23!X=     598.36401,    1324.56104,     237.00000,      230.000!  !END!
+    24!X=     598.36401,    1324.56104,     237.00000,      240.000!  !END!
+    25!X=     598.36401,    1324.56104,     237.00000,      250.000!  !END!
+    26!X=     598.36401,    1324.56104,     237.00000,      260.000!  !END!
+    27!X=     598.36401,    1324.56104,     237.00000,      270.000!  !END!
+    28!X=     598.36401,    1324.56104,     237.00000,      280.000!  !END!
+    29!X=     598.36401,    1324.56104,     237.00000,      290.000!  !END!
+    30!X=     598.36401,    1324.56104,     237.00000,      300.000!  !END!
+    31!X=     598.36401,    1324.56104,     237.00000,      310.000!  !END!
+    32!X=     598.36401,    1324.56104,     237.00000,      320.000!  !END!
+    33!X=     598.36401,    1324.56104,     237.00000,      330.000!  !END!
+    34!X=     598.36401,    1324.56104,     237.00000,      340.000!  !END!
+    35!X=     598.36401,    1324.56104,     237.00000,      350.000!  !END!
+    36!X=     598.36401,    1324.56104,     237.00000,      360.000!  !END!
+    37!X=     598.36401,    1324.56104,     237.00000,      370.000!  !END!
+    38!X=     598.36401,    1324.56104,     237.00000,      380.000!  !END!
+    39!X=     598.36401,    1324.56104,     237.00000,      390.000!  !END!
+    40!X=     598.36401,    1324.56104,     237.00000,      400.000!  !END!
+    41!X=     598.36401,    1324.56104,     237.00000,      410.000!  !END!
+    42!X=     598.36401,    1324.56104,     237.00000,      420.000!  !END!
+    43!X=     598.36401,    1324.56104,     237.00000,      430.000!  !END!
+    44!X=     598.36401,    1324.56104,     237.00000,      440.000!  !END!
+    45!X=     598.36401,    1324.56104,     237.00000,      450.000!  !END!
+    46!X=     598.36401,    1324.56104,     237.00000,      460.000!  !END!
+    47!X=     598.36401,    1324.56104,     237.00000,      470.000!  !END!
+    48!X=     598.36401,    1324.56104,     237.00000,      480.000!  !END!
+    49!X=     598.36401,    1324.56104,     237.00000,      490.000!  !END!
+    50!X=     598.36401,    1324.56104,     237.00000,      500.000!  !END!
+    51!X=     598.36401,    1324.56104,     237.00000,      510.000!  !END!
+    52!X=     598.36401,    1324.56104,     237.00000,      520.000!  !END!
+    53!X=     598.36401,    1324.56104,     237.00000,      530.000!  !END!
+    54!X=     598.36401,    1324.56104,     237.00000,      540.000!  !END!
+    55!X=     598.36401,    1324.56104,     237.00000,      550.000!  !END!
+    56!X=     598.36401,    1324.56104,     237.00000,      560.000!  !END!
+    57!X=     598.36401,    1324.56104,     237.00000,      570.000!  !END!
+    58!X=     598.36401,    1324.56104,     237.00000,      580.000!  !END!
+    59!X=     598.36401,    1324.56104,     237.00000,      590.000!  !END!
+    60!X=     598.36401,    1324.56104,     237.00000,      600.000!  !END!
+    61!X=     598.36401,    1324.56104,     237.00000,      610.000!  !END!
+    62!X=     598.36401,    1324.56104,     237.00000,      620.000!  !END!
+    63!X=     598.36401,    1324.56104,     237.00000,      630.000!  !END!
+    64!X=     598.36401,    1324.56104,     237.00000,      640.000!  !END!
+    65!X=     598.36401,    1324.56104,     237.00000,      650.000!  !END!
+    66!X=     598.36401,    1324.56104,     237.00000,      660.000!  !END!
+    67!X=     598.36401,    1324.56104,     237.00000,      670.000!  !END!
+    68!X=     598.36401,    1324.56104,     237.00000,      680.000!  !END!
+    69!X=     598.36401,    1324.56104,     237.00000,      690.000!  !END!
+    70!X=     598.36401,    1324.56104,     237.00000,      700.000!  !END!
+    71!X=     598.36401,    1324.56104,     237.00000,      710.000!  !END!
+    72!X=     598.36401,    1324.56104,     237.00000,      720.000!  !END!
+    73!X=     598.36401,    1324.56104,     237.00000,      730.000!  !END!
+    74!X=     598.36401,    1324.56104,     237.00000,      740.000!  !END!
+    75!X=     598.36401,    1324.56104,     237.00000,      750.000!  !END!
+    76!X=     598.36401,    1324.56104,     237.00000,      760.000!  !END!
+    77!X=     598.36401,    1324.56104,     237.00000,      770.000!  !END!
+    78!X=     598.36401,    1324.56104,     237.00000,      780.000!  !END!
+    79!X=     598.36401,    1324.56104,     237.00000,      790.000!  !END!
+    80!X=     598.36401,    1324.56104,     237.00000,      800.000!  !END!
+    81!X=     598.36401,    1324.56104,     237.00000,      810.000!  !END!
+    82!X=     598.36401,    1324.56104,     237.00000,      820.000!  !END!
+    83!X=     598.36401,    1324.56104,     237.00000,      830.000!  !END!
+    84!X=     598.36401,    1324.56104,     237.00000,      840.000!  !END!
+    85!X=     598.36401,    1324.56104,     237.00000,      850.000!  !END!
+    86!X=     598.36401,    1324.56104,     237.00000,      860.000!  !END!
+    87!X=     598.36401,    1324.56104,     237.00000,      870.000!  !END!
+    88!X=     598.36401,    1324.56104,     237.00000,      880.000!  !END!
+    89!X=     598.36401,    1324.56104,     237.00000,      890.000!  !END!
+    90!X=     598.36401,    1324.56104,     237.00000,      900.000!  !END!
+    91!X=     598.36401,    1324.56104,     237.00000,      910.000!  !END!
+    92!X=     598.36401,    1324.56104,     237.00000,      920.000!  !END!
+    93!X=     598.36401,    1324.56104,     237.00000,      930.000!  !END!
+    94!X=     598.36401,    1324.56104,     237.00000,      940.000!  !END!
+    95!X=     598.36401,    1324.56104,     237.00000,      950.000!  !END!
+    96!X=     598.36401,    1324.56104,     237.00000,      960.000!  !END!
+    97!X=     598.36401,    1324.56104,     237.00000,      970.000!  !END!
+    98!X=     598.36401,    1324.56104,     237.00000,      980.000!  !END!
+    99!X=     598.36401,    1324.56104,     237.00000,      990.000!  !END!
+   100!X=     598.36401,    1324.56104,     237.00000,     1000.000!  !END!
+   101!X=     598.36401,    1324.56104,     237.00000,     1010.000!  !END!
+   102!X=     598.36401,    1324.56104,     237.00000,     1020.000!  !END!
+   103!X=     598.36401,    1324.56104,     237.00000,     1030.000!  !END!
+   104!X=     598.36401,    1324.56104,     237.00000,     1040.000!  !END!
+   105!X=     598.36401,    1324.56104,     237.00000,     1050.000!  !END!
+   106!X=     598.36401,    1324.56104,     237.00000,     1060.000!  !END!
+   107!X=     598.36401,    1324.56104,     237.00000,     1070.000!  !END!
+   108!X=     598.36401,    1324.56104,     237.00000,     1080.000!  !END!
+   109!X=     598.36401,    1324.56104,     237.00000,     1090.000!  !END!
+   110!X=     598.36401,    1324.56104,     237.00000,     1100.000!  !END!
+   111!X=     598.36401,    1324.56104,     237.00000,     1110.000!  !END!
+   112!X=     598.36401,    1324.56104,     237.00000,     1120.000!  !END!
+   113!X=     598.36401,    1324.56104,     237.00000,     1130.000!  !END!
+   114!X=     598.36401,    1324.56104,     237.00000,     1140.000!  !END!
+   115!X=     598.36401,    1324.56104,     237.00000,     1150.000!  !END!
+   116!X=     598.36401,    1324.56104,     237.00000,     1160.000!  !END!
+   117!X=     598.36401,    1324.56104,     237.00000,     1170.000!  !END!
+   118!X=     598.36401,    1324.56104,     237.00000,     1180.000!  !END!
+   119!X=     598.36401,    1324.56104,     237.00000,     1190.000!  !END!
+   120!X=     598.36401,    1324.56104,     237.00000,     1200.000!  !END!
+   121!X=     598.36401,    1324.56104,     237.00000,     1210.000!  !END!
+   122!X=     598.36401,    1324.56104,     237.00000,     1220.000!  !END!
+   123!X=     598.36401,    1324.56104,     237.00000,     1230.000!  !END!
+   124!X=     598.36401,    1324.56104,     237.00000,     1240.000!  !END!
+   125!X=     598.36401,    1324.56104,     237.00000,     1250.000!  !END!
+   126!X=     598.36401,    1324.56104,     237.00000,     1260.000!  !END!
+   127!X=     598.36401,    1324.56104,     237.00000,     1270.000!  !END!
+   128!X=     598.36401,    1324.56104,     237.00000,     1280.000!  !END!
+   129!X=     598.36401,    1324.56104,     237.00000,     1290.000!  !END!
+   130!X=     598.36401,    1324.56104,     237.00000,     1300.000!  !END!
+   131!X=     598.36401,    1324.56104,     237.00000,     1310.000!  !END!
+   132!X=     598.36401,    1324.56104,     237.00000,     1320.000!  !END!
+   133!X=     598.36401,    1324.56104,     237.00000,     1330.000!  !END!
+   134!X=     598.36401,    1324.56104,     237.00000,     1340.000!  !END!
+   135!X=     598.36401,    1324.56104,     237.00000,     1350.000!  !END!
+   136!X=     598.36401,    1324.56104,     237.00000,     1360.000!  !END!
+   137!X=     598.36401,    1324.56104,     237.00000,     1370.000!  !END!
+   138!X=     598.36401,    1324.56104,     237.00000,     1380.000!  !END!
+   139!X=     598.36401,    1324.56104,     237.00000,     1390.000!  !END!
+   140!X=     598.36401,    1324.56104,     237.00000,     1400.000!  !END!
+   141!X=     598.36401,    1324.56104,     237.00000,     1410.000!  !END!
+   142!X=     598.36401,    1324.56104,     237.00000,     1420.000!  !END!
+   143!X=     598.36401,    1324.56104,     237.00000,     1430.000!  !END!
+   144!X=     598.36401,    1324.56104,     237.00000,     1440.000!  !END!
+   145!X=     598.36401,    1324.56104,     237.00000,     1450.000!  !END!
+   146!X=     598.36401,    1324.56104,     237.00000,     1460.000!  !END!
+   147!X=     598.36401,    1324.56104,     237.00000,     1470.000!  !END!
+   148!X=     598.36401,    1324.56104,     237.00000,     1480.000!  !END!
+   149!X=     598.36401,    1324.56104,     237.00000,     1490.000!  !END!
+   150!X=     598.36401,    1324.56104,     237.00000,     1500.000!  !END!
+   151!X=     598.36401,    1324.56104,     237.00000,     1510.000!  !END!
+   152!X=     598.36401,    1324.56104,     237.00000,     1520.000!  !END!
+   153!X=     598.36401,    1324.56104,     237.00000,     1530.000!  !END!
+   154!X=     598.36401,    1324.56104,     237.00000,     1540.000!  !END!
+   155!X=     598.36401,    1324.56104,     237.00000,     1550.000!  !END!
+   156!X=     598.36401,    1324.56104,     237.00000,     1560.000!  !END!
+   157!X=     598.36401,    1324.56104,     237.00000,     1570.000!  !END!
+   158!X=     598.36401,    1324.56104,     237.00000,     1580.000!  !END!
+   159!X=     598.36401,    1324.56104,     237.00000,     1590.000!  !END!
+   160!X=     598.36401,    1324.56104,     237.00000,     1600.000!  !END!
+   161!X=     598.36401,    1324.56104,     237.00000,     1610.000!  !END!
+   162!X=     598.36401,    1324.56104,     237.00000,     1620.000!  !END!
+   163!X=     598.36401,    1324.56104,     237.00000,     1630.000!  !END!
+   164!X=     598.36401,    1324.56104,     237.00000,     1640.000!  !END!
+   165!X=     598.36401,    1324.56104,     237.00000,     1650.000!  !END!
+   166!X=     598.36401,    1324.56104,     237.00000,     1660.000!  !END!
+   167!X=     598.36401,    1324.56104,     237.00000,     1670.000!  !END!
+   168!X=     598.36401,    1324.56104,     237.00000,     1680.000!  !END!
+   169!X=     598.36401,    1324.56104,     237.00000,     1690.000!  !END!
+   170!X=     598.36401,    1324.56104,     237.00000,     1700.000!  !END!
+   171!X=     598.36401,    1324.56104,     237.00000,     1710.000!  !END!
+   172!X=     598.36401,    1324.56104,     237.00000,     1720.000!  !END!
+   173!X=     598.36401,    1324.56104,     237.00000,     1730.000!  !END!
+   174!X=     598.36401,    1324.56104,     237.00000,     1740.000!  !END!
+   175!X=     598.36401,    1324.56104,     237.00000,     1750.000!  !END!
+   176!X=     598.36401,    1324.56104,     237.00000,     1760.000!  !END!
+   177!X=     598.36401,    1324.56104,     237.00000,     1770.000!  !END!
+   178!X=     598.36401,    1324.56104,     237.00000,     1780.000!  !END!
+   179!X=     598.36401,    1324.56104,     237.00000,     1790.000!  !END!
+   180!X=     598.36401,    1324.56104,     237.00000,     1800.000!  !END!
+   181!X=     598.36401,    1324.56104,     237.00000,     1810.000!  !END!
+   182!X=     598.36401,    1324.56104,     237.00000,     1820.000!  !END!
+   183!X=     598.36401,    1324.56104,     237.00000,     1830.000!  !END!
+   184!X=     598.36401,    1324.56104,     237.00000,     1840.000!  !END!
+   185!X=     598.36401,    1324.56104,     237.00000,     1850.000!  !END!
+   186!X=     598.36401,    1324.56104,     237.00000,     1860.000!  !END!
+   187!X=     598.36401,    1324.56104,     237.00000,     1870.000!  !END!
+   188!X=     598.36401,    1324.56104,     237.00000,     1880.000!  !END!
+   189!X=     598.36401,    1324.56104,     237.00000,     1890.000!  !END!
+   190!X=     598.36401,    1324.56104,     237.00000,     1900.000!  !END!
+   191!X=     598.36401,    1324.56104,     237.00000,     1910.000!  !END!
+   192!X=     598.36401,    1324.56104,     237.00000,     1920.000!  !END!
+   193!X=     598.36401,    1324.56104,     237.00000,     1930.000!  !END!
+   194!X=     598.36401,    1324.56104,     237.00000,     1940.000!  !END!
+   195!X=     598.36401,    1324.56104,     237.00000,     1950.000!  !END!
+   196!X=     598.36401,    1324.56104,     237.00000,     1960.000!  !END!
+   197!X=     598.36401,    1324.56104,     237.00000,     1970.000!  !END!
+   198!X=     598.36401,    1324.56104,     237.00000,     1980.000!  !END!
+   199!X=     598.36401,    1324.56104,     237.00000,     1990.000!  !END!
+   200!X=     598.36401,    1324.56104,     237.00000,     2000.000!  !END!
+   201!X=     603.23499,    1328.33606,     185.00000,       10.000!  !END!
+   202!X=     603.23499,    1328.33606,     185.00000,       20.000!  !END!
+   203!X=     603.23499,    1328.33606,     185.00000,       30.000!  !END!
+   204!X=     603.23499,    1328.33606,     185.00000,       40.000!  !END!
+   205!X=     603.23499,    1328.33606,     185.00000,       50.000!  !END!
+   206!X=     603.23499,    1328.33606,     185.00000,       60.000!  !END!
+   207!X=     603.23499,    1328.33606,     185.00000,       70.000!  !END!
+   208!X=     603.23499,    1328.33606,     185.00000,       80.000!  !END!
+   209!X=     603.23499,    1328.33606,     185.00000,       90.000!  !END!
+   210!X=     603.23499,    1328.33606,     185.00000,      100.000!  !END!
+   211!X=     603.23499,    1328.33606,     185.00000,      110.000!  !END!
+   212!X=     603.23499,    1328.33606,     185.00000,      120.000!  !END!
+   213!X=     603.23499,    1328.33606,     185.00000,      130.000!  !END!
+   214!X=     603.23499,    1328.33606,     185.00000,      140.000!  !END!
+   215!X=     603.23499,    1328.33606,     185.00000,      150.000!  !END!
+   216!X=     603.23499,    1328.33606,     185.00000,      160.000!  !END!
+   217!X=     603.23499,    1328.33606,     185.00000,      170.000!  !END!
+   218!X=     603.23499,    1328.33606,     185.00000,      180.000!  !END!
+   219!X=     603.23499,    1328.33606,     185.00000,      190.000!  !END!
+   220!X=     603.23499,    1328.33606,     185.00000,      200.000!  !END!
+   221!X=     603.23499,    1328.33606,     185.00000,      210.000!  !END!
+   222!X=     603.23499,    1328.33606,     185.00000,      220.000!  !END!
+   223!X=     603.23499,    1328.33606,     185.00000,      230.000!  !END!
+   224!X=     603.23499,    1328.33606,     185.00000,      240.000!  !END!
+   225!X=     603.23499,    1328.33606,     185.00000,      250.000!  !END!
+   226!X=     603.23499,    1328.33606,     185.00000,      260.000!  !END!
+   227!X=     603.23499,    1328.33606,     185.00000,      270.000!  !END!
+   228!X=     603.23499,    1328.33606,     185.00000,      280.000!  !END!
+   229!X=     603.23499,    1328.33606,     185.00000,      290.000!  !END!
+   230!X=     603.23499,    1328.33606,     185.00000,      300.000!  !END!
+   231!X=     603.23499,    1328.33606,     185.00000,      310.000!  !END!
+   232!X=     603.23499,    1328.33606,     185.00000,      320.000!  !END!
+   233!X=     603.23499,    1328.33606,     185.00000,      330.000!  !END!
+   234!X=     603.23499,    1328.33606,     185.00000,      340.000!  !END!
+   235!X=     603.23499,    1328.33606,     185.00000,      350.000!  !END!
+   236!X=     603.23499,    1328.33606,     185.00000,      360.000!  !END!
+   237!X=     603.23499,    1328.33606,     185.00000,      370.000!  !END!
+   238!X=     603.23499,    1328.33606,     185.00000,      380.000!  !END!
+   239!X=     603.23499,    1328.33606,     185.00000,      390.000!  !END!
+   240!X=     603.23499,    1328.33606,     185.00000,      400.000!  !END!
+   241!X=     603.23499,    1328.33606,     185.00000,      410.000!  !END!
+   242!X=     603.23499,    1328.33606,     185.00000,      420.000!  !END!
+   243!X=     603.23499,    1328.33606,     185.00000,      430.000!  !END!
+   244!X=     603.23499,    1328.33606,     185.00000,      440.000!  !END!
+   245!X=     603.23499,    1328.33606,     185.00000,      450.000!  !END!
+   246!X=     603.23499,    1328.33606,     185.00000,      460.000!  !END!
+   247!X=     603.23499,    1328.33606,     185.00000,      470.000!  !END!
+   248!X=     603.23499,    1328.33606,     185.00000,      480.000!  !END!
+   249!X=     603.23499,    1328.33606,     185.00000,      490.000!  !END!
+   250!X=     603.23499,    1328.33606,     185.00000,      500.000!  !END!
+   251!X=     603.23499,    1328.33606,     185.00000,      510.000!  !END!
+   252!X=     603.23499,    1328.33606,     185.00000,      520.000!  !END!
+   253!X=     603.23499,    1328.33606,     185.00000,      530.000!  !END!
+   254!X=     603.23499,    1328.33606,     185.00000,      540.000!  !END!
+   255!X=     603.23499,    1328.33606,     185.00000,      550.000!  !END!
+   256!X=     603.23499,    1328.33606,     185.00000,      560.000!  !END!
+   257!X=     603.23499,    1328.33606,     185.00000,      570.000!  !END!
+   258!X=     603.23499,    1328.33606,     185.00000,      580.000!  !END!
+   259!X=     603.23499,    1328.33606,     185.00000,      590.000!  !END!
+   260!X=     603.23499,    1328.33606,     185.00000,      600.000!  !END!
+   261!X=     603.23499,    1328.33606,     185.00000,      610.000!  !END!
+   262!X=     603.23499,    1328.33606,     185.00000,      620.000!  !END!
+   263!X=     603.23499,    1328.33606,     185.00000,      630.000!  !END!
+   264!X=     603.23499,    1328.33606,     185.00000,      640.000!  !END!
+   265!X=     603.23499,    1328.33606,     185.00000,      650.000!  !END!
+   266!X=     603.23499,    1328.33606,     185.00000,      660.000!  !END!
+   267!X=     603.23499,    1328.33606,     185.00000,      670.000!  !END!
+   268!X=     603.23499,    1328.33606,     185.00000,      680.000!  !END!
+   269!X=     603.23499,    1328.33606,     185.00000,      690.000!  !END!
+   270!X=     603.23499,    1328.33606,     185.00000,      700.000!  !END!
+   271!X=     603.23499,    1328.33606,     185.00000,      710.000!  !END!
+   272!X=     603.23499,    1328.33606,     185.00000,      720.000!  !END!
+   273!X=     603.23499,    1328.33606,     185.00000,      730.000!  !END!
+   274!X=     603.23499,    1328.33606,     185.00000,      740.000!  !END!
+   275!X=     603.23499,    1328.33606,     185.00000,      750.000!  !END!
+   276!X=     603.23499,    1328.33606,     185.00000,      760.000!  !END!
+   277!X=     603.23499,    1328.33606,     185.00000,      770.000!  !END!
+   278!X=     603.23499,    1328.33606,     185.00000,      780.000!  !END!
+   279!X=     603.23499,    1328.33606,     185.00000,      790.000!  !END!
+   280!X=     603.23499,    1328.33606,     185.00000,      800.000!  !END!
+   281!X=     603.23499,    1328.33606,     185.00000,      810.000!  !END!
+   282!X=     603.23499,    1328.33606,     185.00000,      820.000!  !END!
+   283!X=     603.23499,    1328.33606,     185.00000,      830.000!  !END!
+   284!X=     603.23499,    1328.33606,     185.00000,      840.000!  !END!
+   285!X=     603.23499,    1328.33606,     185.00000,      850.000!  !END!
+   286!X=     603.23499,    1328.33606,     185.00000,      860.000!  !END!
+   287!X=     603.23499,    1328.33606,     185.00000,      870.000!  !END!
+   288!X=     603.23499,    1328.33606,     185.00000,      880.000!  !END!
+   289!X=     603.23499,    1328.33606,     185.00000,      890.000!  !END!
+   290!X=     603.23499,    1328.33606,     185.00000,      900.000!  !END!
+   291!X=     603.23499,    1328.33606,     185.00000,      910.000!  !END!
+   292!X=     603.23499,    1328.33606,     185.00000,      920.000!  !END!
+   293!X=     603.23499,    1328.33606,     185.00000,      930.000!  !END!
+   294!X=     603.23499,    1328.33606,     185.00000,      940.000!  !END!
+   295!X=     603.23499,    1328.33606,     185.00000,      950.000!  !END!
+   296!X=     603.23499,    1328.33606,     185.00000,      960.000!  !END!
+   297!X=     603.23499,    1328.33606,     185.00000,      970.000!  !END!
+   298!X=     603.23499,    1328.33606,     185.00000,      980.000!  !END!
+   299!X=     603.23499,    1328.33606,     185.00000,      990.000!  !END!
+   300!X=     603.23499,    1328.33606,     185.00000,     1000.000!  !END!
+   301!X=     603.23499,    1328.33606,     185.00000,     1010.000!  !END!
+   302!X=     603.23499,    1328.33606,     185.00000,     1020.000!  !END!
+   303!X=     603.23499,    1328.33606,     185.00000,     1030.000!  !END!
+   304!X=     603.23499,    1328.33606,     185.00000,     1040.000!  !END!
+   305!X=     603.23499,    1328.33606,     185.00000,     1050.000!  !END!
+   306!X=     603.23499,    1328.33606,     185.00000,     1060.000!  !END!
+   307!X=     603.23499,    1328.33606,     185.00000,     1070.000!  !END!
+   308!X=     603.23499,    1328.33606,     185.00000,     1080.000!  !END!
+   309!X=     603.23499,    1328.33606,     185.00000,     1090.000!  !END!
+   310!X=     603.23499,    1328.33606,     185.00000,     1100.000!  !END!
+   311!X=     603.23499,    1328.33606,     185.00000,     1110.000!  !END!
+   312!X=     603.23499,    1328.33606,     185.00000,     1120.000!  !END!
+   313!X=     603.23499,    1328.33606,     185.00000,     1130.000!  !END!
+   314!X=     603.23499,    1328.33606,     185.00000,     1140.000!  !END!
+   315!X=     603.23499,    1328.33606,     185.00000,     1150.000!  !END!
+   316!X=     603.23499,    1328.33606,     185.00000,     1160.000!  !END!
+   317!X=     603.23499,    1328.33606,     185.00000,     1170.000!  !END!
+   318!X=     603.23499,    1328.33606,     185.00000,     1180.000!  !END!
+   319!X=     603.23499,    1328.33606,     185.00000,     1190.000!  !END!
+   320!X=     603.23499,    1328.33606,     185.00000,     1200.000!  !END!
+   321!X=     603.23499,    1328.33606,     185.00000,     1210.000!  !END!
+   322!X=     603.23499,    1328.33606,     185.00000,     1220.000!  !END!
+   323!X=     603.23499,    1328.33606,     185.00000,     1230.000!  !END!
+   324!X=     603.23499,    1328.33606,     185.00000,     1240.000!  !END!
+   325!X=     603.23499,    1328.33606,     185.00000,     1250.000!  !END!
+   326!X=     603.23499,    1328.33606,     185.00000,     1260.000!  !END!
+   327!X=     603.23499,    1328.33606,     185.00000,     1270.000!  !END!
+   328!X=     603.23499,    1328.33606,     185.00000,     1280.000!  !END!
+   329!X=     603.23499,    1328.33606,     185.00000,     1290.000!  !END!
+   330!X=     603.23499,    1328.33606,     185.00000,     1300.000!  !END!
+   331!X=     603.23499,    1328.33606,     185.00000,     1310.000!  !END!
+   332!X=     603.23499,    1328.33606,     185.00000,     1320.000!  !END!
+   333!X=     603.23499,    1328.33606,     185.00000,     1330.000!  !END!
+   334!X=     603.23499,    1328.33606,     185.00000,     1340.000!  !END!
+   335!X=     603.23499,    1328.33606,     185.00000,     1350.000!  !END!
+   336!X=     603.23499,    1328.33606,     185.00000,     1360.000!  !END!
+   337!X=     603.23499,    1328.33606,     185.00000,     1370.000!  !END!
+   338!X=     603.23499,    1328.33606,     185.00000,     1380.000!  !END!
+   339!X=     603.23499,    1328.33606,     185.00000,     1390.000!  !END!
+   340!X=     603.23499,    1328.33606,     185.00000,     1400.000!  !END!
+   341!X=     603.23499,    1328.33606,     185.00000,     1410.000!  !END!
+   342!X=     603.23499,    1328.33606,     185.00000,     1420.000!  !END!
+   343!X=     603.23499,    1328.33606,     185.00000,     1430.000!  !END!
+   344!X=     603.23499,    1328.33606,     185.00000,     1440.000!  !END!
+   345!X=     603.23499,    1328.33606,     185.00000,     1450.000!  !END!
+   346!X=     603.23499,    1328.33606,     185.00000,     1460.000!  !END!
+   347!X=     603.23499,    1328.33606,     185.00000,     1470.000!  !END!
+   348!X=     603.23499,    1328.33606,     185.00000,     1480.000!  !END!
+   349!X=     603.23499,    1328.33606,     185.00000,     1490.000!  !END!
+   350!X=     603.23499,    1328.33606,     185.00000,     1500.000!  !END!
+   351!X=     603.23499,    1328.33606,     185.00000,     1510.000!  !END!
+   352!X=     603.23499,    1328.33606,     185.00000,     1520.000!  !END!
+   353!X=     603.23499,    1328.33606,     185.00000,     1530.000!  !END!
+   354!X=     603.23499,    1328.33606,     185.00000,     1540.000!  !END!
+   355!X=     603.23499,    1328.33606,     185.00000,     1550.000!  !END!
+   356!X=     603.23499,    1328.33606,     185.00000,     1560.000!  !END!
+   357!X=     603.23499,    1328.33606,     185.00000,     1570.000!  !END!
+   358!X=     603.23499,    1328.33606,     185.00000,     1580.000!  !END!
+   359!X=     603.23499,    1328.33606,     185.00000,     1590.000!  !END!
+   360!X=     603.23499,    1328.33606,     185.00000,     1600.000!  !END!
+   361!X=     603.23499,    1328.33606,     185.00000,     1610.000!  !END!
+   362!X=     603.23499,    1328.33606,     185.00000,     1620.000!  !END!
+   363!X=     603.23499,    1328.33606,     185.00000,     1630.000!  !END!
+   364!X=     603.23499,    1328.33606,     185.00000,     1640.000!  !END!
+   365!X=     603.23499,    1328.33606,     185.00000,     1650.000!  !END!
+   366!X=     603.23499,    1328.33606,     185.00000,     1660.000!  !END!
+   367!X=     603.23499,    1328.33606,     185.00000,     1670.000!  !END!
+   368!X=     603.23499,    1328.33606,     185.00000,     1680.000!  !END!
+   369!X=     603.23499,    1328.33606,     185.00000,     1690.000!  !END!
+   370!X=     603.23499,    1328.33606,     185.00000,     1700.000!  !END!
+   371!X=     603.23499,    1328.33606,     185.00000,     1710.000!  !END!
+   372!X=     603.23499,    1328.33606,     185.00000,     1720.000!  !END!
+   373!X=     603.23499,    1328.33606,     185.00000,     1730.000!  !END!
+   374!X=     603.23499,    1328.33606,     185.00000,     1740.000!  !END!
+   375!X=     603.23499,    1328.33606,     185.00000,     1750.000!  !END!
+   376!X=     603.23499,    1328.33606,     185.00000,     1760.000!  !END!
+   377!X=     603.23499,    1328.33606,     185.00000,     1770.000!  !END!
+   378!X=     603.23499,    1328.33606,     185.00000,     1780.000!  !END!
+   379!X=     603.23499,    1328.33606,     185.00000,     1790.000!  !END!
+   380!X=     603.23499,    1328.33606,     185.00000,     1800.000!  !END!
+   381!X=     603.23499,    1328.33606,     185.00000,     1810.000!  !END!
+   382!X=     603.23499,    1328.33606,     185.00000,     1820.000!  !END!
+   383!X=     603.23499,    1328.33606,     185.00000,     1830.000!  !END!
+   384!X=     603.23499,    1328.33606,     185.00000,     1840.000!  !END!
+   385!X=     603.23499,    1328.33606,     185.00000,     1850.000!  !END!
+   386!X=     603.23499,    1328.33606,     185.00000,     1860.000!  !END!
+   387!X=     603.23499,    1328.33606,     185.00000,     1870.000!  !END!
+   388!X=     603.23499,    1328.33606,     185.00000,     1880.000!  !END!
+   389!X=     603.23499,    1328.33606,     185.00000,     1890.000!  !END!
+   390!X=     603.23499,    1328.33606,     185.00000,     1900.000!  !END!
+   391!X=     603.23499,    1328.33606,     185.00000,     1910.000!  !END!
+   392!X=     603.23499,    1328.33606,     185.00000,     1920.000!  !END!
+   393!X=     603.23499,    1328.33606,     185.00000,     1930.000!  !END!
+   394!X=     603.23499,    1328.33606,     185.00000,     1940.000!  !END!
+   395!X=     603.23499,    1328.33606,     185.00000,     1950.000!  !END!
+   396!X=     603.23499,    1328.33606,     185.00000,     1960.000!  !END!
+   397!X=     603.23499,    1328.33606,     185.00000,     1970.000!  !END!
+   398!X=     603.23499,    1328.33606,     185.00000,     1980.000!  !END!
+   399!X=     603.23499,    1328.33606,     185.00000,     1990.000!  !END!
+   400!X=     603.23499,    1328.33606,     185.00000,     2000.000!  !END!
+   401!X=     594.30402,    1325.75696,     201.00000,       10.000!  !END!
+   402!X=     594.30402,    1325.75696,     201.00000,       20.000!  !END!
+   403!X=     594.30402,    1325.75696,     201.00000,       30.000!  !END!
+   404!X=     594.30402,    1325.75696,     201.00000,       40.000!  !END!
+   405!X=     594.30402,    1325.75696,     201.00000,       50.000!  !END!
+   406!X=     594.30402,    1325.75696,     201.00000,       60.000!  !END!
+   407!X=     594.30402,    1325.75696,     201.00000,       70.000!  !END!
+   408!X=     594.30402,    1325.75696,     201.00000,       80.000!  !END!
+   409!X=     594.30402,    1325.75696,     201.00000,       90.000!  !END!
+   410!X=     594.30402,    1325.75696,     201.00000,      100.000!  !END!
+   411!X=     594.30402,    1325.75696,     201.00000,      110.000!  !END!
+   412!X=     594.30402,    1325.75696,     201.00000,      120.000!  !END!
+   413!X=     594.30402,    1325.75696,     201.00000,      130.000!  !END!
+   414!X=     594.30402,    1325.75696,     201.00000,      140.000!  !END!
+   415!X=     594.30402,    1325.75696,     201.00000,      150.000!  !END!
+   416!X=     594.30402,    1325.75696,     201.00000,      160.000!  !END!
+   417!X=     594.30402,    1325.75696,     201.00000,      170.000!  !END!
+   418!X=     594.30402,    1325.75696,     201.00000,      180.000!  !END!
+   419!X=     594.30402,    1325.75696,     201.00000,      190.000!  !END!
+   420!X=     594.30402,    1325.75696,     201.00000,      200.000!  !END!
+   421!X=     594.30402,    1325.75696,     201.00000,      210.000!  !END!
+   422!X=     594.30402,    1325.75696,     201.00000,      220.000!  !END!
+   423!X=     594.30402,    1325.75696,     201.00000,      230.000!  !END!
+   424!X=     594.30402,    1325.75696,     201.00000,      240.000!  !END!
+   425!X=     594.30402,    1325.75696,     201.00000,      250.000!  !END!
+   426!X=     594.30402,    1325.75696,     201.00000,      260.000!  !END!
+   427!X=     594.30402,    1325.75696,     201.00000,      270.000!  !END!
+   428!X=     594.30402,    1325.75696,     201.00000,      280.000!  !END!
+   429!X=     594.30402,    1325.75696,     201.00000,      290.000!  !END!
+   430!X=     594.30402,    1325.75696,     201.00000,      300.000!  !END!
+   431!X=     594.30402,    1325.75696,     201.00000,      310.000!  !END!
+   432!X=     594.30402,    1325.75696,     201.00000,      320.000!  !END!
+   433!X=     594.30402,    1325.75696,     201.00000,      330.000!  !END!
+   434!X=     594.30402,    1325.75696,     201.00000,      340.000!  !END!
+   435!X=     594.30402,    1325.75696,     201.00000,      350.000!  !END!
+   436!X=     594.30402,    1325.75696,     201.00000,      360.000!  !END!
+   437!X=     594.30402,    1325.75696,     201.00000,      370.000!  !END!
+   438!X=     594.30402,    1325.75696,     201.00000,      380.000!  !END!
+   439!X=     594.30402,    1325.75696,     201.00000,      390.000!  !END!
+   440!X=     594.30402,    1325.75696,     201.00000,      400.000!  !END!
+   441!X=     594.30402,    1325.75696,     201.00000,      410.000!  !END!
+   442!X=     594.30402,    1325.75696,     201.00000,      420.000!  !END!
+   443!X=     594.30402,    1325.75696,     201.00000,      430.000!  !END!
+   444!X=     594.30402,    1325.75696,     201.00000,      440.000!  !END!
+   445!X=     594.30402,    1325.75696,     201.00000,      450.000!  !END!
+   446!X=     594.30402,    1325.75696,     201.00000,      460.000!  !END!
+   447!X=     594.30402,    1325.75696,     201.00000,      470.000!  !END!
+   448!X=     594.30402,    1325.75696,     201.00000,      480.000!  !END!
+   449!X=     594.30402,    1325.75696,     201.00000,      490.000!  !END!
+   450!X=     594.30402,    1325.75696,     201.00000,      500.000!  !END!
+   451!X=     594.30402,    1325.75696,     201.00000,      510.000!  !END!
+   452!X=     594.30402,    1325.75696,     201.00000,      520.000!  !END!
+   453!X=     594.30402,    1325.75696,     201.00000,      530.000!  !END!
+   454!X=     594.30402,    1325.75696,     201.00000,      540.000!  !END!
+   455!X=     594.30402,    1325.75696,     201.00000,      550.000!  !END!
+   456!X=     594.30402,    1325.75696,     201.00000,      560.000!  !END!
+   457!X=     594.30402,    1325.75696,     201.00000,      570.000!  !END!
+   458!X=     594.30402,    1325.75696,     201.00000,      580.000!  !END!
+   459!X=     594.30402,    1325.75696,     201.00000,      590.000!  !END!
+   460!X=     594.30402,    1325.75696,     201.00000,      600.000!  !END!
+   461!X=     594.30402,    1325.75696,     201.00000,      610.000!  !END!
+   462!X=     594.30402,    1325.75696,     201.00000,      620.000!  !END!
+   463!X=     594.30402,    1325.75696,     201.00000,      630.000!  !END!
+   464!X=     594.30402,    1325.75696,     201.00000,      640.000!  !END!
+   465!X=     594.30402,    1325.75696,     201.00000,      650.000!  !END!
+   466!X=     594.30402,    1325.75696,     201.00000,      660.000!  !END!
+   467!X=     594.30402,    1325.75696,     201.00000,      670.000!  !END!
+   468!X=     594.30402,    1325.75696,     201.00000,      680.000!  !END!
+   469!X=     594.30402,    1325.75696,     201.00000,      690.000!  !END!
+   470!X=     594.30402,    1325.75696,     201.00000,      700.000!  !END!
+   471!X=     594.30402,    1325.75696,     201.00000,      710.000!  !END!
+   472!X=     594.30402,    1325.75696,     201.00000,      720.000!  !END!
+   473!X=     594.30402,    1325.75696,     201.00000,      730.000!  !END!
+   474!X=     594.30402,    1325.75696,     201.00000,      740.000!  !END!
+   475!X=     594.30402,    1325.75696,     201.00000,      750.000!  !END!
+   476!X=     594.30402,    1325.75696,     201.00000,      760.000!  !END!
+   477!X=     594.30402,    1325.75696,     201.00000,      770.000!  !END!
+   478!X=     594.30402,    1325.75696,     201.00000,      780.000!  !END!
+   479!X=     594.30402,    1325.75696,     201.00000,      790.000!  !END!
+   480!X=     594.30402,    1325.75696,     201.00000,      800.000!  !END!
+   481!X=     594.30402,    1325.75696,     201.00000,      810.000!  !END!
+   482!X=     594.30402,    1325.75696,     201.00000,      820.000!  !END!
+   483!X=     594.30402,    1325.75696,     201.00000,      830.000!  !END!
+   484!X=     594.30402,    1325.75696,     201.00000,      840.000!  !END!
+   485!X=     594.30402,    1325.75696,     201.00000,      850.000!  !END!
+   486!X=     594.30402,    1325.75696,     201.00000,      860.000!  !END!
+   487!X=     594.30402,    1325.75696,     201.00000,      870.000!  !END!
+   488!X=     594.30402,    1325.75696,     201.00000,      880.000!  !END!
+   489!X=     594.30402,    1325.75696,     201.00000,      890.000!  !END!
+   490!X=     594.30402,    1325.75696,     201.00000,      900.000!  !END!
+   491!X=     594.30402,    1325.75696,     201.00000,      910.000!  !END!
+   492!X=     594.30402,    1325.75696,     201.00000,      920.000!  !END!
+   493!X=     594.30402,    1325.75696,     201.00000,      930.000!  !END!
+   494!X=     594.30402,    1325.75696,     201.00000,      940.000!  !END!
+   495!X=     594.30402,    1325.75696,     201.00000,      950.000!  !END!
+   496!X=     594.30402,    1325.75696,     201.00000,      960.000!  !END!
+   497!X=     594.30402,    1325.75696,     201.00000,      970.000!  !END!
+   498!X=     594.30402,    1325.75696,     201.00000,      980.000!  !END!
+   499!X=     594.30402,    1325.75696,     201.00000,      990.000!  !END!
+   500!X=     594.30402,    1325.75696,     201.00000,     1000.000!  !END!
+   501!X=     594.30402,    1325.75696,     201.00000,     1010.000!  !END!
+   502!X=     594.30402,    1325.75696,     201.00000,     1020.000!  !END!
+   503!X=     594.30402,    1325.75696,     201.00000,     1030.000!  !END!
+   504!X=     594.30402,    1325.75696,     201.00000,     1040.000!  !END!
+   505!X=     594.30402,    1325.75696,     201.00000,     1050.000!  !END!
+   506!X=     594.30402,    1325.75696,     201.00000,     1060.000!  !END!
+   507!X=     594.30402,    1325.75696,     201.00000,     1070.000!  !END!
+   508!X=     594.30402,    1325.75696,     201.00000,     1080.000!  !END!
+   509!X=     594.30402,    1325.75696,     201.00000,     1090.000!  !END!
+   510!X=     594.30402,    1325.75696,     201.00000,     1100.000!  !END!
+   511!X=     594.30402,    1325.75696,     201.00000,     1110.000!  !END!
+   512!X=     594.30402,    1325.75696,     201.00000,     1120.000!  !END!
+   513!X=     594.30402,    1325.75696,     201.00000,     1130.000!  !END!
+   514!X=     594.30402,    1325.75696,     201.00000,     1140.000!  !END!
+   515!X=     594.30402,    1325.75696,     201.00000,     1150.000!  !END!
+   516!X=     594.30402,    1325.75696,     201.00000,     1160.000!  !END!
+   517!X=     594.30402,    1325.75696,     201.00000,     1170.000!  !END!
+   518!X=     594.30402,    1325.75696,     201.00000,     1180.000!  !END!
+   519!X=     594.30402,    1325.75696,     201.00000,     1190.000!  !END!
+   520!X=     594.30402,    1325.75696,     201.00000,     1200.000!  !END!
+   521!X=     594.30402,    1325.75696,     201.00000,     1210.000!  !END!
+   522!X=     594.30402,    1325.75696,     201.00000,     1220.000!  !END!
+   523!X=     594.30402,    1325.75696,     201.00000,     1230.000!  !END!
+   524!X=     594.30402,    1325.75696,     201.00000,     1240.000!  !END!
+   525!X=     594.30402,    1325.75696,     201.00000,     1250.000!  !END!
+   526!X=     594.30402,    1325.75696,     201.00000,     1260.000!  !END!
+   527!X=     594.30402,    1325.75696,     201.00000,     1270.000!  !END!
+   528!X=     594.30402,    1325.75696,     201.00000,     1280.000!  !END!
+   529!X=     594.30402,    1325.75696,     201.00000,     1290.000!  !END!
+   530!X=     594.30402,    1325.75696,     201.00000,     1300.000!  !END!
+   531!X=     594.30402,    1325.75696,     201.00000,     1310.000!  !END!
+   532!X=     594.30402,    1325.75696,     201.00000,     1320.000!  !END!
+   533!X=     594.30402,    1325.75696,     201.00000,     1330.000!  !END!
+   534!X=     594.30402,    1325.75696,     201.00000,     1340.000!  !END!
+   535!X=     594.30402,    1325.75696,     201.00000,     1350.000!  !END!
+   536!X=     594.30402,    1325.75696,     201.00000,     1360.000!  !END!
+   537!X=     594.30402,    1325.75696,     201.00000,     1370.000!  !END!
+   538!X=     594.30402,    1325.75696,     201.00000,     1380.000!  !END!
+   539!X=     594.30402,    1325.75696,     201.00000,     1390.000!  !END!
+   540!X=     594.30402,    1325.75696,     201.00000,     1400.000!  !END!
+   541!X=     594.30402,    1325.75696,     201.00000,     1410.000!  !END!
+   542!X=     594.30402,    1325.75696,     201.00000,     1420.000!  !END!
+   543!X=     594.30402,    1325.75696,     201.00000,     1430.000!  !END!
+   544!X=     594.30402,    1325.75696,     201.00000,     1440.000!  !END!
+   545!X=     594.30402,    1325.75696,     201.00000,     1450.000!  !END!
+   546!X=     594.30402,    1325.75696,     201.00000,     1460.000!  !END!
+   547!X=     594.30402,    1325.75696,     201.00000,     1470.000!  !END!
+   548!X=     594.30402,    1325.75696,     201.00000,     1480.000!  !END!
+   549!X=     594.30402,    1325.75696,     201.00000,     1490.000!  !END!
+   550!X=     594.30402,    1325.75696,     201.00000,     1500.000!  !END!
+   551!X=     594.30402,    1325.75696,     201.00000,     1510.000!  !END!
+   552!X=     594.30402,    1325.75696,     201.00000,     1520.000!  !END!
+   553!X=     594.30402,    1325.75696,     201.00000,     1530.000!  !END!
+   554!X=     594.30402,    1325.75696,     201.00000,     1540.000!  !END!
+   555!X=     594.30402,    1325.75696,     201.00000,     1550.000!  !END!
+   556!X=     594.30402,    1325.75696,     201.00000,     1560.000!  !END!
+   557!X=     594.30402,    1325.75696,     201.00000,     1570.000!  !END!
+   558!X=     594.30402,    1325.75696,     201.00000,     1580.000!  !END!
+   559!X=     594.30402,    1325.75696,     201.00000,     1590.000!  !END!
+   560!X=     594.30402,    1325.75696,     201.00000,     1600.000!  !END!
+   561!X=     594.30402,    1325.75696,     201.00000,     1610.000!  !END!
+   562!X=     594.30402,    1325.75696,     201.00000,     1620.000!  !END!
+   563!X=     594.30402,    1325.75696,     201.00000,     1630.000!  !END!
+   564!X=     594.30402,    1325.75696,     201.00000,     1640.000!  !END!
+   565!X=     594.30402,    1325.75696,     201.00000,     1650.000!  !END!
+   566!X=     594.30402,    1325.75696,     201.00000,     1660.000!  !END!
+   567!X=     594.30402,    1325.75696,     201.00000,     1670.000!  !END!
+   568!X=     594.30402,    1325.75696,     201.00000,     1680.000!  !END!
+   569!X=     594.30402,    1325.75696,     201.00000,     1690.000!  !END!
+   570!X=     594.30402,    1325.75696,     201.00000,     1700.000!  !END!
+   571!X=     594.30402,    1325.75696,     201.00000,     1710.000!  !END!
+   572!X=     594.30402,    1325.75696,     201.00000,     1720.000!  !END!
+   573!X=     594.30402,    1325.75696,     201.00000,     1730.000!  !END!
+   574!X=     594.30402,    1325.75696,     201.00000,     1740.000!  !END!
+   575!X=     594.30402,    1325.75696,     201.00000,     1750.000!  !END!
+   576!X=     594.30402,    1325.75696,     201.00000,     1760.000!  !END!
+   577!X=     594.30402,    1325.75696,     201.00000,     1770.000!  !END!
+   578!X=     594.30402,    1325.75696,     201.00000,     1780.000!  !END!
+   579!X=     594.30402,    1325.75696,     201.00000,     1790.000!  !END!
+   580!X=     594.30402,    1325.75696,     201.00000,     1800.000!  !END!
+   581!X=     594.30402,    1325.75696,     201.00000,     1810.000!  !END!
+   582!X=     594.30402,    1325.75696,     201.00000,     1820.000!  !END!
+   583!X=     594.30402,    1325.75696,     201.00000,     1830.000!  !END!
+   584!X=     594.30402,    1325.75696,     201.00000,     1840.000!  !END!
+   585!X=     594.30402,    1325.75696,     201.00000,     1850.000!  !END!
+   586!X=     594.30402,    1325.75696,     201.00000,     1860.000!  !END!
+   587!X=     594.30402,    1325.75696,     201.00000,     1870.000!  !END!
+   588!X=     594.30402,    1325.75696,     201.00000,     1880.000!  !END!
+   589!X=     594.30402,    1325.75696,     201.00000,     1890.000!  !END!
+   590!X=     594.30402,    1325.75696,     201.00000,     1900.000!  !END!
+   591!X=     594.30402,    1325.75696,     201.00000,     1910.000!  !END!
+   592!X=     594.30402,    1325.75696,     201.00000,     1920.000!  !END!
+   593!X=     594.30402,    1325.75696,     201.00000,     1930.000!  !END!
+   594!X=     594.30402,    1325.75696,     201.00000,     1940.000!  !END!
+   595!X=     594.30402,    1325.75696,     201.00000,     1950.000!  !END!
+   596!X=     594.30402,    1325.75696,     201.00000,     1960.000!  !END!
+   597!X=     594.30402,    1325.75696,     201.00000,     1970.000!  !END!
+   598!X=     594.30402,    1325.75696,     201.00000,     1980.000!  !END!
+   599!X=     594.30402,    1325.75696,     201.00000,     1990.000!  !END!
+   600!X=     594.30402,    1325.75696,     201.00000,     2000.000!  !END!
+   601!X=     581.89697,    1325.01196,     369.00000,       10.000!  !END!
+   602!X=     581.89697,    1325.01196,     369.00000,       20.000!  !END!
+   603!X=     581.89697,    1325.01196,     369.00000,       30.000!  !END!
+   604!X=     581.89697,    1325.01196,     369.00000,       40.000!  !END!
+   605!X=     581.89697,    1325.01196,     369.00000,       50.000!  !END!
+   606!X=     581.89697,    1325.01196,     369.00000,       60.000!  !END!
+   607!X=     581.89697,    1325.01196,     369.00000,       70.000!  !END!
+   608!X=     581.89697,    1325.01196,     369.00000,       80.000!  !END!
+   609!X=     581.89697,    1325.01196,     369.00000,       90.000!  !END!
+   610!X=     581.89697,    1325.01196,     369.00000,      100.000!  !END!
+   611!X=     581.89697,    1325.01196,     369.00000,      110.000!  !END!
+   612!X=     581.89697,    1325.01196,     369.00000,      120.000!  !END!
+   613!X=     581.89697,    1325.01196,     369.00000,      130.000!  !END!
+   614!X=     581.89697,    1325.01196,     369.00000,      140.000!  !END!
+   615!X=     581.89697,    1325.01196,     369.00000,      150.000!  !END!
+   616!X=     581.89697,    1325.01196,     369.00000,      160.000!  !END!
+   617!X=     581.89697,    1325.01196,     369.00000,      170.000!  !END!
+   618!X=     581.89697,    1325.01196,     369.00000,      180.000!  !END!
+   619!X=     581.89697,    1325.01196,     369.00000,      190.000!  !END!
+   620!X=     581.89697,    1325.01196,     369.00000,      200.000!  !END!
+   621!X=     581.89697,    1325.01196,     369.00000,      210.000!  !END!
+   622!X=     581.89697,    1325.01196,     369.00000,      220.000!  !END!
+   623!X=     581.89697,    1325.01196,     369.00000,      230.000!  !END!
+   624!X=     581.89697,    1325.01196,     369.00000,      240.000!  !END!
+   625!X=     581.89697,    1325.01196,     369.00000,      250.000!  !END!
+   626!X=     581.89697,    1325.01196,     369.00000,      260.000!  !END!
+   627!X=     581.89697,    1325.01196,     369.00000,      270.000!  !END!
+   628!X=     581.89697,    1325.01196,     369.00000,      280.000!  !END!
+   629!X=     581.89697,    1325.01196,     369.00000,      290.000!  !END!
+   630!X=     581.89697,    1325.01196,     369.00000,      300.000!  !END!
+   631!X=     581.89697,    1325.01196,     369.00000,      310.000!  !END!
+   632!X=     581.89697,    1325.01196,     369.00000,      320.000!  !END!
+   633!X=     581.89697,    1325.01196,     369.00000,      330.000!  !END!
+   634!X=     581.89697,    1325.01196,     369.00000,      340.000!  !END!
+   635!X=     581.89697,    1325.01196,     369.00000,      350.000!  !END!
+   636!X=     581.89697,    1325.01196,     369.00000,      360.000!  !END!
+   637!X=     581.89697,    1325.01196,     369.00000,      370.000!  !END!
+   638!X=     581.89697,    1325.01196,     369.00000,      380.000!  !END!
+   639!X=     581.89697,    1325.01196,     369.00000,      390.000!  !END!
+   640!X=     581.89697,    1325.01196,     369.00000,      400.000!  !END!
+   641!X=     581.89697,    1325.01196,     369.00000,      410.000!  !END!
+   642!X=     581.89697,    1325.01196,     369.00000,      420.000!  !END!
+   643!X=     581.89697,    1325.01196,     369.00000,      430.000!  !END!
+   644!X=     581.89697,    1325.01196,     369.00000,      440.000!  !END!
+   645!X=     581.89697,    1325.01196,     369.00000,      450.000!  !END!
+   646!X=     581.89697,    1325.01196,     369.00000,      460.000!  !END!
+   647!X=     581.89697,    1325.01196,     369.00000,      470.000!  !END!
+   648!X=     581.89697,    1325.01196,     369.00000,      480.000!  !END!
+   649!X=     581.89697,    1325.01196,     369.00000,      490.000!  !END!
+   650!X=     581.89697,    1325.01196,     369.00000,      500.000!  !END!
+   651!X=     581.89697,    1325.01196,     369.00000,      510.000!  !END!
+   652!X=     581.89697,    1325.01196,     369.00000,      520.000!  !END!
+   653!X=     581.89697,    1325.01196,     369.00000,      530.000!  !END!
+   654!X=     581.89697,    1325.01196,     369.00000,      540.000!  !END!
+   655!X=     581.89697,    1325.01196,     369.00000,      550.000!  !END!
+   656!X=     581.89697,    1325.01196,     369.00000,      560.000!  !END!
+   657!X=     581.89697,    1325.01196,     369.00000,      570.000!  !END!
+   658!X=     581.89697,    1325.01196,     369.00000,      580.000!  !END!
+   659!X=     581.89697,    1325.01196,     369.00000,      590.000!  !END!
+   660!X=     581.89697,    1325.01196,     369.00000,      600.000!  !END!
+   661!X=     581.89697,    1325.01196,     369.00000,      610.000!  !END!
+   662!X=     581.89697,    1325.01196,     369.00000,      620.000!  !END!
+   663!X=     581.89697,    1325.01196,     369.00000,      630.000!  !END!
+   664!X=     581.89697,    1325.01196,     369.00000,      640.000!  !END!
+   665!X=     581.89697,    1325.01196,     369.00000,      650.000!  !END!
+   666!X=     581.89697,    1325.01196,     369.00000,      660.000!  !END!
+   667!X=     581.89697,    1325.01196,     369.00000,      670.000!  !END!
+   668!X=     581.89697,    1325.01196,     369.00000,      680.000!  !END!
+   669!X=     581.89697,    1325.01196,     369.00000,      690.000!  !END!
+   670!X=     581.89697,    1325.01196,     369.00000,      700.000!  !END!
+   671!X=     581.89697,    1325.01196,     369.00000,      710.000!  !END!
+   672!X=     581.89697,    1325.01196,     369.00000,      720.000!  !END!
+   673!X=     581.89697,    1325.01196,     369.00000,      730.000!  !END!
+   674!X=     581.89697,    1325.01196,     369.00000,      740.000!  !END!
+   675!X=     581.89697,    1325.01196,     369.00000,      750.000!  !END!
+   676!X=     581.89697,    1325.01196,     369.00000,      760.000!  !END!
+   677!X=     581.89697,    1325.01196,     369.00000,      770.000!  !END!
+   678!X=     581.89697,    1325.01196,     369.00000,      780.000!  !END!
+   679!X=     581.89697,    1325.01196,     369.00000,      790.000!  !END!
+   680!X=     581.89697,    1325.01196,     369.00000,      800.000!  !END!
+   681!X=     581.89697,    1325.01196,     369.00000,      810.000!  !END!
+   682!X=     581.89697,    1325.01196,     369.00000,      820.000!  !END!
+   683!X=     581.89697,    1325.01196,     369.00000,      830.000!  !END!
+   684!X=     581.89697,    1325.01196,     369.00000,      840.000!  !END!
+   685!X=     581.89697,    1325.01196,     369.00000,      850.000!  !END!
+   686!X=     581.89697,    1325.01196,     369.00000,      860.000!  !END!
+   687!X=     581.89697,    1325.01196,     369.00000,      870.000!  !END!
+   688!X=     581.89697,    1325.01196,     369.00000,      880.000!  !END!
+   689!X=     581.89697,    1325.01196,     369.00000,      890.000!  !END!
+   690!X=     581.89697,    1325.01196,     369.00000,      900.000!  !END!
+   691!X=     581.89697,    1325.01196,     369.00000,      910.000!  !END!
+   692!X=     581.89697,    1325.01196,     369.00000,      920.000!  !END!
+   693!X=     581.89697,    1325.01196,     369.00000,      930.000!  !END!
+   694!X=     581.89697,    1325.01196,     369.00000,      940.000!  !END!
+   695!X=     581.89697,    1325.01196,     369.00000,      950.000!  !END!
+   696!X=     581.89697,    1325.01196,     369.00000,      960.000!  !END!
+   697!X=     581.89697,    1325.01196,     369.00000,      970.000!  !END!
+   698!X=     581.89697,    1325.01196,     369.00000,      980.000!  !END!
+   699!X=     581.89697,    1325.01196,     369.00000,      990.000!  !END!
+   700!X=     581.89697,    1325.01196,     369.00000,     1000.000!  !END!
+   701!X=     581.89697,    1325.01196,     369.00000,     1010.000!  !END!
+   702!X=     581.89697,    1325.01196,     369.00000,     1020.000!  !END!
+   703!X=     581.89697,    1325.01196,     369.00000,     1030.000!  !END!
+   704!X=     581.89697,    1325.01196,     369.00000,     1040.000!  !END!
+   705!X=     581.89697,    1325.01196,     369.00000,     1050.000!  !END!
+   706!X=     581.89697,    1325.01196,     369.00000,     1060.000!  !END!
+   707!X=     581.89697,    1325.01196,     369.00000,     1070.000!  !END!
+   708!X=     581.89697,    1325.01196,     369.00000,     1080.000!  !END!
+   709!X=     581.89697,    1325.01196,     369.00000,     1090.000!  !END!
+   710!X=     581.89697,    1325.01196,     369.00000,     1100.000!  !END!
+   711!X=     581.89697,    1325.01196,     369.00000,     1110.000!  !END!
+   712!X=     581.89697,    1325.01196,     369.00000,     1120.000!  !END!
+   713!X=     581.89697,    1325.01196,     369.00000,     1130.000!  !END!
+   714!X=     581.89697,    1325.01196,     369.00000,     1140.000!  !END!
+   715!X=     581.89697,    1325.01196,     369.00000,     1150.000!  !END!
+   716!X=     581.89697,    1325.01196,     369.00000,     1160.000!  !END!
+   717!X=     581.89697,    1325.01196,     369.00000,     1170.000!  !END!
+   718!X=     581.89697,    1325.01196,     369.00000,     1180.000!  !END!
+   719!X=     581.89697,    1325.01196,     369.00000,     1190.000!  !END!
+   720!X=     581.89697,    1325.01196,     369.00000,     1200.000!  !END!
+   721!X=     581.89697,    1325.01196,     369.00000,     1210.000!  !END!
+   722!X=     581.89697,    1325.01196,     369.00000,     1220.000!  !END!
+   723!X=     581.89697,    1325.01196,     369.00000,     1230.000!  !END!
+   724!X=     581.89697,    1325.01196,     369.00000,     1240.000!  !END!
+   725!X=     581.89697,    1325.01196,     369.00000,     1250.000!  !END!
+   726!X=     581.89697,    1325.01196,     369.00000,     1260.000!  !END!
+   727!X=     581.89697,    1325.01196,     369.00000,     1270.000!  !END!
+   728!X=     581.89697,    1325.01196,     369.00000,     1280.000!  !END!
+   729!X=     581.89697,    1325.01196,     369.00000,     1290.000!  !END!
+   730!X=     581.89697,    1325.01196,     369.00000,     1300.000!  !END!
+   731!X=     581.89697,    1325.01196,     369.00000,     1310.000!  !END!
+   732!X=     581.89697,    1325.01196,     369.00000,     1320.000!  !END!
+   733!X=     581.89697,    1325.01196,     369.00000,     1330.000!  !END!
+   734!X=     581.89697,    1325.01196,     369.00000,     1340.000!  !END!
+   735!X=     581.89697,    1325.01196,     369.00000,     1350.000!  !END!
+   736!X=     581.89697,    1325.01196,     369.00000,     1360.000!  !END!
+   737!X=     581.89697,    1325.01196,     369.00000,     1370.000!  !END!
+   738!X=     581.89697,    1325.01196,     369.00000,     1380.000!  !END!
+   739!X=     581.89697,    1325.01196,     369.00000,     1390.000!  !END!
+   740!X=     581.89697,    1325.01196,     369.00000,     1400.000!  !END!
+   741!X=     581.89697,    1325.01196,     369.00000,     1410.000!  !END!
+   742!X=     581.89697,    1325.01196,     369.00000,     1420.000!  !END!
+   743!X=     581.89697,    1325.01196,     369.00000,     1430.000!  !END!
+   744!X=     581.89697,    1325.01196,     369.00000,     1440.000!  !END!
+   745!X=     581.89697,    1325.01196,     369.00000,     1450.000!  !END!
+   746!X=     581.89697,    1325.01196,     369.00000,     1460.000!  !END!
+   747!X=     581.89697,    1325.01196,     369.00000,     1470.000!  !END!
+   748!X=     581.89697,    1325.01196,     369.00000,     1480.000!  !END!
+   749!X=     581.89697,    1325.01196,     369.00000,     1490.000!  !END!
+   750!X=     581.89697,    1325.01196,     369.00000,     1500.000!  !END!
+   751!X=     581.89697,    1325.01196,     369.00000,     1510.000!  !END!
+   752!X=     581.89697,    1325.01196,     369.00000,     1520.000!  !END!
+   753!X=     581.89697,    1325.01196,     369.00000,     1530.000!  !END!
+   754!X=     581.89697,    1325.01196,     369.00000,     1540.000!  !END!
+   755!X=     581.89697,    1325.01196,     369.00000,     1550.000!  !END!
+   756!X=     581.89697,    1325.01196,     369.00000,     1560.000!  !END!
+   757!X=     581.89697,    1325.01196,     369.00000,     1570.000!  !END!
+   758!X=     581.89697,    1325.01196,     369.00000,     1580.000!  !END!
+   759!X=     581.89697,    1325.01196,     369.00000,     1590.000!  !END!
+   760!X=     581.89697,    1325.01196,     369.00000,     1600.000!  !END!
+   761!X=     581.89697,    1325.01196,     369.00000,     1610.000!  !END!
+   762!X=     581.89697,    1325.01196,     369.00000,     1620.000!  !END!
+   763!X=     581.89697,    1325.01196,     369.00000,     1630.000!  !END!
+   764!X=     581.89697,    1325.01196,     369.00000,     1640.000!  !END!
+   765!X=     581.89697,    1325.01196,     369.00000,     1650.000!  !END!
+   766!X=     581.89697,    1325.01196,     369.00000,     1660.000!  !END!
+   767!X=     581.89697,    1325.01196,     369.00000,     1670.000!  !END!
+   768!X=     581.89697,    1325.01196,     369.00000,     1680.000!  !END!
+   769!X=     581.89697,    1325.01196,     369.00000,     1690.000!  !END!
+   770!X=     581.89697,    1325.01196,     369.00000,     1700.000!  !END!
+   771!X=     581.89697,    1325.01196,     369.00000,     1710.000!  !END!
+   772!X=     581.89697,    1325.01196,     369.00000,     1720.000!  !END!
+   773!X=     581.89697,    1325.01196,     369.00000,     1730.000!  !END!
+   774!X=     581.89697,    1325.01196,     369.00000,     1740.000!  !END!
+   775!X=     581.89697,    1325.01196,     369.00000,     1750.000!  !END!
+   776!X=     581.89697,    1325.01196,     369.00000,     1760.000!  !END!
+   777!X=     581.89697,    1325.01196,     369.00000,     1770.000!  !END!
+   778!X=     581.89697,    1325.01196,     369.00000,     1780.000!  !END!
+   779!X=     581.89697,    1325.01196,     369.00000,     1790.000!  !END!
+   780!X=     581.89697,    1325.01196,     369.00000,     1800.000!  !END!
+   781!X=     581.89697,    1325.01196,     369.00000,     1810.000!  !END!
+   782!X=     581.89697,    1325.01196,     369.00000,     1820.000!  !END!
+   783!X=     581.89697,    1325.01196,     369.00000,     1830.000!  !END!
+   784!X=     581.89697,    1325.01196,     369.00000,     1840.000!  !END!
+   785!X=     581.89697,    1325.01196,     369.00000,     1850.000!  !END!
+   786!X=     581.89697,    1325.01196,     369.00000,     1860.000!  !END!
+   787!X=     581.89697,    1325.01196,     369.00000,     1870.000!  !END!
+   788!X=     581.89697,    1325.01196,     369.00000,     1880.000!  !END!
+   789!X=     581.89697,    1325.01196,     369.00000,     1890.000!  !END!
+   790!X=     581.89697,    1325.01196,     369.00000,     1900.000!  !END!
+   791!X=     581.89697,    1325.01196,     369.00000,     1910.000!  !END!
+   792!X=     581.89697,    1325.01196,     369.00000,     1920.000!  !END!
+   793!X=     581.89697,    1325.01196,     369.00000,     1930.000!  !END!
+   794!X=     581.89697,    1325.01196,     369.00000,     1940.000!  !END!
+   795!X=     581.89697,    1325.01196,     369.00000,     1950.000!  !END!
+   796!X=     581.89697,    1325.01196,     369.00000,     1960.000!  !END!
+   797!X=     581.89697,    1325.01196,     369.00000,     1970.000!  !END!
+   798!X=     581.89697,    1325.01196,     369.00000,     1980.000!  !END!
+   799!X=     581.89697,    1325.01196,     369.00000,     1990.000!  !END!
+   800!X=     581.89697,    1325.01196,     369.00000,     2000.000!  !END!
+   801!X=     571.52502,    1316.39905,     699.00000,       10.000!  !END!
+   802!X=     571.52502,    1316.39905,     699.00000,       20.000!  !END!
+   803!X=     571.52502,    1316.39905,     699.00000,       30.000!  !END!
+   804!X=     571.52502,    1316.39905,     699.00000,       40.000!  !END!
+   805!X=     571.52502,    1316.39905,     699.00000,       50.000!  !END!
+   806!X=     571.52502,    1316.39905,     699.00000,       60.000!  !END!
+   807!X=     571.52502,    1316.39905,     699.00000,       70.000!  !END!
+   808!X=     571.52502,    1316.39905,     699.00000,       80.000!  !END!
+   809!X=     571.52502,    1316.39905,     699.00000,       90.000!  !END!
+   810!X=     571.52502,    1316.39905,     699.00000,      100.000!  !END!
+   811!X=     571.52502,    1316.39905,     699.00000,      110.000!  !END!
+   812!X=     571.52502,    1316.39905,     699.00000,      120.000!  !END!
+   813!X=     571.52502,    1316.39905,     699.00000,      130.000!  !END!
+   814!X=     571.52502,    1316.39905,     699.00000,      140.000!  !END!
+   815!X=     571.52502,    1316.39905,     699.00000,      150.000!  !END!
+   816!X=     571.52502,    1316.39905,     699.00000,      160.000!  !END!
+   817!X=     571.52502,    1316.39905,     699.00000,      170.000!  !END!
+   818!X=     571.52502,    1316.39905,     699.00000,      180.000!  !END!
+   819!X=     571.52502,    1316.39905,     699.00000,      190.000!  !END!
+   820!X=     571.52502,    1316.39905,     699.00000,      200.000!  !END!
+   821!X=     571.52502,    1316.39905,     699.00000,      210.000!  !END!
+   822!X=     571.52502,    1316.39905,     699.00000,      220.000!  !END!
+   823!X=     571.52502,    1316.39905,     699.00000,      230.000!  !END!
+   824!X=     571.52502,    1316.39905,     699.00000,      240.000!  !END!
+   825!X=     571.52502,    1316.39905,     699.00000,      250.000!  !END!
+   826!X=     571.52502,    1316.39905,     699.00000,      260.000!  !END!
+   827!X=     571.52502,    1316.39905,     699.00000,      270.000!  !END!
+   828!X=     571.52502,    1316.39905,     699.00000,      280.000!  !END!
+   829!X=     571.52502,    1316.39905,     699.00000,      290.000!  !END!
+   830!X=     571.52502,    1316.39905,     699.00000,      300.000!  !END!
+   831!X=     571.52502,    1316.39905,     699.00000,      310.000!  !END!
+   832!X=     571.52502,    1316.39905,     699.00000,      320.000!  !END!
+   833!X=     571.52502,    1316.39905,     699.00000,      330.000!  !END!
+   834!X=     571.52502,    1316.39905,     699.00000,      340.000!  !END!
+   835!X=     571.52502,    1316.39905,     699.00000,      350.000!  !END!
+   836!X=     571.52502,    1316.39905,     699.00000,      360.000!  !END!
+   837!X=     571.52502,    1316.39905,     699.00000,      370.000!  !END!
+   838!X=     571.52502,    1316.39905,     699.00000,      380.000!  !END!
+   839!X=     571.52502,    1316.39905,     699.00000,      390.000!  !END!
+   840!X=     571.52502,    1316.39905,     699.00000,      400.000!  !END!
+   841!X=     571.52502,    1316.39905,     699.00000,      410.000!  !END!
+   842!X=     571.52502,    1316.39905,     699.00000,      420.000!  !END!
+   843!X=     571.52502,    1316.39905,     699.00000,      430.000!  !END!
+   844!X=     571.52502,    1316.39905,     699.00000,      440.000!  !END!
+   845!X=     571.52502,    1316.39905,     699.00000,      450.000!  !END!
+   846!X=     571.52502,    1316.39905,     699.00000,      460.000!  !END!
+   847!X=     571.52502,    1316.39905,     699.00000,      470.000!  !END!
+   848!X=     571.52502,    1316.39905,     699.00000,      480.000!  !END!
+   849!X=     571.52502,    1316.39905,     699.00000,      490.000!  !END!
+   850!X=     571.52502,    1316.39905,     699.00000,      500.000!  !END!
+   851!X=     571.52502,    1316.39905,     699.00000,      510.000!  !END!
+   852!X=     571.52502,    1316.39905,     699.00000,      520.000!  !END!
+   853!X=     571.52502,    1316.39905,     699.00000,      530.000!  !END!
+   854!X=     571.52502,    1316.39905,     699.00000,      540.000!  !END!
+   855!X=     571.52502,    1316.39905,     699.00000,      550.000!  !END!
+   856!X=     571.52502,    1316.39905,     699.00000,      560.000!  !END!
+   857!X=     571.52502,    1316.39905,     699.00000,      570.000!  !END!
+   858!X=     571.52502,    1316.39905,     699.00000,      580.000!  !END!
+   859!X=     571.52502,    1316.39905,     699.00000,      590.000!  !END!
+   860!X=     571.52502,    1316.39905,     699.00000,      600.000!  !END!
+   861!X=     571.52502,    1316.39905,     699.00000,      610.000!  !END!
+   862!X=     571.52502,    1316.39905,     699.00000,      620.000!  !END!
+   863!X=     571.52502,    1316.39905,     699.00000,      630.000!  !END!
+   864!X=     571.52502,    1316.39905,     699.00000,      640.000!  !END!
+   865!X=     571.52502,    1316.39905,     699.00000,      650.000!  !END!
+   866!X=     571.52502,    1316.39905,     699.00000,      660.000!  !END!
+   867!X=     571.52502,    1316.39905,     699.00000,      670.000!  !END!
+   868!X=     571.52502,    1316.39905,     699.00000,      680.000!  !END!
+   869!X=     571.52502,    1316.39905,     699.00000,      690.000!  !END!
+   870!X=     571.52502,    1316.39905,     699.00000,      700.000!  !END!
+   871!X=     571.52502,    1316.39905,     699.00000,      710.000!  !END!
+   872!X=     571.52502,    1316.39905,     699.00000,      720.000!  !END!
+   873!X=     571.52502,    1316.39905,     699.00000,      730.000!  !END!
+   874!X=     571.52502,    1316.39905,     699.00000,      740.000!  !END!
+   875!X=     571.52502,    1316.39905,     699.00000,      750.000!  !END!
+   876!X=     571.52502,    1316.39905,     699.00000,      760.000!  !END!
+   877!X=     571.52502,    1316.39905,     699.00000,      770.000!  !END!
+   878!X=     571.52502,    1316.39905,     699.00000,      780.000!  !END!
+   879!X=     571.52502,    1316.39905,     699.00000,      790.000!  !END!
+   880!X=     571.52502,    1316.39905,     699.00000,      800.000!  !END!
+   881!X=     571.52502,    1316.39905,     699.00000,      810.000!  !END!
+   882!X=     571.52502,    1316.39905,     699.00000,      820.000!  !END!
+   883!X=     571.52502,    1316.39905,     699.00000,      830.000!  !END!
+   884!X=     571.52502,    1316.39905,     699.00000,      840.000!  !END!
+   885!X=     571.52502,    1316.39905,     699.00000,      850.000!  !END!
+   886!X=     571.52502,    1316.39905,     699.00000,      860.000!  !END!
+   887!X=     571.52502,    1316.39905,     699.00000,      870.000!  !END!
+   888!X=     571.52502,    1316.39905,     699.00000,      880.000!  !END!
+   889!X=     571.52502,    1316.39905,     699.00000,      890.000!  !END!
+   890!X=     571.52502,    1316.39905,     699.00000,      900.000!  !END!
+   891!X=     571.52502,    1316.39905,     699.00000,      910.000!  !END!
+   892!X=     571.52502,    1316.39905,     699.00000,      920.000!  !END!
+   893!X=     571.52502,    1316.39905,     699.00000,      930.000!  !END!
+   894!X=     571.52502,    1316.39905,     699.00000,      940.000!  !END!
+   895!X=     571.52502,    1316.39905,     699.00000,      950.000!  !END!
+   896!X=     571.52502,    1316.39905,     699.00000,      960.000!  !END!
+   897!X=     571.52502,    1316.39905,     699.00000,      970.000!  !END!
+   898!X=     571.52502,    1316.39905,     699.00000,      980.000!  !END!
+   899!X=     571.52502,    1316.39905,     699.00000,      990.000!  !END!
+   900!X=     571.52502,    1316.39905,     699.00000,     1000.000!  !END!
+   901!X=     571.52502,    1316.39905,     699.00000,     1010.000!  !END!
+   902!X=     571.52502,    1316.39905,     699.00000,     1020.000!  !END!
+   903!X=     571.52502,    1316.39905,     699.00000,     1030.000!  !END!
+   904!X=     571.52502,    1316.39905,     699.00000,     1040.000!  !END!
+   905!X=     571.52502,    1316.39905,     699.00000,     1050.000!  !END!
+   906!X=     571.52502,    1316.39905,     699.00000,     1060.000!  !END!
+   907!X=     571.52502,    1316.39905,     699.00000,     1070.000!  !END!
+   908!X=     571.52502,    1316.39905,     699.00000,     1080.000!  !END!
+   909!X=     571.52502,    1316.39905,     699.00000,     1090.000!  !END!
+   910!X=     571.52502,    1316.39905,     699.00000,     1100.000!  !END!
+   911!X=     571.52502,    1316.39905,     699.00000,     1110.000!  !END!
+   912!X=     571.52502,    1316.39905,     699.00000,     1120.000!  !END!
+   913!X=     571.52502,    1316.39905,     699.00000,     1130.000!  !END!
+   914!X=     571.52502,    1316.39905,     699.00000,     1140.000!  !END!
+   915!X=     571.52502,    1316.39905,     699.00000,     1150.000!  !END!
+   916!X=     571.52502,    1316.39905,     699.00000,     1160.000!  !END!
+   917!X=     571.52502,    1316.39905,     699.00000,     1170.000!  !END!
+   918!X=     571.52502,    1316.39905,     699.00000,     1180.000!  !END!
+   919!X=     571.52502,    1316.39905,     699.00000,     1190.000!  !END!
+   920!X=     571.52502,    1316.39905,     699.00000,     1200.000!  !END!
+   921!X=     571.52502,    1316.39905,     699.00000,     1210.000!  !END!
+   922!X=     571.52502,    1316.39905,     699.00000,     1220.000!  !END!
+   923!X=     571.52502,    1316.39905,     699.00000,     1230.000!  !END!
+   924!X=     571.52502,    1316.39905,     699.00000,     1240.000!  !END!
+   925!X=     571.52502,    1316.39905,     699.00000,     1250.000!  !END!
+   926!X=     571.52502,    1316.39905,     699.00000,     1260.000!  !END!
+   927!X=     571.52502,    1316.39905,     699.00000,     1270.000!  !END!
+   928!X=     571.52502,    1316.39905,     699.00000,     1280.000!  !END!
+   929!X=     571.52502,    1316.39905,     699.00000,     1290.000!  !END!
+   930!X=     571.52502,    1316.39905,     699.00000,     1300.000!  !END!
+   931!X=     571.52502,    1316.39905,     699.00000,     1310.000!  !END!
+   932!X=     571.52502,    1316.39905,     699.00000,     1320.000!  !END!
+   933!X=     571.52502,    1316.39905,     699.00000,     1330.000!  !END!
+   934!X=     571.52502,    1316.39905,     699.00000,     1340.000!  !END!
+   935!X=     571.52502,    1316.39905,     699.00000,     1350.000!  !END!
+   936!X=     571.52502,    1316.39905,     699.00000,     1360.000!  !END!
+   937!X=     571.52502,    1316.39905,     699.00000,     1370.000!  !END!
+   938!X=     571.52502,    1316.39905,     699.00000,     1380.000!  !END!
+   939!X=     571.52502,    1316.39905,     699.00000,     1390.000!  !END!
+   940!X=     571.52502,    1316.39905,     699.00000,     1400.000!  !END!
+   941!X=     571.52502,    1316.39905,     699.00000,     1410.000!  !END!
+   942!X=     571.52502,    1316.39905,     699.00000,     1420.000!  !END!
+   943!X=     571.52502,    1316.39905,     699.00000,     1430.000!  !END!
+   944!X=     571.52502,    1316.39905,     699.00000,     1440.000!  !END!
+   945!X=     571.52502,    1316.39905,     699.00000,     1450.000!  !END!
+   946!X=     571.52502,    1316.39905,     699.00000,     1460.000!  !END!
+   947!X=     571.52502,    1316.39905,     699.00000,     1470.000!  !END!
+   948!X=     571.52502,    1316.39905,     699.00000,     1480.000!  !END!
+   949!X=     571.52502,    1316.39905,     699.00000,     1490.000!  !END!
+   950!X=     571.52502,    1316.39905,     699.00000,     1500.000!  !END!
+   951!X=     571.52502,    1316.39905,     699.00000,     1510.000!  !END!
+   952!X=     571.52502,    1316.39905,     699.00000,     1520.000!  !END!
+   953!X=     571.52502,    1316.39905,     699.00000,     1530.000!  !END!
+   954!X=     571.52502,    1316.39905,     699.00000,     1540.000!  !END!
+   955!X=     571.52502,    1316.39905,     699.00000,     1550.000!  !END!
+   956!X=     571.52502,    1316.39905,     699.00000,     1560.000!  !END!
+   957!X=     571.52502,    1316.39905,     699.00000,     1570.000!  !END!
+   958!X=     571.52502,    1316.39905,     699.00000,     1580.000!  !END!
+   959!X=     571.52502,    1316.39905,     699.00000,     1590.000!  !END!
+   960!X=     571.52502,    1316.39905,     699.00000,     1600.000!  !END!
+   961!X=     571.52502,    1316.39905,     699.00000,     1610.000!  !END!
+   962!X=     571.52502,    1316.39905,     699.00000,     1620.000!  !END!
+   963!X=     571.52502,    1316.39905,     699.00000,     1630.000!  !END!
+   964!X=     571.52502,    1316.39905,     699.00000,     1640.000!  !END!
+   965!X=     571.52502,    1316.39905,     699.00000,     1650.000!  !END!
+   966!X=     571.52502,    1316.39905,     699.00000,     1660.000!  !END!
+   967!X=     571.52502,    1316.39905,     699.00000,     1670.000!  !END!
+   968!X=     571.52502,    1316.39905,     699.00000,     1680.000!  !END!
+   969!X=     571.52502,    1316.39905,     699.00000,     1690.000!  !END!
+   970!X=     571.52502,    1316.39905,     699.00000,     1700.000!  !END!
+   971!X=     571.52502,    1316.39905,     699.00000,     1710.000!  !END!
+   972!X=     571.52502,    1316.39905,     699.00000,     1720.000!  !END!
+   973!X=     571.52502,    1316.39905,     699.00000,     1730.000!  !END!
+   974!X=     571.52502,    1316.39905,     699.00000,     1740.000!  !END!
+   975!X=     571.52502,    1316.39905,     699.00000,     1750.000!  !END!
+   976!X=     571.52502,    1316.39905,     699.00000,     1760.000!  !END!
+   977!X=     571.52502,    1316.39905,     699.00000,     1770.000!  !END!
+   978!X=     571.52502,    1316.39905,     699.00000,     1780.000!  !END!
+   979!X=     571.52502,    1316.39905,     699.00000,     1790.000!  !END!
+   980!X=     571.52502,    1316.39905,     699.00000,     1800.000!  !END!
+   981!X=     571.52502,    1316.39905,     699.00000,     1810.000!  !END!
+   982!X=     571.52502,    1316.39905,     699.00000,     1820.000!  !END!
+   983!X=     571.52502,    1316.39905,     699.00000,     1830.000!  !END!
+   984!X=     571.52502,    1316.39905,     699.00000,     1840.000!  !END!
+   985!X=     571.52502,    1316.39905,     699.00000,     1850.000!  !END!
+   986!X=     571.52502,    1316.39905,     699.00000,     1860.000!  !END!
+   987!X=     571.52502,    1316.39905,     699.00000,     1870.000!  !END!
+   988!X=     571.52502,    1316.39905,     699.00000,     1880.000!  !END!
+   989!X=     571.52502,    1316.39905,     699.00000,     1890.000!  !END!
+   990!X=     571.52502,    1316.39905,     699.00000,     1900.000!  !END!
+   991!X=     571.52502,    1316.39905,     699.00000,     1910.000!  !END!
+   992!X=     571.52502,    1316.39905,     699.00000,     1920.000!  !END!
+   993!X=     571.52502,    1316.39905,     699.00000,     1930.000!  !END!
+   994!X=     571.52502,    1316.39905,     699.00000,     1940.000!  !END!
+   995!X=     571.52502,    1316.39905,     699.00000,     1950.000!  !END!
+   996!X=     571.52502,    1316.39905,     699.00000,     1960.000!  !END!
+   997!X=     571.52502,    1316.39905,     699.00000,     1970.000!  !END!
+   998!X=     571.52502,    1316.39905,     699.00000,     1980.000!  !END!
+   999!X=     571.52502,    1316.39905,     699.00000,     1990.000!  !END!
+  1000!X=     571.52502,    1316.39905,     699.00000,     2000.000!  !END!

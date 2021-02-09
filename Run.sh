@@ -42,7 +42,7 @@ DGRIDKM=$(echo "scale=3; $res/1000" | bc)
 let MESHGLAZ=1000/$res+1
 cwd=$(pwd)
 # Number of nam files for 48 hours
-NAMno=17
+NAMno=9
 
 #------------------------------------------------------------------------#
 #------------------- DO NOT ALTER BELOW THIS LINE------------------------#
@@ -53,7 +53,7 @@ NAMno=17
 
 # Defaults that can be overwritten via command line
 rundate=$(date +%Y%m%d)
-numhours=48
+numhours=24
 runVIS=false
 runallVIS=false
 rungoogle=false
@@ -497,7 +497,7 @@ if [ "$run3DDAT" = true ]; then
     fi
     cd NAM_data/raw/${rundate}
     # Download each NAM data file if required:
-    for i in `seq 0 3 48`; do
+    for i in `seq 0 3 24`; do
       hour=`printf "%02d" $i`
       if [ ! -f nam.t00z.afwaca${hour}.tm00.grib2 ]; then
 	echo "### DOWNLOADING DATA FOR FORECAST HOUR "${hour}" ###"
